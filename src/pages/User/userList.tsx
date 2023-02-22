@@ -49,7 +49,6 @@ export default function Page() {
       cardBordered
       request={apiOaUserList}
       rowKey="id"
-
     />
   );
 }

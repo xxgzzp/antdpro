@@ -6,12 +6,11 @@ import { SettingDrawer } from '@ant-design/pro-components';
 import type { RequestConfig, RunTimeLayoutConfig } from '@umijs/max';
 import { history, Link } from '@umijs/max';
 import defaultSettings from '../config/defaultSettings';
-import { errorConfig } from './requestErrorConfig';
 import React from 'react';
 import { apiOaCurrentuserList } from './services/ant-design-pro/api';
 import Cookies from 'js-cookie';
 const isDev = process.env.NODE_ENV === 'development';
-const loginPath = '/user/login';
+const loginPath = '/login';
 
 /**
  * @see  https://umijs.org/zh-CN/plugins/plugin-initial-state

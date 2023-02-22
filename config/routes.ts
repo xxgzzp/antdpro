@@ -12,27 +12,10 @@
  */
 export default [
   {
-    path: '/user',
-    layout: false,
-    routes: [
-      {
-        name: 'login',
-        path: '/user/login',
-        component: './User/Login',
-      },
-    ],
-  },
-  {
     path: '/welcome',
-    name: 'welcome',
-    icon: 'smile',
+    name: '主页',
+    icon: 'home',
     component: './Welcome',
-  },
-  {
-    path: '/material',
-    name: '材料系统',
-    icon: 'smile',
-    component: './Material',
   },
   {
     path: '/admin',
@@ -67,10 +50,44 @@ export default [
     component: './Login',
   },
   {
-    name: '用户列表',
-    path: '/userlist',
+    name: '用户',
+    path: '/user',
+    icon: 'idcard',
     layout: true,
-    component: './User/userlist',
+    component: './User/userList',
   },
-
+  {
+    name: '订单',
+    path: '/order',
+    icon: 'profile',
+    layout: true,
+    component: './Order/OrderList',
+  },
+  {
+    name: '项目',
+    path: '/project',
+    icon: 'bank',
+    layout: true,
+    component: './Project/ProjectList',
+  },
+  {
+    name: '供应商',
+    path: '/supplier',
+    icon: 'shop',
+    layout: true,
+    component: './Supplier/SupplierList',
+  },
+  {
+    name: '材料合同',
+    path: '/Contract',
+    icon: 'wallet',
+    layout: true,
+    component: './Contract/ContractList',
+  },
+  {
+    path: '/material',
+    name: '材料系统',
+    icon: 'tool',
+    component: './Material',
+  },
 ];
