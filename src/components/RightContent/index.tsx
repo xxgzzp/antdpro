@@ -4,6 +4,7 @@ import { SelectLang, useModel } from '@umijs/max';
 import React from 'react';
 import Avatar from './AvatarDropdown';
 
+
 export type SiderTheme = 'light' | 'dark';
 
 const GlobalHeaderRight: React.FC = () => {
