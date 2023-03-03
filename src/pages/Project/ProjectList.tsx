@@ -20,7 +20,6 @@ export default function SupplierList() {
   const handleSearch = (value: string) => {
     setSearchParams({ search: value });
   };
-
   const handleUpdate = (row:API.Project)=>{
     setModalOpen(true);
     setTypeAddOrUpdate(false);  // 将表单方式切回更新
@@ -77,16 +76,8 @@ export default function SupplierList() {
       width: 120,
       valueType: 'option',
       render: (_, row,) => [
-        <>
-          <Button
-            size="small"
-            onClick={()=>handleUpdate(row)}
-          >修改</Button>
-          <Button
-            size="small"
-            onClick={() =>handleDelete(row)}
-            danger>删除</Button>
-        </>
+          <Button size="small" key="update" onClick={()=>handleUpdate(row)}>修改</Button>,
+          <Button size="small" key="delete" onClick={() =>handleDelete(row)} danger>删除</Button>,
       ],
     }
   ];
@@ -113,8 +104,6 @@ export default function SupplierList() {
           multipleLine: true,
           search: {
             onSearch: handleSearch,
-            // @ts-ignore
-            collapsed:false, // 不收起
             placeholder:'搜索'
           }}}
         // 右上角按钮

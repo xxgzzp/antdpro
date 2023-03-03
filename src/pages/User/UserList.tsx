@@ -7,7 +7,7 @@ import {SearchOutlined} from "@ant-design/icons";
 import {keyBy} from "lodash";
 import UserForm from "@/pages/User/UserForm";
 import 'react-toastify/dist/ReactToastify.css';
-
+import { v4 as uuidv4 } from 'uuid';
 
 export default function Page() {
   const proTableRef = useRef<ActionType>();
@@ -74,11 +74,11 @@ export default function Page() {
       dataIndex: 'username',
       filterDropdown: () => (
         <div style={{ padding: 8 }}>
-          <Input  style={{ width: 188, marginBlockEnd: 8, display: 'block' }}></Input>
+          <Input key="userInput" style={{ width: 188, marginBlockEnd: 8, display: 'block' }}></Input>
         </div>
       ),
       filterIcon: (filtered) => (
-        <SearchOutlined style={{ color: filtered ? '#1890ff' : undefined }} />
+        <SearchOutlined key="searchOutlined" style={{ color: filtered ? '#1890ff' : undefined }} />
       ),
       search: false
     },
@@ -132,22 +132,13 @@ export default function Page() {
     },
     {
       title: '操作',
-      key: 'option',
       width: 120,
+      key:"options",
       valueType: 'option',
-      render: (_, row,) => [
-        <>
-          <Button
-            size="small"
-            key={`${row.id}update`}
-            onClick={()=>handleUpdate(row)}
-                  >修改</Button>
-          <Button
-            size="small"
-            key={`${row.id}delete`}
-            onClick={() =>handleDelete(row)}
-            danger>删除</Button>
-        </>
+      render: (_, row) => [
+        // eslint-disable-next-line react/jsx-key
+        <Button size="small" key="update" onClick={()=>handleUpdate(row)}>修改</Button>,
+        <Button size="small" key="delete" onClick={() =>handleDelete(row)} danger>删除</Button>,
       ],
     },
   ];
@@ -155,7 +146,6 @@ export default function Page() {
   return (
     <>
     <ProTable<API.User>
-      key="id"
       headerTitle="用户管理"
       columns={columns}
       actionRef={proTableRef}
@@ -175,8 +165,6 @@ export default function Page() {
         multipleLine: true,
         search: {
           onSearch: handleSearch,
-          // @ts-ignore
-          collapsed:false, // 不收起
           placeholder:'搜索'
         }}}
       // 右上角按钮
@@ -191,6 +179,7 @@ export default function Page() {
            open={deleteModalVisit}
            onCancel={() => {setDeleteModalVisit(false)}}
            confirmLoading={deleteModalLoading}
+           key="userModal"
            onOk={() => {
              setDeleteModalLoading(true)
              // 删除用户

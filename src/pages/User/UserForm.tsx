@@ -1,5 +1,5 @@
 import {ProForm, ProFormDependency, ProFormInstance, ProFormSelect} from "@ant-design/pro-form";
-import React, {Dispatch, SetStateAction, useEffect, useRef, useState} from "react";
+import React, {Dispatch, SetStateAction, useRef} from "react";
 import {ModalForm, ProFormGroup, ProFormText} from "@ant-design/pro-components";
 import {Form, Select} from "antd";
 import {
@@ -8,7 +8,7 @@ import {
   apiOaUserCreate,
   apiOaUserPartialUpdate,
 } from "@/services/ant-design-pro/api";
-import {toast} from "react-toastify";
+
 
 
 const UserForm: React.FC<{
@@ -51,12 +51,7 @@ const UserForm: React.FC<{
         reload?.()
         // 表单重置
         restFormRef.current?.resetFields();
-      }).then(response=>{
-        toast(response.message)
-      }).catch(response=>{
-          toast(response.message)
-        }
-      )
+      })
     }
   }
   // 手机号和用户名保持一致，并且用户名可更改

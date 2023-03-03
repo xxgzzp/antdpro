@@ -131,7 +131,6 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
 
 // request拦截器 添加csrf和Token参数
 const csrfTokenInterceptor = (url: string, options: RequestConfig) => {
-  NProgress.start(); // 显示进度条
   return{
     url: `${url}`,
     options: { ...options, interceptors: true,
@@ -184,7 +183,6 @@ export const request: RequestConfig = {
   requestInterceptors: [csrfTokenInterceptor],
   responseInterceptors: [
     (response) => {
-      NProgress.done(); // 隐藏进度条
       // 拦截响应数据，进行个性化处理
       const {data}:any = response;
       // 统一处理 响应后的message

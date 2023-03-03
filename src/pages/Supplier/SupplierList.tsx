@@ -100,19 +100,9 @@ export default function SupplierList() {
       key: 'option',
       width: 120,
       valueType: 'option',
-      render: (_, row,) => [
-        <>
-          <Button
-            size="small"
-            key='update'
-            onClick={()=>handleUpdate(row)}
-          >修改</Button>
-          <Button
-            size="small"
-            key='delete'
-            onClick={() =>handleDelete(row)}
-            danger>删除</Button>
-        </>
+      render: (_, row) => [
+        <Button size="small" key='update' onClick={()=>handleUpdate(row)}>修改</Button>,
+        <Button size="small" key='delete' onClick={() =>handleDelete(row)} danger>删除</Button>,
       ],
     }
   ];
@@ -140,8 +130,6 @@ export default function SupplierList() {
           multipleLine: true,
           search: {
             onSearch: handleSearch,
-            // @ts-ignore
-            collapsed:false, // 不收起
             placeholder:'搜索'
           }}}
         // 右上角按钮
