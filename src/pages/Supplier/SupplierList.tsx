@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 import type { ActionType, ProColumns } from '@ant-design/pro-components';
 import {ProTable,} from '@ant-design/pro-components';
 import React, { useRef, useState} from 'react';
@@ -157,15 +156,5 @@ export default function SupplierList() {
         reload={proTableRef.current?.reload}
       />
     </>
-=======
-import React from 'react';
-import styles from './SupplierList.less';
-
-export default function Page() {
-  return (
-    <div>
-      <h1 className={styles.title}>Page SupplierList</h1>
-    </div>
->>>>>>> origin/master
-  );
+  )
 }

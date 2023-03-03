@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 import type { ActionType, ProColumns } from '@ant-design/pro-components';
 import {ProTable,} from '@ant-design/pro-components';
 import React, { useRef, useState} from 'react';
@@ -14,28 +13,28 @@ export default function SupplierList() {
   // 删除中 控制删除model
   const [deleteModalOpen, setDeleteModalOpen] = useState<boolean>(false);
   const [deleteModalLoading, setDeleteModalLoading] = useState<boolean>(false);
-  const [deleteProject, setDeleteProject] = useState<{id:number | undefined,name:string}>();
+  const [deleteProject, setDeleteProject] = useState<{ id: number | undefined, name: string }>();
   // 在 onSearch 方法中更新搜索条件
   const [searchParams, setSearchParams] = useState({});
 
   const handleSearch = (value: string) => {
-    setSearchParams({ search: value });
+    setSearchParams({search: value});
   };
-  const handleUpdate = (row:API.Project)=>{
+  const handleUpdate = (row: API.Project) => {
     setModalOpen(true);
     setTypeAddOrUpdate(false);  // 将表单方式切回更新
     setUpdateProject(row);
   };
-  const handleAdd = ()=>{
+  const handleAdd = () => {
     setModalOpen(true);
     setTypeAddOrUpdate(true);
   };
   // 点击删除时
-  const handleDelete = (row:API.Supplier)=>{
+  const handleDelete = (row: API.Supplier) => {
     setTypeAddOrUpdate(true) // 将表单方式切回删除
     setDeleteProject({
-      id:row.id,
-      name:row.name,
+      id: row.id,
+      name: row.name,
     });
     setDeleteModalOpen(true)
   }
@@ -56,7 +55,7 @@ export default function SupplierList() {
     {
       title: '项目名称',
       dataIndex: 'name',
-      search:{
+      search: {
         // @ts-ignore
         key: 'search',
       },
@@ -64,12 +63,12 @@ export default function SupplierList() {
     {
       title: '项目地址',
       dataIndex: 'address',
-      search:false,
+      search: false,
     },
     {
       title: '项目经理',
       dataIndex: 'manager_name',
-      search:false,
+      search: false,
     },
     {
       title: '操作',
@@ -77,8 +76,8 @@ export default function SupplierList() {
       width: 120,
       valueType: 'option',
       render: (_, row,) => [
-          <Button size="small" key="update" onClick={()=>handleUpdate(row)}>修改</Button>,
-          <Button size="small" key="delete" onClick={() =>handleDelete(row)} danger>删除</Button>,
+        <Button size="small" key="update" onClick={() => handleUpdate(row)}>修改</Button>,
+        <Button size="small" key="delete" onClick={() => handleDelete(row)} danger>删除</Button>,
       ],
     }
   ];
@@ -94,7 +93,7 @@ export default function SupplierList() {
         params={searchParams}
         pagination={{
           showQuickJumper: true,
-          "pageSize":10,
+          "pageSize": 10,
         }}
         // 右上角三个调整按钮
         options={{
@@ -105,8 +104,9 @@ export default function SupplierList() {
           multipleLine: true,
           search: {
             onSearch: handleSearch,
-            placeholder:'搜索'
-          }}}
+            placeholder: '搜索'
+          }
+        }}
         // 右上角按钮
         toolBarRender={() => [
           <Button type="primary" key="primary" onClick={handleAdd}>
@@ -117,7 +117,9 @@ export default function SupplierList() {
       <Modal
         title="项目-删除"
         open={deleteModalOpen}
-        onCancel={() => {setDeleteModalOpen(false)}}
+        onCancel={() => {
+          setDeleteModalOpen(false)
+        }}
         confirmLoading={deleteModalLoading}
         onOk={handleDeleteOk}
       >
@@ -131,15 +133,5 @@ export default function SupplierList() {
         reload={proTableRef.current?.reload}
       />
     </>
-=======
-import React from 'react';
-import styles from './ProjectList.less';
-
-export default function Page() {
-  return (
-    <div>
-      <h1 className={styles.title}>Page ProjectList</h1>
-    </div>
->>>>>>> origin/master
-  );
+  )
 }
