@@ -1,9 +1,9 @@
-import { apiOaProjectList } from "@/services/ant-design-pro/api";
-import React, { useEffect, useState } from "react";
-import { Button, Divider,  Select, Space } from "antd";
-import { PlusOutlined } from "@ant-design/icons";
-import { useRequest } from "@@/plugin-request";
-import ProjectForm from "@/pages/Project/ProjectForm";
+import ProjectForm from '@/pages/Project/ProjectForm';
+import { apiOaProjectList } from '@/services/ant-design-pro/api';
+import { useRequest } from '@@/plugin-request';
+import { PlusOutlined } from '@ant-design/icons';
+import { Button, Divider, Select, Space } from 'antd';
+import { useEffect, useState } from 'react';
 const ProjectSelectAdd = () => {
   const [userModalOpen, setUserModalOpen] = useState<boolean>(false);
   const [projectList, setProjectList] = useState([]);

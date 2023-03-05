@@ -19,8 +19,8 @@ const Settings: ProLayoutProps & {
   pwa: true,
   logo: 'https://gw.alipayobjects.com/zos/rmsportal/KDpgvguMpGfqaHPjicRK.svg',
   iconfontUrl: '',
-  menu:{
-    locale : false,
+  menu: {
+    locale: false,
   },
   token: {
     // 参见ts声明，demo 见文档，通过token 修改样式

@@ -1,86 +1,69 @@
-import { ProFormSelect } from "@ant-design/pro-components";
-import {apiOaProjectList} from "@/services/ant-design-pro/api";
-import React, {useState} from "react";
-import {Button, Divider, Input, Select, Space} from "antd";
-import {PlusOutlined} from "@ant-design/icons";
-import UserForm from "@/pages/User/UserForm";
-import {useRequest} from "@@/plugin-request";
+import { apiMaterialMaterialList, apiMaterialOrderItemList } from '@/services/ant-design-pro/api';
+import { Autocomplete, TextField } from '@mui/material';
+import { DataGrid } from '@mui/x-data-grid';
+import { useEffect, useState } from 'react';
 
-
-const InfoCard: React.FC<{
-  title: string;
-  index: number;
-  desc: string;
-  href: string;
-}> = ({ title, href, index, desc }) => {
-  const [userModalOpen, setUserModalOpen] = useState<boolean>(false);
-  const [data,setData]=useState()
-  const {run,loading} = useRequest(apiOaProjectList,{manual: true});
-  const handleClick =async () => {
-    run().then((r) => {console.log(r);})
-    await apiOaProjectList().then((r) => {
-      const res = r.results.map(r => ({
-        label: r.name,
-        value: r.id,
-      }))
-      setData(res)
-    })
-
-  }
+function OrderItemList() {
+  const [orderItems, setOrderItems] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [materialOptions, setMaterialOptions] = useState([]);
+  useEffect(() => {
+    setLoading(true);
+    apiMaterialOrderItemList({}).then((res) => {
+      setLoading(false);
+      setOrderItems(res.results);
+    });
+  }, []);
+  const handleMaterialNameChange = (event, value, params) => {
+    const updatedOrderItems = [...orderItems];
+    updatedOrderItems[params.rowIndex].materialName = value;
+    setOrderItems(updatedOrderItems);
+  };
+  const handleMaterialNameSearch = (event, value) => {
+    apiMaterialMaterialList({ search: value }).then((res) => {
+      setMaterialOptions(res.results);
+    });
+  };
+  const columns = [
+    { field: 'id', headerName: 'ID', width: 70 },
+    {
+      field: 'materialName',
+      headerName: 'Material Name',
+      width: 200,
+      valueGetter: (params) => params.row.material.sku,
+      renderCell: (params) => (
+        <Autocomplete
+          options={materialOptions}
+          value={params.value}
+          onChange={(event, value) => handleMaterialNameChange(event, value, params)}
+          onInputChange={handleMaterialNameSearch}
+          getOptionLabel={(option) => option.name}
+          renderInput={(params) => (
+            <TextField {...params} label="Material Name" variant="standard" />
+          )}
+        />
+      ),
+    },
+    {
+      field: 'materialSku',
+      headerName: 'Material SKU',
+      width: 200,
+      valueGetter: (params) => params.row.material.sku,
+    },
+    { field: 'need_time', headerName: 'Need Time', width: 150, editable: true, resizable: true },
+    { field: 'buy_num', headerName: 'Buy Num', width: 120, editable: true, resizable: true },
+    { field: 'used_site', headerName: 'Used Site', width: 150, editable: true, resizable: true },
+    { field: 'sort', headerName: 'Sort', width: 120, editable: true, resizable: true },
+    { field: 'is_arrival', headerName: 'Is Arrival', width: 120, editable: true, resizable: true },
+    { field: 'order', headerName: 'Order', width: 200, editable: true, resizable: true },
+    { field: 'contract', headerName: 'Contract', width: 200, editable: true, resizable: true },
+    { field: 'receipt', headerName: 'Receipt', width: 200, editable: true, resizable: true },
+  ];
   return (
-    <>
-    <ProFormSelect.SearchSelect
-      name="userQuery"
-      label="查询选择器 - request"
-      fieldProps={{
-        labelInValue: true,
-        style: {
-          minWidth: 140,
-        },
-      }}
-      debounceTime={300}
-      request={async ({ keyWords = '' }) => {
-        // @ts-ignore
-        await apiOaProjectList({"search": keyWords}).then(r => {
-          const res = r.results.map(r => ({
-            label: r.name,
-            value: r.id,
-          }))
-          setData(res)
-        })
-        return data
-      }
-      }
-    />
-  <Select
-    loading={loading}
-    style={{ width: 300 }}
-    placeholder="custom dropdown render"
-    onClick={handleClick}
-    dropdownRender={(menu) => (
-      <>
-        {menu}
-        <Divider style={{ margin: '8px 0' }} />
-        <Space style={{ padding: '0 8px 4px' }}>
-          <Input
-            placeholder="Please enter item"
-          />
-          <Button type="text" icon={<PlusOutlined />} onClick={() => {setUserModalOpen(true)}}>
-            Add item
-          </Button>
-        </Space>
-      </>
-    )}
-    options={data}
-  />
-      <UserForm
-        modalOpen={userModalOpen}
-        setModalOpen={setUserModalOpen}
-      />
-
-    </>
-
-
+    <div style={{ height: '100%', width: '100%' }}>
+      <DataGrid rows={orderItems} columns={columns} loading={loading} autoHeight={true} />
+    </div>
   );
-};
-export default InfoCard;
+}
+
+export default OrderItemList;
