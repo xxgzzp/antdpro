@@ -11,7 +11,7 @@ import { ProFormDateRangePicker } from '@ant-design/pro-form';
 import { Badge, Button, Modal, Radio } from 'antd';
 import { keyBy } from 'lodash';
 import { useEffect, useRef, useState } from 'react';
-import 'react-toastify/dist/ReactToastify.css';
+import { history } from 'umi';
 export default function Page() {
   const proTableRef = useRef<ActionType>();
   // 关闭和打开"用户"模态框
@@ -73,6 +73,9 @@ export default function Page() {
   const handleAdd = () => {
     setTypeAddOrUpdate(true);
     setModalOpen(true);
+  };
+  const handleRowClick = (record: API.Order) => {
+    history.push(`/order/${record.id}/orderitems`);
   };
   const handleMenuChange = (key) => {
     setActiveKey(key as string);
@@ -229,7 +232,13 @@ export default function Page() {
           // "pageSize":10,
         }}
         rowKey="id"
+        onRow={(record) => {
+          return {
+            onDoubleClick: () => handleRowClick(record),
+          };
+        }}
         // 右上角三个调整按钮
+
         options={{
           search: true,
         }}
