@@ -69,7 +69,10 @@ const App: React.FC = () => {
     newData.splice(index, 1, {
       ...item,
       ...newRow,
+      // https://ant.design/components/table-cn#components-table-demo-expand
+      // children: [{ ...item }] 这样子可以设置展开可是效果不好
     });
+    console.log(newRow);
     setDataSource(newData);
     const updateOrder: OrderLocal = { id: order_id!, items: newData! };
     // 不用在此判断updateOrder存不存在Local，updateOrderLocal已经判断了
@@ -117,12 +120,6 @@ const App: React.FC = () => {
       editable: true,
     },
     {
-      title: '单位',
-      width: '10%',
-      dataIndex: 'material_unit',
-      editable: true,
-    },
-    {
       title: '使用部位',
       dataIndex: 'used_site',
       editable: true,
@@ -131,6 +128,12 @@ const App: React.FC = () => {
       title: '申购数量',
       width: '10%',
       dataIndex: 'buy_num',
+      editable: true,
+    },
+    {
+      title: '单位',
+      width: '10%',
+      dataIndex: 'material_unit',
       editable: true,
     },
     {
@@ -175,7 +178,24 @@ const App: React.FC = () => {
     }
     return false;
   };
-
+  // 展开渲染
+  const handleExpendedRowRender = (record) => {
+    if (remoteDate) {
+      const newData = [...remoteDate.results];
+      const index = newData.findIndex((item) => record.id === item.id);
+      const item = newData[index];
+      return (
+        <tr className="editable-row">
+          <td>系统数据:</td>
+          <td style={{ padding: '5px 100px' }}>{item.material_name}</td>
+          <td style={{ paddingRight: '50px' }}>{item.material_sku}</td>
+          <td style={{ paddingRight: '50px' }}>{item.buy_num}</td>
+          <td style={{ paddingRight: '50px' }}>{item.material_unit}</td>
+        </tr>
+      );
+    }
+    return <p>远程获取数据失败</p>;
+  };
   return (
     <div>
       <Button onClick={handleCommit} type="primary" style={{ marginBottom: 16 }}>
@@ -197,17 +217,8 @@ const App: React.FC = () => {
         pagination={false}
         size="small" // 紧凑
         expandable={{
-          expandedRowRender: (record) => (
-            <p
-              style={{ margin: 0 }}
-            >{`序号:${record.sort} 材料名称:${record.material_name} sku:${record.material_sku}`}</p>
-          ),
-          // <tr className="editable-row">
-          //   <td className="editable-cell">{record.sort}</td>
-          //   <td>{record.material_name}</td>
-          //   <td>{record.material_sku}</td>
-          // </tr>
-          rowExpandable: (record) => handleRowExpandable(record),
+          expandedRowRender: handleExpendedRowRender,
+          rowExpandable: handleRowExpandable,
         }}
       />
     </div>
