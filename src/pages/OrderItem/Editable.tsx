@@ -34,6 +34,7 @@ export const EditableRow: React.FC = ({ ...props }) => {
   );
 };
 export const EditableCell: React.FC<EditableCellProps> = ({
+  title,
   editable,
   children,
   dataIndex,

@@ -114,7 +114,7 @@ export default [
     path: '/order/:order_id/orderitems/',
     name: '材料单明细',
     icon: 'tool',
-    component: './OrderItem/OrderItem',
+    component: './OrderItem/OrderItemList',
   },
   {
     path: '/',

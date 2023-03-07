@@ -1,10 +1,11 @@
 import { EditableCell, EditableRow } from '@/pages/OrderItem/Editable';
-import '@/pages/OrderItem/test.less';
+import '@/pages/OrderItem/OrderItemList.less';
 import useOrderLocalStorage, { OrderLocal } from '@/pages/OrderItem/useOrderLocalStorage';
 import { apiMaterialOrderItemList } from '@/services/ant-design-pro/api';
 import { request } from '@umijs/max';
 import { useRequest } from 'ahooks';
 import { Button, Popconfirm, Table } from 'antd';
+import { isEqual } from 'lodash';
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router';
 import { v4 as uuidv4 } from 'uuid';
@@ -12,19 +13,32 @@ import { v4 as uuidv4 } from 'uuid';
 const App: React.FC = () => {
   const { order_id } = useParams<{ order_id?: string }>();
   const [dataSource, setDataSource] = useState<API.OrderItem[]>([]);
-  const { data, loading } = useRequest(() => apiMaterialOrderItemList({ order: order_id }));
+  const { data: remoteDate, loading } = useRequest(() =>
+    apiMaterialOrderItemList({ order: order_id }),
+  );
   const { getOrderLocal, updateOrderLocal, deleteOrderLocal } = useOrderLocalStorage();
-
+  const order = getOrderLocal(order_id!);
   useEffect(() => {
-    const order = getOrderLocal(order_id!);
-    // 如果filter后的数据不是的长度不是空的就说明本地保存有用户的order
+    // 如果有本地数据，先加载本地的
+    // 这个放在外面会报Too many re-renders. React limits the number of renders to prevent an infinite loop.原因未知
+
     if (order?.length) {
-      console.log('引用了用户保存在本地的数据');
       setDataSource(order[0].items);
-    } else if (data) {
-      setDataSource(data.results);
     }
-  }, [data]);
+    // 如果没有本地数据就set远程数据
+    if (!order?.length && remoteDate) {
+      setDataSource(remoteDate.results);
+    }
+    // 若远程数据和本地数据相等就删除本地数据
+    if (remoteDate && order?.length) {
+      // 去除时间戳后比较
+      const _localDate = order[0].items.map((item) => ({ ...item, timestamp: undefined }));
+      const _remoteDate = remoteDate.results.map((item) => ({ ...item, timestamp: undefined }));
+      if (isEqual(_localDate, _remoteDate)) {
+        deleteOrderLocal(order_id!);
+      }
+    }
+  }, [remoteDate]);
   // 删除行
   const handleDelete = (id: React.Key) => {
     if (dataSource) {
@@ -80,6 +94,7 @@ const App: React.FC = () => {
 
   type EditableTableProps = Parameters<typeof Table>[0];
   type ColumnTypes = Exclude<EditableTableProps['columns'], undefined>;
+
   const defaultColumns: (ColumnTypes[number] & { editable?: boolean; dataIndex: string })[] = [
     {
       title: '序号',
@@ -87,6 +102,8 @@ const App: React.FC = () => {
       width: '7%',
       editable: true,
     },
+    // @ts-ignore
+    Table.EXPAND_COLUMN,
     {
       title: 'name',
       dataIndex: 'material_name',
@@ -144,6 +161,20 @@ const App: React.FC = () => {
       }),
     };
   });
+  // 是否展开远程数据的行
+  const handleRowExpandable = (record) => {
+    if (order?.length && remoteDate) {
+      // 按时间戳判断，如果是修改了就展开
+      const remoteItem = remoteDate.results.filter((item) => item.id === record.id);
+      const timestamp = remoteItem.map((item) => item.timestamp)[0];
+      const _localItem = { ...record, timestamp: undefined };
+      const _remoteItem = { ...remoteItem[0], timestamp: undefined };
+      const _isEqual = isEqual(_localItem, _remoteItem);
+      // 修改了，并且修改后的内容不相等
+      return record.timestamp > timestamp && !_isEqual;
+    }
+    return false;
+  };
 
   return (
     <div>
@@ -165,6 +196,19 @@ const App: React.FC = () => {
         scroll={{ y: 500 }}
         pagination={false}
         size="small" // 紧凑
+        expandable={{
+          expandedRowRender: (record) => (
+            <p
+              style={{ margin: 0 }}
+            >{`序号:${record.sort} 材料名称:${record.material_name} sku:${record.material_sku}`}</p>
+          ),
+          // <tr className="editable-row">
+          //   <td className="editable-cell">{record.sort}</td>
+          //   <td>{record.material_name}</td>
+          //   <td>{record.material_sku}</td>
+          // </tr>
+          rowExpandable: (record) => handleRowExpandable(record),
+        }}
       />
     </div>
   );

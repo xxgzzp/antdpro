@@ -45,6 +45,7 @@ const useOrderLocalStorage = () => {
   const getAllOrdersLocal = () => {
     return orders;
   };
+
   return {
     getOrderLocal,
     addOrderLocal,
