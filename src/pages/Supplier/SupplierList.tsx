@@ -1,19 +1,19 @@
+import SupplierForm from '@/pages/Supplier/SupplierForm';
+import { apiOaSupplierDelete, apiOaSupplierList } from '@/services/ant-design-pro/api';
 import type { ActionType, ProColumns } from '@ant-design/pro-components';
-import {ProTable,} from '@ant-design/pro-components';
-import React, { useRef, useState} from 'react';
-import {apiOaSupplierDelete, apiOaSupplierList} from "@/services/ant-design-pro/api";
-import {Button, Modal,} from "antd";
-import SupplierForm from "@/pages/Supplier/SupplierForm";
+import { ProTable } from '@ant-design/pro-components';
+import { Button, Modal } from 'antd';
+import { useRef, useState } from 'react';
 export default function SupplierList() {
   const proTableRef = useRef<ActionType>();
   // 关闭和打开SupplierForm模态框
   const [ModalOpen, setModalOpen] = useState<boolean>(false);
-  const [updateSupplier, setUpdateSupplier] = useState<API.Supplier>()
+  const [updateSupplier, setUpdateSupplier] = useState<API.Supplier>();
   const [typeAddOrUpdate, setTypeAddOrUpdate] = useState<boolean>(true);
   // 删除中 控制删除model
   const [deleteModalOpen, setDeleteModalOpen] = useState<boolean>(false);
   const [deleteModalLoading, setDeleteModalLoading] = useState<boolean>(false);
-  const [deleteSupplier, setDeleteSupplier] = useState<{id:number | undefined,name:string}>();
+  const [deleteSupplier, setDeleteSupplier] = useState<{ id: number | undefined; name: string }>();
   // 在 onSearch 方法中更新搜索条件
   const [searchParams, setSearchParams] = useState({});
 
@@ -21,35 +21,34 @@ export default function SupplierList() {
     setSearchParams({ search: value });
   };
 
-  const handleUpdate = (row:API.Supplier)=>{
+  const handleUpdate = (row: API.Supplier) => {
     setModalOpen(true);
-    setTypeAddOrUpdate(false);  // 将表单方式切回更新
+    setTypeAddOrUpdate(false); // 将表单方式切回更新
     setUpdateSupplier(row);
   };
-  const handleAdd = ()=>{
+  const handleAdd = () => {
     setModalOpen(true);
     setTypeAddOrUpdate(true);
   };
   // 点击删除时
-  const handleDelete = (row:API.Supplier)=>{
-    setTypeAddOrUpdate(true) // 将表单方式切回删除
+  const handleDelete = (row: API.Supplier) => {
+    setTypeAddOrUpdate(true); // 将表单方式切回删除
     setDeleteSupplier({
-      id:row.id,
-      name:row.name,
+      id: row.id,
+      name: row.name,
     });
-    setDeleteModalOpen(true)
-  }
+    setDeleteModalOpen(true);
+  };
   // 在模态框里点击确认删除时
   const handleDeleteOk = () => {
-    setDeleteModalLoading(true)
+    setDeleteModalLoading(true);
     // 删除用户
-    apiOaSupplierDelete({id: deleteSupplier?.id} as API.apiOaSupplierDeleteParams).then(
-      () => {
-        setDeleteModalOpen(false)
-        proTableRef.current?.reload()
-        setDeleteModalLoading(false)
-      })
-  }
+    apiOaSupplierDelete({ id: deleteSupplier?.id } as API.apiOaSupplierDeleteParams).then(() => {
+      setDeleteModalOpen(false);
+      proTableRef.current?.reload();
+      setDeleteModalLoading(false);
+    });
+  };
 
   // ProTable 的 columns定义
   const columns: ProColumns[] = [
@@ -70,11 +69,11 @@ export default function SupplierList() {
       title: '类别',
       dataIndex: 'category',
       onFilter: true,
-      valueEnum:{
-        "消防": {text: '消防' },
-        "土建": {text: '土建', status: 'Error',},
-        "电缆": {text: '电缆', status: 'Success'},//disabled: true,可以让它不能选择
-        "其他": {text: '其他', status: 'Processing',},
+      valueEnum: {
+        消防: { text: '消防' },
+        土建: { text: '土建', status: 'Error' },
+        电缆: { text: '电缆', status: 'Success' }, //disabled: true,可以让它不能选择
+        其他: { text: '其他', status: 'Processing' },
       },
     },
     {
@@ -101,10 +100,14 @@ export default function SupplierList() {
       width: 120,
       valueType: 'option',
       render: (_, row) => [
-        <Button size="small" key='update' onClick={()=>handleUpdate(row)}>修改</Button>,
-        <Button size="small" key='delete' onClick={() =>handleDelete(row)} danger>删除</Button>,
+        <Button size="small" key="update" type="link" onClick={() => handleUpdate(row)}>
+          修改
+        </Button>,
+        <Button size="small" key="delete" type="link" onClick={() => handleDelete(row)} danger>
+          删除
+        </Button>,
       ],
-    }
+    },
   ];
 
   return (
@@ -119,7 +122,7 @@ export default function SupplierList() {
         params={searchParams}
         pagination={{
           showQuickJumper: true,
-          "pageSize":10,
+          pageSize: 10,
         }}
         // 右上角三个调整按钮
         options={{
@@ -130,19 +133,22 @@ export default function SupplierList() {
           multipleLine: true,
           search: {
             onSearch: handleSearch,
-            placeholder:'搜索'
-          }}}
+            placeholder: '搜索',
+          },
+        }}
         // 右上角按钮
         toolBarRender={() => [
           <Button type="primary" key="primary" onClick={handleAdd}>
             新增供应商
-          </Button>
-        ]}>
-      </ProTable>
+          </Button>,
+        ]}
+      ></ProTable>
       <Modal
         title="供应商-删除"
         open={deleteModalOpen}
-        onCancel={() => {setDeleteModalOpen(false)}}
+        onCancel={() => {
+          setDeleteModalOpen(false);
+        }}
         confirmLoading={deleteModalLoading}
         onOk={handleDeleteOk}
       >
@@ -156,5 +162,5 @@ export default function SupplierList() {
         reload={proTableRef.current?.reload}
       />
     </>
-  )
+  );
 }

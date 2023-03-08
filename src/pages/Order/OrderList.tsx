@@ -197,10 +197,10 @@ export default function Page() {
       valueType: 'option',
       render: (_, row) => [
         // eslint-disable-next-line react/jsx-key
-        <Button size="small" key="update" onClick={() => handleUpdate(row)}>
+        <Button size="small" key="update" type="link" onClick={() => handleUpdate(row)}>
           修改
         </Button>,
-        <Button size="small" key="delete" onClick={() => handleDelete(row)} danger>
+        <Button size="small" key="delete" type="link" onClick={() => handleDelete(row)} danger>
           删除
         </Button>,
       ],

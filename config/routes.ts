@@ -38,7 +38,7 @@ export default [
     // path: '/oa',
     name: 'oa系统',
     icon: 'crown',
-    flatMenu: true,
+    // flatMenu: true,
     routes: [
       {
         name: '用户',
@@ -79,14 +79,6 @@ export default [
     component: './Contract/ContractList',
   },
   {
-    name: '项目',
-    path: '/project',
-    icon: 'bank',
-    layout: true,
-    component: './Project/ProjectList',
-  },
-
-  {
     path: '*',
     layout: false,
     component: './404',
@@ -110,10 +102,12 @@ export default [
     icon: 'tool',
     component: './Material/MaterialList',
   },
+  // https://v3.umijs.org/zh-CN/plugins/plugin-layout
   {
     path: '/order/:order_id/orderitems/',
     name: '材料单明细',
     icon: 'tool',
+    menuHeaderRender: false,
     component: './OrderItem/OrderItemList',
   },
   {
