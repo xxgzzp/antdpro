@@ -3,6 +3,7 @@ import '@/pages/OrderItem/OrderItemList.less';
 import OrderTop from '@/pages/OrderItem/OrderTop';
 import useOrderLocalStorage, { OrderLocal } from '@/pages/OrderItem/useOrderLocalStorage';
 import { apiMaterialOrderItemList } from '@/services/ant-design-pro/api';
+import { useSearchParams } from '@@/exports';
 import { request } from '@umijs/max';
 import { useRequest } from 'ahooks';
 import { Button, Descriptions, Form, Popconfirm, Table } from 'antd';
@@ -12,26 +13,48 @@ import { useParams } from 'react-router';
 import { v4 as uuidv4 } from 'uuid';
 
 const OrderItemList: React.FC = () => {
-  // get URL中的order_id
-  const { order_id } = useParams<{ order_id?: string }>();
   // 请求订单项
-  const { data: remoteDate, loading } = useRequest(() =>
-    apiMaterialOrderItemList({ order: order_id }),
-  );
-  const [dataSource, setDataSource] = useState<API.OrderItem[]>([]);
-  // 将用户编辑的order保存本地
-  const { getOrderLocal, updateOrderLocal, deleteOrderLocal } = useOrderLocalStorage();
-  const orderLocal = getOrderLocal(order_id!); // 获取本地order
+  const {
+    data: remoteDate,
+    loading: orderRemoteLoading,
+    run: getOrderItemRemote,
+  } = useRequest(apiMaterialOrderItemList, { manual: true });
+  // URL中的order_id
+  const { order_id } = useParams<{ order_id?: string }>();
   // 上方订单信息表单
   const [orderForm] = Form.useForm();
+  // 获取URL中的new参数
+  const [searchParams] = useSearchParams();
+  const is_new = searchParams.get('is_new');
+  // 操作LocalStorage
+  const { getOrderLocal, updateOrderLocal, deleteOrderLocal } = useOrderLocalStorage();
+  const orderLocal = getOrderLocal(order_id!); // 获取本地order
+  // 操作的数据源 并且新建初始数据，如果是新建order就要用到
+  const [dataSource, setDataSource] = useState<API.OrderItem[]>([
+    {
+      id: uuidv4(),
+      material_name: undefined,
+      material_sku: undefined,
+      material_unit: undefined,
+      need_time: undefined,
+      buy_num: undefined,
+      used_site: undefined,
+      sort: 1,
+      is_arrival: false,
+      timestamp: undefined,
+    },
+  ]);
   useEffect(() => {
-    // 这个放在外面会报Too many re-renders. React limits the number of renders to prevent an infinite loop.原因未知
-    // 如果有本地数据，先加载本地的,没有就加载远程的
-    if (orderLocal?.length) {
-      setDataSource(orderLocal[0].items);
-    } else if (remoteDate) {
-      setDataSource(remoteDate.results);
+    // 如果不是新建订单就请求远程
+    if (is_new !== 'true') {
+      getOrderItemRemote({ order: order_id });
     }
+    // 如果有本地数据就加载
+    if (typeof orderLocal !== undefined && orderLocal?.length) {
+      setDataSource(orderLocal[0].items);
+    }
+  }, []);
+  useEffect(() => {
     // 若远程数据和本地数据相等就删除本地数据
     if (remoteDate && orderLocal?.length) {
       // 去除时间戳后比较
@@ -40,6 +63,9 @@ const OrderItemList: React.FC = () => {
       if (isEqual(_localDate, _remoteDate)) {
         deleteOrderLocal(order_id!);
       }
+    }
+    if (remoteDate && !orderLocal?.length) {
+      setDataSource(remoteDate.results);
     }
   }, [remoteDate]);
 
@@ -207,10 +233,9 @@ const OrderItemList: React.FC = () => {
     }
     return <p>远程获取数据失败</p>;
   };
-
   return (
     <div>
-      <OrderTop orderForm={orderForm} order_id={order_id}></OrderTop>
+      <OrderTop orderForm={orderForm} order_id={order_id} is_new={is_new}></OrderTop>
       <Descriptions.Item label="操作">
         <span style={{ paddingRight: '10px' }}>
           <Button
@@ -231,7 +256,7 @@ const OrderItemList: React.FC = () => {
         rowKey={(record) => record.id}
         locale={{ emptyText: 'empty' }}
         // 有本地数据就不显示加载
-        loading={orderLocal?.length ? false : loading}
+        loading={orderLocal?.length ? false : orderRemoteLoading}
         components={components}
         rowClassName={() => 'editable-row'}
         bordered

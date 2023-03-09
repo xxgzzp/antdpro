@@ -57,7 +57,6 @@ export const EditableCell: React.FC<EditableCellProps> = ({
     setEditing(!editing);
     form.setFieldsValue({ [dataIndex]: record[dataIndex] });
   };
-
   const save = async () => {
     try {
       const values = await form.validateFields();
@@ -67,7 +66,6 @@ export const EditableCell: React.FC<EditableCellProps> = ({
       console.log('Save failed:', errInfo);
     }
   };
-
   let childNode = children;
 
   const handleSearch = (dataIndex: string, text: string) => {

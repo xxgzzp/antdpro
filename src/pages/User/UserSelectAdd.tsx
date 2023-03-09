@@ -1,19 +1,22 @@
 import UserForm from '@/pages/User/UserForm';
-import { apiOaUserList } from '@/services/ant-design-pro/api';
-import { useRequest } from '@@/plugin-request';
 import { PlusOutlined } from '@ant-design/icons';
-import { Button, Divider, Select, Space, Spin } from 'antd';
+import { useModel } from '@umijs/max';
+import { Button, Divider, Select, Space } from 'antd';
 import React, { useEffect, useState } from 'react';
 
 const UserSelectAdd: React.FC<{
   mode?: string;
-  defaultValue?: any;
+  defaultValue?: {
+    label?: string;
+    value?: string;
+  }[];
   onChange?: (value: any) => void;
 }> = ({ mode, defaultValue, onChange }) => {
   const [userModalOpen, setUserModalOpen] = useState<boolean>(false);
   const [userList, setUserList] = useState([]);
-  const { run, loading } = useRequest(apiOaUserList, { manual: true });
   const [value, setValue] = useState(defaultValue);
+  const userSelectList = useModel('userSelectList');
+
   //Chatbot:
   // 根据代码，可以看出在 `<Form.Item name="created_by">` 和 `<Form.Item name="checked_by">` 中使用的是 Ant Design 的 Form 组件，
   // 同时内部嵌套了自定义的 `UserSelectAdd` 组件。在 `UserSelectAdd` 组件中，使用了 `Select` 组件来渲染下拉框，同时通过 `defaultValue` 属性设置了初始值。
@@ -24,59 +27,44 @@ const UserSelectAdd: React.FC<{
     setValue(value);
     onChange && onChange(value);
   };
-
   useEffect(() => {
-    const fetchData = async () => {
-      const response = await run();
-      const res = response.results.map((r) => ({
-        label: r.name,
-        value: r.id,
-      }));
-      setUserList(res);
-    };
-    fetchData();
+    setUserList(userSelectList);
   }, []);
-
   return (
     <div>
-      {loading ? (
-        <Spin />
-      ) : (
-        <Select
-          bordered={false}
-          style={{ minWidth: '100px' }}
-          mode={mode && mode === 'multiple' ? 'multiple' : undefined}
-          value={value}
-          loading={loading}
-          onChange={handleChange}
-          placeholder="请选择"
+      <Select
+        bordered={false}
+        style={{ minWidth: '100px' }}
+        mode={mode && mode === 'multiple' ? 'multiple' : undefined}
+        value={value}
+        onChange={handleChange}
+        placeholder="请选择"
+        // @ts-ignore
+        filterOption={(input, option) => (option?.label ?? '').includes(input)}
+        filterSort={(optionA, optionB) =>
           // @ts-ignore
-          filterOption={(input, option) => (option?.label ?? '').includes(input)}
-          filterSort={(optionA, optionB) =>
-            // @ts-ignore
-            (optionA?.label ?? '').toLowerCase().localeCompare((optionB?.label ?? '').toLowerCase())
-          }
-          options={userList}
-          showSearch
-          dropdownRender={(menu) => (
-            <>
-              {menu}
-              <Divider style={{ margin: '8px 0' }} />
-              <Space style={{ padding: '0 8px 4px' }}>
-                <Button
-                  type="text"
-                  icon={<PlusOutlined />}
-                  onClick={() => {
-                    setUserModalOpen(true);
-                  }}
-                >
-                  增加用户
-                </Button>
-              </Space>
-            </>
-          )}
-        />
-      )}
+          (optionA?.label ?? '').toLowerCase().localeCompare((optionB?.label ?? '').toLowerCase())
+        }
+        options={userList}
+        showSearch
+        dropdownRender={(menu) => (
+          <>
+            {menu}
+            <Divider style={{ margin: '8px 0' }} />
+            <Space style={{ padding: '0 8px 4px' }}>
+              <Button
+                type="text"
+                icon={<PlusOutlined />}
+                onClick={() => {
+                  setUserModalOpen(true);
+                }}
+              >
+                增加用户
+              </Button>
+            </Space>
+          </>
+        )}
+      />
       <UserForm
         modalOpen={userModalOpen}
         setModalOpen={setUserModalOpen}
