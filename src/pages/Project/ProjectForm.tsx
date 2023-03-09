@@ -1,14 +1,12 @@
-import React, {useRef} from "react";
-import { Dispatch, SetStateAction } from "react";
-import { ProFormInstance, ProFormSelect} from "@ant-design/pro-form";
-import {ModalForm,  ProFormText} from "@ant-design/pro-components";
-import { Form} from "antd";
 import {
   apiOaProjectCreate,
   apiOaProjectPartialUpdate,
-  apiOaUserList
-} from "@/services/ant-design-pro/api";
-
+  apiOaUserList,
+} from '@/services/ant-design-pro/api';
+import { ModalForm, ProFormText } from '@ant-design/pro-components';
+import { ProFormInstance, ProFormSelect } from '@ant-design/pro-form';
+import { Form } from 'antd';
+import React, { Dispatch, SetStateAction, useRef } from 'react';
 
 const ProjectForm: React.FC<{
   modalOpen: boolean;
@@ -16,8 +14,8 @@ const ProjectForm: React.FC<{
   reload?: ((resetPageIndex?: boolean | undefined) => Promise<void>) | undefined;
   updateInit?: API.Project | undefined;
   typeAddOrUpdate?: boolean;
-}> = ({ modalOpen, setModalOpen, reload, updateInit, typeAddOrUpdate = true }) => {
-
+  setProjectList?: Dispatch<SetStateAction<any[]>>; // 在Select中，如果添加用户，要把新增的用户set回去
+}> = ({ modalOpen, setModalOpen, reload, updateInit, typeAddOrUpdate = true, setProjectList }) => {
   const restFormRef = useRef<ProFormInstance>();
   const [form] = Form.useForm();
 
@@ -25,23 +23,35 @@ const ProjectForm: React.FC<{
   if (typeAddOrUpdate) {
     restFormRef.current?.resetFields();
   } else {
-    form.setFieldsValue(updateInit)
+    form.setFieldsValue(updateInit);
   }
   const handleFinish = async (formData: API.Project) => {
     if (typeAddOrUpdate) {
-      await apiOaProjectCreate(formData).then(() => {
+      await apiOaProjectCreate(formData).then((data) => {
+        if (setProjectList) {
+          setProjectList((prevList) => [
+            ...prevList,
+            {
+              label: formData.name,
+              value: data.id,
+            },
+          ]);
+        }
         setModalOpen(false);
         reload?.();
         restFormRef.current?.resetFields();
-      })
+      });
     } else {
-      await apiOaProjectPartialUpdate({ id: updateInit?.id } as API.apiOaProjectPartialUpdateParams, formData).then(() => {
+      await apiOaProjectPartialUpdate(
+        { id: updateInit?.id } as API.apiOaProjectPartialUpdateParams,
+        formData,
+      ).then(() => {
         setModalOpen(false);
         reload?.();
         restFormRef.current?.resetFields();
-      })
+      });
     }
-  }
+  };
 
   return (
     <>
@@ -90,15 +100,14 @@ const ProjectForm: React.FC<{
           name="manager"
           label="管理人"
           placeholder="请选择"
-          request={async ()=>{
+          request={async () => {
             const response = await apiOaUserList();
             const { results } = response;
             return results.map((item) => ({
               value: item.id,
               label: item.name,
             }));
-          }
-          }
+          }}
         ></ProFormSelect>
         {/*// import addressOptions from "@/components/utils/addressOptions.tsx";*/}
         {/*// const handleAddressChange = (value) => {*/}
@@ -125,6 +134,6 @@ const ProjectForm: React.FC<{
         {/*</ProFormGroup>*/}
       </ModalForm>
     </>
-  )
-}
+  );
+};
 export default ProjectForm;

@@ -1,26 +1,19 @@
-import { formatDate } from '@/components/Utils/formatDate';
 import { EditableCell, EditableRow } from '@/pages/OrderItem/Editable';
 import '@/pages/OrderItem/OrderItemList.less';
+import OrderTop from '@/pages/OrderItem/OrderTop';
 import useOrderLocalStorage, { OrderLocal } from '@/pages/OrderItem/useOrderLocalStorage';
-import UserSelectAdd from '@/pages/User/UserSelectAdd';
-import { apiMaterialOrderItemList, apiMaterialOrderRead } from '@/services/ant-design-pro/api';
-import { request, useModel } from '@umijs/max';
+import { apiMaterialOrderItemList } from '@/services/ant-design-pro/api';
+import { request } from '@umijs/max';
 import { useRequest } from 'ahooks';
-import { Button, Descriptions, Form, Popconfirm, Skeleton, Table } from 'antd';
+import { Button, Descriptions, Form, Popconfirm, Table } from 'antd';
 import { isEqual } from 'lodash';
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router';
 import { v4 as uuidv4 } from 'uuid';
 
-const App: React.FC = () => {
-  // get 初始数据中用户的信息
-  const { currentUser } = useModel('@@initialState');
+const OrderItemList: React.FC = () => {
   // get URL中的order_id
   const { order_id } = useParams<{ order_id?: string }>();
-  // 请求订单详细数据
-  const { data: orderDetail, loading: orderDetailLoading } = useRequest(() =>
-    apiMaterialOrderRead({ id: order_id! }),
-  );
   // 请求订单项
   const { data: remoteDate, loading } = useRequest(() =>
     apiMaterialOrderItemList({ order: order_id }),
@@ -28,27 +21,28 @@ const App: React.FC = () => {
   const [dataSource, setDataSource] = useState<API.OrderItem[]>([]);
   // 将用户编辑的order保存本地
   const { getOrderLocal, updateOrderLocal, deleteOrderLocal } = useOrderLocalStorage();
-  const order = getOrderLocal(order_id!);
+  const orderLocal = getOrderLocal(order_id!); // 获取本地order
+  // 上方订单信息表单
+  const [orderForm] = Form.useForm();
   useEffect(() => {
-    // 如果有本地数据，先加载本地的
     // 这个放在外面会报Too many re-renders. React limits the number of renders to prevent an infinite loop.原因未知
-    if (order?.length) {
-      setDataSource(order[0].items);
-    }
-    // 如果没有本地数据就set远程数据
-    if (!order?.length && remoteDate) {
+    // 如果有本地数据，先加载本地的,没有就加载远程的
+    if (orderLocal?.length) {
+      setDataSource(orderLocal[0].items);
+    } else if (remoteDate) {
       setDataSource(remoteDate.results);
     }
     // 若远程数据和本地数据相等就删除本地数据
-    if (remoteDate && order?.length) {
+    if (remoteDate && orderLocal?.length) {
       // 去除时间戳后比较
-      const _localDate = order[0].items.map((item) => ({ ...item, timestamp: undefined }));
+      const _localDate = orderLocal[0].items.map((item) => ({ ...item, timestamp: undefined }));
       const _remoteDate = remoteDate.results.map((item) => ({ ...item, timestamp: undefined }));
       if (isEqual(_localDate, _remoteDate)) {
         deleteOrderLocal(order_id!);
       }
     }
   }, [remoteDate]);
+
   // 删除行
   const handleDelete = (id: React.Key) => {
     if (dataSource) {
@@ -88,13 +82,17 @@ const App: React.FC = () => {
     // 保存本地
     updateOrderLocal(updateOrder);
   };
+
   // 提交数据
   const [commitLoading, setCommitLoading] = useState<boolean>(false);
   const handleCommit = async () => {
     setCommitLoading(true);
     await request('/api/material/order_commit/', {
       method: 'POST',
-      data: { order_items: dataSource, order_id: order_id },
+      data: {
+        order_items: dataSource,
+        order: { ...orderForm.getFieldsValue(), order_id: order_id },
+      },
     });
     setCommitLoading(false);
     // 提交了就在本地删除
@@ -121,13 +119,13 @@ const App: React.FC = () => {
     // @ts-ignore
     Table.EXPAND_COLUMN,
     {
-      title: 'name',
+      title: '材料与设备名称',
       dataIndex: 'material_name',
       width: '20%',
       editable: true,
     },
     {
-      title: 'sku',
+      title: '规格',
       width: '30%',
       dataIndex: 'material_sku',
       editable: true,
@@ -179,7 +177,7 @@ const App: React.FC = () => {
   });
   // 是否展开远程数据的行
   const handleRowExpandable = (record) => {
-    if (order?.length && remoteDate) {
+    if (orderLocal?.length && remoteDate) {
       // 按时间戳判断，如果是修改了就展开
       const remoteItem = remoteDate.results.filter((item) => item.id === record.id);
       const timestamp = remoteItem.map((item) => item.timestamp)[0];
@@ -209,68 +207,38 @@ const App: React.FC = () => {
     }
     return <p>远程获取数据失败</p>;
   };
+
   return (
     <div>
-      <Skeleton loading={orderDetailLoading} active={true}>
-        <Form
-          initialValues={{
-            created_by_name: orderDetail?.created_by_name
-              ? orderDetail?.created_by_name
-              : currentUser?.name,
-            created_by: orderDetail?.created_by ? orderDetail?.created_by : currentUser?.id,
-            supplier_name: orderDetail?.supplier_name,
-          }}
-        >
-          <Descriptions bordered>
-            <Form.Item label="创建者" name="created_by_name">
-              <Descriptions.Item label="创建者">
-                <UserSelectAdd
-                  mode="multiple"
-                  defaultValue={orderDetail?.created_by}
-                ></UserSelectAdd>
-              </Descriptions.Item>
-            </Form.Item>
-            <Descriptions.Item label="审核人">
-              <UserSelectAdd
-                mode="multiple"
-                defaultValue={orderDetail?.checked_by?.map((r) => r.checked_by)}
-              ></UserSelectAdd>
-            </Descriptions.Item>
-            <Descriptions.Item label="供应商">{orderDetail?.supplier_name}</Descriptions.Item>
-            <Descriptions.Item label="创建时间" span={1}>
-              {formatDate(orderDetail?.created_time)}
-            </Descriptions.Item>
-            <Descriptions.Item label="操作">
-              <span style={{ paddingRight: '10px' }}>
-                <Button
-                  onClick={handleCommit}
-                  type="primary"
-                  style={{ marginBottom: 16 }}
-                  loading={commitLoading}
-                >
-                  提交
-                </Button>
-              </span>
-              <Button onClick={handleAdd} type="primary" style={{ marginBottom: 16 }}>
-                增加一行
-              </Button>
-            </Descriptions.Item>
-          </Descriptions>
-        </Form>
-      </Skeleton>
+      <OrderTop orderForm={orderForm} order_id={order_id}></OrderTop>
+      <Descriptions.Item label="操作">
+        <span style={{ paddingRight: '10px' }}>
+          <Button
+            onClick={handleCommit}
+            type="primary"
+            style={{ marginBottom: 16 }}
+            loading={commitLoading}
+          >
+            提交
+          </Button>
+        </span>
+        <Button onClick={handleAdd} type="primary" style={{ marginBottom: 16 }}>
+          增加一行
+        </Button>
+      </Descriptions.Item>
       <Table
         style={{ paddingTop: '20px' }}
         rowKey={(record) => record.id}
         locale={{ emptyText: 'empty' }}
         // 有本地数据就不显示加载
-        loading={order?.length ? false : loading}
+        loading={orderLocal?.length ? false : loading}
         components={components}
         rowClassName={() => 'editable-row'}
         bordered
         dataSource={dataSource}
         columns={columns as ColumnTypes}
-        scroll={{ y: 500 }}
         pagination={false}
+        sticky={true}
         size="small" // 紧凑
         expandable={{
           expandedRowRender: handleExpendedRowRender,
@@ -281,4 +249,4 @@ const App: React.FC = () => {
   );
 };
 
-export default App;
+export default OrderItemList;
