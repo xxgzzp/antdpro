@@ -17,7 +17,7 @@ export default function Page() {
   // 删除用户中 控制删除model
   const [deleteModalVisit, setDeleteModalVisit] = useState<boolean>(false);
   const [deleteModalLoading, setDeleteModalLoading] = useState<boolean>(false);
-  const [deleteUser, setDeleteUser] = useState<{ id: number | undefined; name: string }>();
+  const [deleteUser, setDeleteUser] = useState<{ id: string | undefined; name: string }>();
   // 在 onSearch 方法中更新搜索条件
   const [searchParams, setSearchParams] = useState({});
   // 上面的菜单中的project下拉选择

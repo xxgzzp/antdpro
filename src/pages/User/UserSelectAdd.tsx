@@ -13,10 +13,11 @@ const UserSelectAdd: React.FC<{
   onChange?: (value: any) => void;
 }> = ({ mode, defaultValue, onChange }) => {
   const [userModalOpen, setUserModalOpen] = useState<boolean>(false);
-  const [userList, setUserList] = useState([]);
-  const [value, setValue] = useState(defaultValue);
+  const [userList, setUserList] = useState<{ value: string | undefined; label: string }[]>();
+  const [value, setValue] = useState<
+    { label?: string | undefined; value?: string | undefined }[] | undefined
+  >();
   const userSelectList = useModel('userSelectList');
-
   //Chatbot:
   // 根据代码，可以看出在 `<Form.Item name="created_by">` 和 `<Form.Item name="checked_by">` 中使用的是 Ant Design 的 Form 组件，
   // 同时内部嵌套了自定义的 `UserSelectAdd` 组件。在 `UserSelectAdd` 组件中，使用了 `Select` 组件来渲染下拉框，同时通过 `defaultValue` 属性设置了初始值。
@@ -25,11 +26,17 @@ const UserSelectAdd: React.FC<{
   // 1. 在 `UserSelectAdd` 组件中定义一个 `handleChange` 函数，用于处理 `Select` 组件的值变化事件，将选中的值通过 `onChange` 回调函数传递给父组件。
   const handleChange = (value: any) => {
     setValue(value);
-    onChange && onChange(value);
+    if (onChange) {
+      onChange(value);
+    }
   };
   useEffect(() => {
     setUserList(userSelectList);
   }, []);
+  useEffect(() => {
+    setValue(defaultValue);
+  }, [defaultValue]);
+
   return (
     <div>
       <Select

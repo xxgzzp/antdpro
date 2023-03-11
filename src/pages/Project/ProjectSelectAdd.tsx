@@ -10,8 +10,10 @@ const ProjectSelectAdd: React.FC<{
   onChange?: (value: any) => void;
 }> = ({ mode, defaultValue, onChange }) => {
   const [projectModalOpen, setProjectModalOpen] = useState<boolean>(false);
-  const [projectList, setProjectList] = useState([]);
-  const [value, setValue] = useState(defaultValue);
+  const [projectList, setProjectList] = useState<{ value: string | undefined; label: string }[]>(
+    [],
+  );
+  const [value, setValue] = useState();
   const projectSelectList = useModel('projectSelectList');
   //Chatbot:
   // 根据代码，可以看出在 `<Form.Item name="created_by">` 和 `<Form.Item name="checked_by">` 中使用的是 Ant Design 的 Form 组件，
@@ -21,13 +23,18 @@ const ProjectSelectAdd: React.FC<{
   // 1. 在 `UserSelectAdd` 组件中定义一个 `handleChange` 函数，用于处理 `Select` 组件的值变化事件，将选中的值通过 `onChange` 回调函数传递给父组件。
   const handleChange = (value: any) => {
     setValue(value);
-    onChange && onChange(value);
+    if (onChange) {
+      onChange(value);
+    }
   };
 
   useEffect(() => {
     setProjectList(projectSelectList);
   }, []);
 
+  useEffect(() => {
+    setValue(defaultValue);
+  }, [defaultValue]);
   return (
     <div>
       <Select

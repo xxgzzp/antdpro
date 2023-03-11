@@ -1,36 +1,20 @@
-import {
-  LockOutlined,
-  MobileOutlined,
-  UserOutlined,
-} from '@ant-design/icons';
+import { LockOutlined, MobileOutlined, UserOutlined } from '@ant-design/icons';
 import {
   LoginForm,
+  ProConfigProvider,
   ProFormCaptcha,
   ProFormCheckbox,
   ProFormText,
-  ProConfigProvider,
 } from '@ant-design/pro-components';
-import {message, Tabs} from 'antd';
-import type { CSSProperties } from 'react';
-import React, {useRef, useState} from 'react';
-import {request, history, useIntl, useModel} from "@umijs/max";
-import {flushSync} from "react-dom";
-import {CaptFieldRef} from "@ant-design/pro-form/lib";
+import { CaptFieldRef } from '@ant-design/pro-form/lib';
+import { history, request, useIntl, useModel } from '@umijs/max';
+import { message, Tabs } from 'antd';
+import { useRef, useState } from 'react';
+import { flushSync } from 'react-dom';
+import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import {toast, ToastContainer} from "react-toastify";
-import 'react-toastify/dist/ReactToastify.css';
-
 
 type LoginType = 'phone' | 'account';
-
-const iconStyles: CSSProperties = {
-  marginInlineStart: '16px',
-  color: 'rgba(0, 0, 0, 0.2)',
-  fontSize: '24px',
-  verticalAlign: 'middle',
-  cursor: 'pointer',
-};
-
 
 export default () => {
   // const [userLoginState, setUserLoginState] = useState<>({});
@@ -53,16 +37,12 @@ export default () => {
   const handleSubmit = async (values: any) => {
     try {
       // 登录
-      const msg = await request('/api/oa/login/',{
+      const msg = await request('/api/oa/login/', {
         method: 'POST',
         data: values,
-      })
-      console.log(`${msg}123123`)
+      });
+      console.log(`${msg}123123`);
       if (msg.Token !== undefined) {
-        const defaultLoginSuccessMessage = intl.formatMessage({
-          id: 'pages.login.success',
-          defaultMessage: '登录成功！',
-        });
         localStorage.setItem(' Token ', msg.Token);
         // 获取到Token后就获取用户信息
         await fetchUserInfo();
@@ -82,12 +62,11 @@ export default () => {
       message.error(defaultLoginFailureMessage);
     }
   };
-  const handleSendCaptcha =async (phone:string) => {
-
+  const handleSendCaptcha = async (phone: string) => {
     const result = await request('/api/oa/sendsms/', {
       method: 'POST',
-      data: {'phone': `${phone}`}
-    })
+      data: { phone: `${phone}` },
+    });
     if (!result) {
       return;
     }
@@ -95,7 +74,7 @@ export default () => {
     // if (){
     //   captchaRef.current?.endTiming();
     // }
-  }
+  };
 
   // const { status, type: loginType } = userLoginState;
   return (
@@ -188,7 +167,7 @@ export default () => {
                   captchaProps={{
                     size: 'large',
                   }}
-                  phoneName='phone'
+                  phoneName="phone"
                   placeholder={'请输入验证码'}
                   captchaTextRender={(timing, count) => {
                     if (timing) {

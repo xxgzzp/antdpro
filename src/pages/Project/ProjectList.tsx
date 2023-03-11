@@ -13,7 +13,7 @@ export default function SupplierList() {
   // 删除中 控制删除model
   const [deleteModalOpen, setDeleteModalOpen] = useState<boolean>(false);
   const [deleteModalLoading, setDeleteModalLoading] = useState<boolean>(false);
-  const [deleteProject, setDeleteProject] = useState<{ id: number | undefined; name: string }>();
+  const [deleteProject, setDeleteProject] = useState<{ id: string | undefined; name: string }>();
   // 在 onSearch 方法中更新搜索条件
   const [searchParams, setSearchParams] = useState({});
 

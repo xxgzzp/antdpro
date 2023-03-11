@@ -15,7 +15,9 @@ const UserForm: React.FC<{
   reload?: ((resetPageIndex?: boolean | undefined) => Promise<void>) | undefined;
   updateUserInit?: API.User | undefined;
   typeAddOrUpdate?: boolean; // true是增加,false是更新
-  setUserList?: Dispatch<SetStateAction<any[]>>; // 在Select中，如果添加用户，要把新增的用户set回去
+  setUserList?: Dispatch<
+    SetStateAction<{ value: string | undefined; label: string }[] | undefined>
+  >; // 在Select中，如果添加用户，要把新增的用户set回去
 }> = ({ modalOpen, setModalOpen, reload, updateUserInit, typeAddOrUpdate = true, setUserList }) => {
   const restFormRef = useRef<ProFormInstance>();
   const [form] = Form.useForm();
@@ -31,14 +33,14 @@ const UserForm: React.FC<{
 
   const handleFinish = async (formData: API.User) => {
     if (typeAddOrUpdate) {
-      await apiOaUserCreate(formData).then(({ data }) => {
+      await apiOaUserCreate(formData).then(({ id }) => {
         // 在Select中，如果添加用户，要把新增的用户set回去
         if (setUserList) {
           setUserList((prevList) => [
-            ...prevList,
+            ...(prevList ?? []),
             {
               label: formData.name,
-              value: data.id,
+              value: id,
             },
           ]);
         }
@@ -162,7 +164,7 @@ const UserForm: React.FC<{
           label="项目"
           placeholder="请选择"
           request={async () => {
-            const response = await apiOaProjectList();
+            const response = await apiOaProjectList({ pageSize: 200 });
             const { results } = response;
             return results.map((item) => ({
               value: item.id,

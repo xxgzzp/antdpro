@@ -30,30 +30,20 @@ const OrderItemList: React.FC = () => {
   const { getOrderLocal, updateOrderLocal, deleteOrderLocal } = useOrderLocalStorage();
   const orderLocal = getOrderLocal(order_id!); // 获取本地order
   // 操作的数据源 并且新建初始数据，如果是新建order就要用到
-  const [dataSource, setDataSource] = useState<API.OrderItem[]>([
-    {
-      id: uuidv4(),
-      material_name: undefined,
-      material_sku: undefined,
-      material_unit: undefined,
-      need_time: undefined,
-      buy_num: undefined,
-      used_site: undefined,
-      sort: 1,
-      is_arrival: false,
-      timestamp: undefined,
-    },
-  ]);
+  //
+  const [dataSource, setDataSource] = useState<API.OrderItem[]>([]);
+
   useEffect(() => {
     // 如果不是新建订单就请求远程
     if (is_new !== 'true') {
       getOrderItemRemote({ order: order_id });
     }
-    // 如果有本地数据就加载
+    // 如果有本地数据就读取
     if (typeof orderLocal !== undefined && orderLocal?.length) {
       setDataSource(orderLocal[0].items);
     }
   }, []);
+
   useEffect(() => {
     // 若远程数据和本地数据相等就删除本地数据
     if (remoteDate && orderLocal?.length) {
@@ -81,7 +71,22 @@ const OrderItemList: React.FC = () => {
   // 添加行
   const handleAdd = () => {
     if (dataSource) {
-      const newData = Object.fromEntries(Object.keys(dataSource[0]).map((key) => [key, undefined]));
+      const newData: API.OrderItem = {
+        id: uuidv4(),
+        material_name: undefined,
+        material_sku: undefined,
+        material_unit: undefined,
+        need_time: undefined,
+        buy_num: undefined,
+        used_site: undefined,
+        sort: dataSource.length + 1,
+        is_arrival: false,
+        timestamp: undefined,
+        order: '',
+        material: 0,
+        contract: undefined,
+        receipt: undefined,
+      };
       newData.id = uuidv4();
       newData.sort = dataSource.length + 1;
       setDataSource([...dataSource, newData]);
@@ -104,8 +109,11 @@ const OrderItemList: React.FC = () => {
       // children: [{ ...item }] 这样子可以设置展开可是效果不好
     });
     setDataSource(newData);
-    const updateOrder: OrderLocal = { id: order_id!, items: newData! };
-    // 保存本地
+    // 保存本地数据
+    const updateOrder: OrderLocal = {
+      id: order_id!,
+      items: newData!,
+    };
     updateOrderLocal(updateOrder);
   };
 
@@ -141,6 +149,10 @@ const OrderItemList: React.FC = () => {
       dataIndex: 'sort',
       width: '7%',
       editable: true,
+      sorter: {
+        compare: (a, b) => a.sort - b.sort,
+        multiple: 3,
+      },
     },
     // @ts-ignore
     Table.EXPAND_COLUMN,
@@ -149,12 +161,20 @@ const OrderItemList: React.FC = () => {
       dataIndex: 'material_name',
       width: '20%',
       editable: true,
+      sorter: {
+        compare: (a, b) => a.material_name.length - b.material_name.length,
+        multiple: 3,
+      },
     },
     {
       title: '规格',
       width: '30%',
       dataIndex: 'material_sku',
       editable: true,
+      sorter: {
+        compare: (a, b) => a.material_sku.length - b.material_sku.length,
+        multiple: 3,
+      },
     },
     {
       title: '使用部位',
@@ -166,17 +186,26 @@ const OrderItemList: React.FC = () => {
       width: '10%',
       dataIndex: 'buy_num',
       editable: true,
+      sorter: {
+        compare: (a, b) => a.buy_num - b.buy_num,
+        multiple: 3,
+      },
     },
     {
       title: '单位',
       width: '10%',
       dataIndex: 'material_unit',
       editable: true,
+      sorter: {
+        compare: (a, b) => a.material_unit.length - b.material_unit.length,
+        multiple: 3,
+      },
     },
     {
       title: '操作',
       dataIndex: 'operation',
       width: '7%',
+      // @ts-ignore
       render: (_, record: { id: React.Key }) =>
         dataSource.length >= 1 ? (
           <Popconfirm title="确认删除吗?" onConfirm={() => handleDelete(record.id)}>
@@ -202,7 +231,7 @@ const OrderItemList: React.FC = () => {
     };
   });
   // 是否展开远程数据的行
-  const handleRowExpandable = (record) => {
+  const handleRowExpandable = (record: API.OrderItem) => {
     if (orderLocal?.length && remoteDate) {
       // 按时间戳判断，如果是修改了就展开
       const remoteItem = remoteDate.results.filter((item) => item.id === record.id);
@@ -211,12 +240,12 @@ const OrderItemList: React.FC = () => {
       const _remoteItem = { ...remoteItem[0], timestamp: undefined };
       const _isEqual = isEqual(_localItem, _remoteItem);
       // 修改了，并且修改后的内容不相等
-      return record.timestamp > timestamp && !_isEqual;
+      return record.timestamp! > timestamp! && !_isEqual;
     }
     return false;
   };
   // 展开渲染
-  const handleExpendedRowRender = (record) => {
+  const handleExpendedRowRender = (record: API.OrderItem) => {
     if (remoteDate) {
       const newData = [...remoteDate.results];
       const index = newData.findIndex((item) => record.id === item.id);
@@ -233,6 +262,7 @@ const OrderItemList: React.FC = () => {
     }
     return <p>远程获取数据失败</p>;
   };
+
   return (
     <div>
       <OrderTop orderForm={orderForm} order_id={order_id} is_new={is_new}></OrderTop>
@@ -253,7 +283,7 @@ const OrderItemList: React.FC = () => {
       </Descriptions.Item>
       <Table
         style={{ paddingTop: '20px' }}
-        rowKey={(record) => record.id}
+        rowKey="id"
         locale={{ emptyText: 'empty' }}
         // 有本地数据就不显示加载
         loading={orderLocal?.length ? false : orderRemoteLoading}
@@ -261,6 +291,7 @@ const OrderItemList: React.FC = () => {
         rowClassName={() => 'editable-row'}
         bordered
         dataSource={dataSource}
+        // @ts-ignore
         columns={columns as ColumnTypes}
         pagination={false}
         sticky={true}

@@ -13,17 +13,24 @@ const SupplierSelectAdd: React.FC<{
   onChange?: (value: any) => void;
 }> = ({ mode, defaultValue, onChange }) => {
   const [supplierModalOpen, setSupplierModalOpen] = useState<boolean>(false);
-  const [supplierList, setSupplierList] = useState([]);
-  const [value, setValue] = useState(defaultValue);
+  const [supplierList, setSupplierList] =
+    useState<{ value: string | undefined; label: string }[]>();
+  const [value, setValue] = useState<
+    { label?: string | undefined; value?: string | undefined }[] | undefined
+  >();
   const supplierSelectList = useModel('supplierSelectList');
   const handleChange = (value: any) => {
     setValue(value);
-    onChange && onChange(value);
+    if (onChange) {
+      onChange(value);
+    }
   };
   useEffect(() => {
     setSupplierList(supplierSelectList);
   }, []);
-
+  useEffect(() => {
+    setValue(defaultValue);
+  }, [defaultValue]);
   return (
     <div>
       <Select

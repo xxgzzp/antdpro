@@ -8,10 +8,12 @@ import React, { Dispatch, SetStateAction, useRef } from 'react';
 const SupplierForm: React.FC<{
   modalOpen: boolean;
   setModalOpen: Dispatch<SetStateAction<boolean>>;
-  reload: ((resetPageIndex?: boolean | undefined) => Promise<void>) | undefined;
-  updateInit: API.Supplier | undefined;
-  typeAddOrUpdate: boolean; // true是增加,false是更新
-  setSupplierList?: Dispatch<SetStateAction<any[]>>; // 在Select中，如果添加用户，要把新增的用户set回去
+  reload?: ((resetPageIndex?: boolean | undefined) => Promise<void>) | undefined;
+  updateInit?: API.Supplier | undefined;
+  typeAddOrUpdate?: boolean; // true是增加,false是更新
+  setSupplierList?: Dispatch<
+    React.SetStateAction<{ value: string | undefined; label: string }[] | undefined>
+  >; // 在Select中，如果添加用户，要把新增的用户set回去
 }> = ({ modalOpen, setModalOpen, reload, updateInit, typeAddOrUpdate = true, setSupplierList }) => {
   const restFormRef = useRef<ProFormInstance>();
   const [form] = Form.useForm();
@@ -31,7 +33,7 @@ const SupplierForm: React.FC<{
         // 新增Supplier时，set回去
         if (setSupplierList) {
           setSupplierList((prevList) => [
-            ...prevList,
+            ...(prevList ?? []),
             {
               label: formData.name,
               value: data.id,

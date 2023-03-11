@@ -3,9 +3,10 @@ import { useRequest } from 'ahooks';
 
 export default () => {
   const { data } = useRequest(apiOaUserList);
-  const userSelectList = data.results.map((item) => ({
-    value: item.id,
-    label: item.name,
-  }));
+  const userSelectList =
+    data?.results.map((item) => ({
+      value: item.id,
+      label: item.name,
+    })) || [];
   return userSelectList;
 };

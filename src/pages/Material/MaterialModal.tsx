@@ -1,9 +1,9 @@
-import React, {Dispatch, SetStateAction, useEffect, useState} from 'react';
+import { apiMaterialMaterialRead } from '@/services/ant-design-pro/api';
 import { Modal } from 'antd';
-import {apiMaterialMaterialRead} from "@/services/ant-design-pro/api";
+import { useEffect, useState } from 'react';
 
 function MaterialDetailsModal({ materialId, visible, onClose }) {
-  const [material, setMaterial] = useState(null);
+  const [material, setMaterial] = useState<>(null);
   useEffect(() => {
     async function fetchMaterial() {
       const material = await apiMaterialMaterialRead({ id: materialId });
@@ -12,12 +12,7 @@ function MaterialDetailsModal({ materialId, visible, onClose }) {
     fetchMaterial();
   }, [materialId]);
   return (
-    <Modal
-      open={visible}
-      onCancel={onClose}
-      onOk={onClose}
-      title="Material Details"
-    >
+    <Modal open={visible} onCancel={onClose} onOk={onClose} title="Material Details">
       {material && (
         <div>
           <p>Material ID: {material.id}</p>

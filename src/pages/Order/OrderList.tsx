@@ -4,11 +4,11 @@ import {
   apiMaterialOrderDelete,
   apiMaterialOrderList,
   apiOaProjectList,
-} from '@/services/ant-design-pro/api';
+} from '@/services/ant-design-pro/api'
 import type { ActionType, ProColumns } from '@ant-design/pro-components';
 import { ProTable } from '@ant-design/pro-components';
 import { ProFormDateRangePicker } from '@ant-design/pro-form';
-import { Badge, Button, Modal, Radio } from 'antd';
+import { Badge, Button, Modal, Radio, RadioChangeEvent } from 'antd';
 import { keyBy } from 'lodash';
 import { useEffect, useRef, useState } from 'react';
 import { history } from 'umi';
@@ -21,7 +21,10 @@ export default function Page() {
   // 删除用户中 控制删除model
   const [deleteModalVisit, setDeleteModalVisit] = useState<boolean>(false);
   const [deleteModalLoading, setDeleteModalLoading] = useState<boolean>(false);
-  const [deleteOrder, setDeleteOrder] = useState<{ id: number | undefined; name: string }>();
+  const [deleteOrder, setDeleteOrder] = useState<{
+    id: number | undefined;
+    name: string | undefined;
+  }>();
   // 在 onSearch 方法中更新搜索条件
   const [searchParams, setSearchParams] = useState({});
   // 上面的菜单中的project下拉选择
@@ -77,7 +80,7 @@ export default function Page() {
   const handleRowClick = (record: API.Order) => {
     history.push(`/order/${record.id}/orderitems`);
   };
-  const handleMenuChange = (key) => {
+  const handleMenuChange = (key: React.Key| undefined) => {
     setActiveKey(key as string);
     if (toolbarEnumType === '项目') {
       setSearchParams({ project_name: key });
@@ -86,7 +89,8 @@ export default function Page() {
     }
   };
   // 上方查询表单按钮
-  const handleCategoryRadio = ({ target: { value } }) => {
+  const handleCategoryRadio = (e: RadioChangeEvent) => {
+    const value = e.target.value;
     if (value === '项目') {
       setToolbarEnumType('项目');
     } else if (value === '类别') {
@@ -180,7 +184,7 @@ export default function Page() {
       dataIndex: 'created_time_range',
       valueType: 'dateRange',
       hideInTable: true,
-      renderFormItem: (_, { type, defaultRender, ...rest }) => {
+      renderFormItem: (_, { type, defaultRender }) => {
         if (type === 'form') {
           return (
             <ProFormDateRangePicker style={{ marginLeft: 0 }} name="dateRange_1" label="日期" />
@@ -264,6 +268,7 @@ export default function Page() {
                 ),
               },
               ...Object.keys(toolbarEnumType === '项目' ? projectEnum : categoryEnum).map((key) => {
+                // @ts-ignore
                 const value = toolbarEnumType === '项目' ? projectEnum[key] : categoryEnum[key];
                 return {
                   key: value.text,
@@ -307,7 +312,7 @@ export default function Page() {
           // 删除订单
           apiMaterialOrderDelete({
             id: deleteOrder?.id,
-          } as unknown as API.apiOaUserDeleteParams).then(() => {
+          }).then(() => {
             setDeleteModalVisit(false);
             proTableRef.current?.reload();
             setDeleteModalLoading(false);

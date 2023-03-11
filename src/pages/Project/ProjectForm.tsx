@@ -101,7 +101,7 @@ const ProjectForm: React.FC<{
           label="管理人"
           placeholder="请选择"
           request={async () => {
-            const response = await apiOaUserList();
+            const response = await apiOaUserList({ pageSize: 200 });
             const { results } = response;
             return results.map((item) => ({
               value: item.id,
@@ -109,29 +109,6 @@ const ProjectForm: React.FC<{
             }));
           }}
         ></ProFormSelect>
-        {/*// import addressOptions from "@/components/utils/addressOptions.tsx";*/}
-        {/*// const handleAddressChange = (value) => {*/}
-        {/*//   const cascaderValue = value[0];*/}
-        {/*//   const textValue = value[1];*/}
-        {/*//   const address = [cascaderValue, textValue].filter((val) => !!val).join(" ");*/}
-        {/*//   setAddress(address);*/}
-        {/*// };*/}
-        {/*<ProFormGroup*/}
-        {/*  layout="twoLine"*/}
-        {/*  split={30}*/}
-        {/*  label="具体地址"*/}
-        {/*>*/}
-        {/*  <ProFormCascader*/}
-        {/*    placeholder="省市区"*/}
-        {/*    fieldProps={{options: addressOptions}}*/}
-        {/*    onChange={(value)=>{console.log(value)}}*/}
-        {/*  />*/}
-        {/*  <ProFormText*/}
-        {/*    name="address"*/}
-        {/*    placeholder="补充详细地址"*/}
-        {/*    onChange={handleAddressChange}*/}
-        {/*  ></ProFormText>*/}
-        {/*</ProFormGroup>*/}
       </ModalForm>
     </>
   );

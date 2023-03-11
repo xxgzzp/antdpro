@@ -3,7 +3,6 @@ import ProjectSelectAdd from '@/pages/Project/ProjectSelectAdd';
 import SupplierSelectAdd from '@/pages/Supplier/SupplierSelectAdd';
 import UserSelectAdd from '@/pages/User/UserSelectAdd';
 import { apiMaterialOrderRead } from '@/services/ant-design-pro/api';
-import { useModel } from '@@/exports';
 import { useRequest } from 'ahooks';
 import { Descriptions, Form, Input, Skeleton } from 'antd';
 import { FormInstance } from 'antd/es/form';
@@ -14,6 +13,7 @@ const OrderTop: React.FC<{
   order_id: string | undefined;
   is_new: string | null;
 }> = ({ orderForm, order_id, is_new }) => {
+  // 加载远程数据
   const {
     data: orderDetail,
     loading: orderDetailLoading,
@@ -21,36 +21,33 @@ const OrderTop: React.FC<{
   } = useRequest(apiMaterialOrderRead, {
     manual: true,
   });
-  // 请求订单详细数据
   useEffect(() => {
-    // 不是新建就请求
     if (is_new !== 'true') {
+      // 否则加载远程的
       getOrderDetail({ id: order_id! });
     }
   }, []);
-  // get 初始数据中用户的信息
-  const { currentUser } = useModel('@@initialState');
-
+  useEffect(() => {
+    orderForm?.setFieldsValue({
+      name: orderDetail?.name,
+      created_by: orderDetail?.created_by,
+      checkers: orderDetail?.checked_by?.map((r) => r.checked_by),
+      supplier_id: orderDetail?.supplier,
+      project_id: orderDetail?.project,
+      category: orderDetail?.category,
+    });
+  }, [orderDetail]);
   return (
     <Skeleton loading={orderDetailLoading} active={true}>
-      <Form
-        form={orderForm}
-        initialValues={{
-          created_by_name: orderDetail?.created_by_name
-            ? orderDetail?.created_by_name
-            : currentUser?.name,
-          created_by: orderDetail?.created_by ? orderDetail?.created_by : currentUser?.id,
-          supplier_name: orderDetail?.supplier_name,
-        }}
-      >
+      <Form form={orderForm}>
         <Descriptions bordered size="small">
           <Descriptions.Item label="标题">
-            <Form.Item name="name" initialValue={orderDetail?.name}>
+            <Form.Item name="name">
               <Input placeholder="请输入" bordered={false} />
             </Form.Item>
           </Descriptions.Item>
           <Descriptions.Item label="创建者">
-            <Form.Item name="created_by" initialValue={orderDetail?.created_by}>
+            <Form.Item name="created_by">
               <UserSelectAdd
                 defaultValue={[
                   {
@@ -63,10 +60,7 @@ const OrderTop: React.FC<{
           </Descriptions.Item>
           <Descriptions.Item label="审核人">
             {/*这里有个坑，初始数据要用initialValue，defaultValue是给页面显示的*/}
-            <Form.Item
-              name="checkers"
-              initialValue={orderDetail?.checked_by?.map((r) => r.checked_by)}
-            >
+            <Form.Item name="checkers">
               <UserSelectAdd
                 mode="multiple"
                 defaultValue={orderDetail?.checked_by?.map((r) => ({
@@ -77,7 +71,7 @@ const OrderTop: React.FC<{
             </Form.Item>
           </Descriptions.Item>
           <Descriptions.Item label="供应商">
-            <Form.Item name="supplier_id" initialValue={orderDetail?.supplier}>
+            <Form.Item name="supplier_id">
               <SupplierSelectAdd
                 defaultValue={[
                   {
@@ -89,7 +83,7 @@ const OrderTop: React.FC<{
             </Form.Item>
           </Descriptions.Item>
           <Descriptions.Item label="项目">
-            <Form.Item name="project_id" initialValue={orderDetail?.project}>
+            <Form.Item name="project_id">
               <ProjectSelectAdd
                 defaultValue={[
                   {
@@ -97,17 +91,19 @@ const OrderTop: React.FC<{
                     value: orderDetail?.project,
                   },
                 ]}
-              />
+              ></ProjectSelectAdd>
             </Form.Item>
           </Descriptions.Item>
           <Descriptions.Item label="类别">
-            <Form.Item name="category" initialValue={orderDetail?.category}>
+            <Form.Item name="category">
               <Input placeholder="请输入" bordered={false} />
             </Form.Item>
           </Descriptions.Item>
-          <Descriptions.Item label="创建时间">
-            {formatDate(orderDetail?.created_time)}
-          </Descriptions.Item>
+          {orderDetail?.created_time && (
+            <Descriptions.Item label="创建时间">
+              {orderDetail?.created_time ? formatDate(orderDetail?.created_time) : null}
+            </Descriptions.Item>
+          )}
         </Descriptions>
       </Form>
     </Skeleton>
