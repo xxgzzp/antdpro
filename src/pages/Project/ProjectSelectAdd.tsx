@@ -6,15 +6,16 @@ import React, { useEffect, useState } from 'react';
 
 const ProjectSelectAdd: React.FC<{
   mode?: string;
-  defaultValue?: any;
+  initialValue?: any;
   onChange?: (value: any) => void;
-}> = ({ mode, defaultValue, onChange }) => {
+  bordered?: boolean;
+}> = ({ mode, initialValue, onChange, bordered }) => {
   const [projectModalOpen, setProjectModalOpen] = useState<boolean>(false);
   const [projectList, setProjectList] = useState<{ value: string | undefined; label: string }[]>(
     [],
   );
   const [value, setValue] = useState();
-  const projectSelectList = useModel('projectSelectList');
+  const { projectEnum } = useModel('selector');
   //Chatbot:
   // 根据代码，可以看出在 `<Form.Item name="created_by">` 和 `<Form.Item name="checked_by">` 中使用的是 Ant Design 的 Form 组件，
   // 同时内部嵌套了自定义的 `UserSelectAdd` 组件。在 `UserSelectAdd` 组件中，使用了 `Select` 组件来渲染下拉框，同时通过 `defaultValue` 属性设置了初始值。
@@ -29,19 +30,17 @@ const ProjectSelectAdd: React.FC<{
   };
 
   useEffect(() => {
-    setProjectList(projectSelectList);
+    setProjectList(projectEnum);
   }, []);
 
-  useEffect(() => {
-    setValue(defaultValue);
-  }, [defaultValue]);
   return (
     <div>
       <Select
-        bordered={false}
+        bordered={bordered}
         style={{ minWidth: '100px' }}
         mode={mode && mode === 'multiple' ? 'multiple' : undefined}
         value={value}
+        defaultValue={initialValue}
         onChange={handleChange}
         placeholder="请选择"
         // @ts-ignore

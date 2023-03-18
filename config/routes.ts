@@ -12,27 +12,10 @@
  */
 export default [
   {
-    path: '/welcome',
     name: '主页',
+    path: '/',
     icon: 'home',
-    component: './Welcome',
-  },
-  {
-    path: '/admin',
-    name: 'admin',
-    icon: 'crown',
-    access: 'canAdmin',
-    routes: [
-      {
-        path: '/admin',
-        redirect: '/admin/sub-page',
-      },
-      {
-        path: '/admin/sub-page',
-        name: 'sub-page',
-        component: './Admin',
-      },
-    ],
+    component: './Dashboard',
   },
   {
     // path: '/oa',
@@ -68,7 +51,7 @@ export default [
     path: '/order',
     icon: 'profile',
     layout: true,
-    defaultOpen: true, // 默认展开子菜单
+    // defaultOpen: true, // 默认展开子菜单
     component: './Order/OrderList',
   },
   {
@@ -77,6 +60,37 @@ export default [
     icon: 'wallet',
     layout: true,
     component: './Contract/ContractList',
+  },
+  {
+    name: '材料汇总系统',
+    path: '/material_all',
+    icon: 'tool',
+    layout: true,
+    component: './Material/MaterialAll',
+  },
+  // https://v3.umijs.org/zh-CN/plugins/plugin-layout
+  {
+    path: '/order/:order_id/orderitems/',
+    name: '材料单明细',
+    icon: 'tool',
+    layout: true,
+    hideInMenu: true,
+    component: './OrderItem/OrderItemList',
+  },
+  {
+    path: '/contract/:contract_id/contractitems/',
+    name: '合同明细',
+    icon: 'tool',
+    layout: true,
+    hideInMenu: true,
+    component: './ContractItem/ContractItemList',
+  },
+  {
+    path: '/material',
+    name: '材料系统',
+    icon: 'tool',
+    layout: false,
+    component: './Material/MaterialList',
   },
   {
     path: '*',
@@ -90,28 +104,15 @@ export default [
     component: './User/Login',
   },
   {
-    path: '/test',
-    name: '材料系统',
-    icon: 'tool',
+    name: 'login_wecom',
+    path: '/login_wecom',
     layout: false,
-    component: './test',
+    component: './Wecom',
   },
   {
-    path: '/material',
-    name: '材料系统',
-    icon: 'tool',
-    component: './Material/MaterialList',
-  },
-  // https://v3.umijs.org/zh-CN/plugins/plugin-layout
-  {
-    path: '/order/:order_id/orderitems/',
-    name: '材料单明细',
-    icon: 'tool',
-    menuHeaderRender: false,
-    component: './OrderItem/OrderItemList',
-  },
-  {
-    path: '/',
-    redirect: '/welcome',
+    name: 'login_wecom',
+    path: '/websocket',
+    layout: false,
+    component: './WebSocket',
   },
 ];

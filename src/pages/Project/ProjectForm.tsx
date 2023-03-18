@@ -1,10 +1,7 @@
-import {
-  apiOaProjectCreate,
-  apiOaProjectPartialUpdate,
-  apiOaUserList,
-} from '@/services/ant-design-pro/api';
+import UserSelectAdd from '@/pages/User/UserSelectAdd';
+import { apiOaProjectCreate, apiOaProjectPartialUpdate } from '@/services/ant-design-pro/api';
 import { ModalForm, ProFormText } from '@ant-design/pro-components';
-import { ProFormInstance, ProFormSelect } from '@ant-design/pro-form';
+import { ProFormInstance, ProFormItem } from '@ant-design/pro-form';
 import { Form } from 'antd';
 import React, { Dispatch, SetStateAction, useRef } from 'react';
 
@@ -96,19 +93,9 @@ const ProjectForm: React.FC<{
             },
           ]}
         />
-        <ProFormSelect
-          name="manager"
-          label="管理人"
-          placeholder="请选择"
-          request={async () => {
-            const response = await apiOaUserList({ pageSize: 200 });
-            const { results } = response;
-            return results.map((item) => ({
-              value: item.id,
-              label: item.name,
-            }));
-          }}
-        ></ProFormSelect>
+        <ProFormItem name="manager" label="管理人">
+          <UserSelectAdd></UserSelectAdd>
+        </ProFormItem>
       </ModalForm>
     </>
   );

@@ -1,11 +1,8 @@
-import {
-  apiMaterialOrderCreate,
-  apiMaterialOrderUpdate,
-  apiOaProjectList,
-  apiOaSupplierList,
-} from '@/services/ant-design-pro/api';
+import ProjectSelectAdd from '@/pages/Project/ProjectSelectAdd';
+import SupplierSelectAdd from '@/pages/Supplier/SupplierSelectAdd';
+import { apiMaterialOrderCreate, apiMaterialOrderUpdate } from '@/services/ant-design-pro/api';
 import { ModalForm, ProFormText } from '@ant-design/pro-components';
-import { ProFormInstance, ProFormItem, ProFormSelect } from '@ant-design/pro-form';
+import { ProFormInstance, ProFormItem } from '@ant-design/pro-form';
 import { Form } from 'antd';
 import React, { Dispatch, SetStateAction, useRef } from 'react';
 
@@ -75,33 +72,11 @@ const SupplierForm: React.FC<{
       >
         <ProFormText width="md" name="name" label="材料单名称" placeholder="请输入" />
         <ProFormText width="md" name="category" label="类别" placeholder="请输入" />
-        <ProFormItem label="项目">
-          <ProFormSelect
-            name="project"
-            placeholder="请选择"
-            request={async () => {
-              const response = await apiOaProjectList();
-              const { results } = response;
-              return results.map((item) => ({
-                value: item.id,
-                label: item.name,
-              }));
-            }}
-          ></ProFormSelect>
+        <ProFormItem label="项目" name="project">
+          <ProjectSelectAdd></ProjectSelectAdd>
         </ProFormItem>
-        <ProFormItem label="供应商">
-          <ProFormSelect
-            name="supplier"
-            placeholder="请选择"
-            request={async () => {
-              const response = await apiOaSupplierList();
-              const { results } = response;
-              return results.map((item) => ({
-                value: item.id,
-                label: item.name,
-              }));
-            }}
-          ></ProFormSelect>
+        <ProFormItem label="供应商" name="supplier">
+          <SupplierSelectAdd></SupplierSelectAdd>
         </ProFormItem>
       </ModalForm>
     </>

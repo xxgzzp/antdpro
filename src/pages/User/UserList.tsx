@@ -1,11 +1,12 @@
 import UserForm from '@/pages/User/UserForm';
-import { apiOaProjectList, apiOaUserDelete, apiOaUserList } from '@/services/ant-design-pro/api';
+import { apiOaUserDelete, apiOaUserList } from '@/services/ant-design-pro/api';
 import { SearchOutlined } from '@ant-design/icons';
 import type { ActionType, ProColumns } from '@ant-design/pro-components';
 import { ProTable } from '@ant-design/pro-components';
 import { Button, Input, Modal } from 'antd';
-import { keyBy } from 'lodash';
-import { useEffect, useRef, useState } from 'react';
+
+import { useModel } from '@umijs/max';
+import { useRef, useState } from 'react';
 import 'react-toastify/dist/ReactToastify.css';
 
 export default function Page() {
@@ -20,18 +21,8 @@ export default function Page() {
   const [deleteUser, setDeleteUser] = useState<{ id: string | undefined; name: string }>();
   // 在 onSearch 方法中更新搜索条件
   const [searchParams, setSearchParams] = useState({});
-  // 上面的菜单中的project下拉选择
-  const [ProjectEnum, setProjectEnum] = useState({});
-  useEffect(() => {
-    apiOaProjectList().then((r) => {
-      const res = r.results.map((r) => ({
-        id: r.id,
-        text: r.name,
-      }));
-      const resProjectEnum = keyBy(res, 'id');
-      setProjectEnum(resProjectEnum);
-    });
-  }, []);
+
+  const { projectEnumKeyBy } = useModel('selector');
 
   const handleSearch = (value: string) => {
     setSearchParams({ search: value });
@@ -110,7 +101,7 @@ export default function Page() {
         // @ts-ignore
         key: 'now_project',
       },
-      valueEnum: ProjectEnum,
+      valueEnum: projectEnumKeyBy,
     },
     {
       title: '部门',

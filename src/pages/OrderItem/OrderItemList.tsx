@@ -1,12 +1,12 @@
-import { EditableCell, EditableRow } from '@/pages/OrderItem/Editable';
+import { EditableCell, EditableRow } from '@/components/Utils/Editable';
 import '@/pages/OrderItem/OrderItemList.less';
 import OrderTop from '@/pages/OrderItem/OrderTop';
 import useOrderLocalStorage, { OrderLocal } from '@/pages/OrderItem/useOrderLocalStorage';
-import { apiMaterialOrderItemList } from '@/services/ant-design-pro/api';
-import { useSearchParams } from '@@/exports';
-import { request } from '@umijs/max';
+import { apiMaterialOrderItemList, apiMaterialOrderUpdate } from '@/services/ant-design-pro/api';
+import { ProTable } from '@ant-design/pro-table';
+import { request, useModel } from '@umijs/max';
 import { useRequest } from 'ahooks';
-import { Button, Descriptions, Form, Popconfirm, Table } from 'antd';
+import { Button, Form, Popconfirm, Table } from 'antd';
 import { isEqual } from 'lodash';
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router';
@@ -19,33 +19,33 @@ const OrderItemList: React.FC = () => {
     loading: orderRemoteLoading,
     run: getOrderItemRemote,
   } = useRequest(apiMaterialOrderItemList, { manual: true });
+
   // URL中的order_id
   const { order_id } = useParams<{ order_id?: string }>();
+
   // 上方订单信息表单
   const [orderForm] = Form.useForm();
-  // 获取URL中的new参数
-  const [searchParams] = useSearchParams();
-  const is_new = searchParams.get('is_new');
+
   // 操作LocalStorage
   const { getOrderLocal, updateOrderLocal, deleteOrderLocal } = useOrderLocalStorage();
   const orderLocal = getOrderLocal(order_id!); // 获取本地order
+
   // 操作的数据源 并且新建初始数据，如果是新建order就要用到
-  //
   const [dataSource, setDataSource] = useState<API.OrderItem[]>([]);
 
+  const { reloadKey, setReloadKey } = useModel('tableReload');
+
+  // TODO:加载数据
   useEffect(() => {
-    // 如果不是新建订单就请求远程
-    if (is_new !== 'true') {
-      getOrderItemRemote({ order: order_id });
-    }
+    getOrderItemRemote({ order: order_id });
     // 如果有本地数据就读取
     if (typeof orderLocal !== undefined && orderLocal?.length) {
       setDataSource(orderLocal[0].items);
     }
-  }, []);
+  }, [reloadKey, order_id]);
 
+  // TODO:若远程数据和本地数据相等就删除本地数据
   useEffect(() => {
-    // 若远程数据和本地数据相等就删除本地数据
     if (remoteDate && orderLocal?.length) {
       // 去除时间戳后比较
       const _localDate = orderLocal[0].items.map((item) => ({ ...item, timestamp: undefined }));
@@ -59,7 +59,7 @@ const OrderItemList: React.FC = () => {
     }
   }, [remoteDate]);
 
-  // 删除行
+  // TODO:删除行
   const handleDelete = (id: React.Key) => {
     if (dataSource) {
       const newData = dataSource.filter((item) => item.id !== id);
@@ -68,7 +68,8 @@ const OrderItemList: React.FC = () => {
       updateOrderLocal(updateOrder);
     }
   };
-  // 添加行
+
+  // TODO:新增行
   const handleAdd = () => {
     if (dataSource) {
       const newData: API.OrderItem = {
@@ -92,7 +93,8 @@ const OrderItemList: React.FC = () => {
       setDataSource([...dataSource, newData]);
     }
   };
-  // 保存行
+
+  // TODO:保存行
   const handleSave = (row: API.OrderItem) => {
     const newData = [...dataSource];
     const index = newData.findIndex((item) => row.id === item.id);
@@ -117,17 +119,25 @@ const OrderItemList: React.FC = () => {
     updateOrderLocal(updateOrder);
   };
 
-  // 提交数据
+  // TODO:提交数据
   const [commitLoading, setCommitLoading] = useState<boolean>(false);
   const handleCommit = async () => {
     setCommitLoading(true);
+    await apiMaterialOrderUpdate({ id: order_id! }, { ...orderForm.getFieldsValue() });
     await request('/api/material/order_commit/', {
       method: 'POST',
       data: {
         order_items: dataSource,
-        order: { ...orderForm.getFieldsValue(), order_id: order_id },
+        order_id: order_id,
       },
-    });
+    })
+      .then(() => {
+        setReloadKey(reloadKey + 1);
+      })
+      .catch(() => {
+        setCommitLoading(false);
+      });
+
     setCommitLoading(false);
     // 提交了就在本地删除
     deleteOrderLocal(order_id!);
@@ -150,6 +160,7 @@ const OrderItemList: React.FC = () => {
       width: '7%',
       editable: true,
       sorter: {
+        // @ts-ignore
         compare: (a, b) => a.sort - b.sort,
         multiple: 3,
       },
@@ -162,7 +173,8 @@ const OrderItemList: React.FC = () => {
       width: '20%',
       editable: true,
       sorter: {
-        compare: (a, b) => a.material_name.length - b.material_name.length,
+        // @ts-ignore
+        compare: (a, b) => a.material_name?.length - b.material_name?.length,
         multiple: 3,
       },
     },
@@ -172,7 +184,8 @@ const OrderItemList: React.FC = () => {
       dataIndex: 'material_sku',
       editable: true,
       sorter: {
-        compare: (a, b) => a.material_sku.length - b.material_sku.length,
+        // @ts-ignore
+        compare: (a, b) => a.material_sku?.length - b.material_sku?.length,
         multiple: 3,
       },
     },
@@ -187,6 +200,7 @@ const OrderItemList: React.FC = () => {
       dataIndex: 'buy_num',
       editable: true,
       sorter: {
+        // @ts-ignore
         compare: (a, b) => a.buy_num - b.buy_num,
         multiple: 3,
       },
@@ -197,7 +211,8 @@ const OrderItemList: React.FC = () => {
       dataIndex: 'material_unit',
       editable: true,
       sorter: {
-        compare: (a, b) => a.material_unit.length - b.material_unit.length,
+        // @ts-ignore
+        compare: (a, b) => a.material_unit?.length - b.material_unit?.length,
         multiple: 3,
       },
     },
@@ -230,6 +245,7 @@ const OrderItemList: React.FC = () => {
       }),
     };
   });
+
   // 是否展开远程数据的行
   const handleRowExpandable = (record: API.OrderItem) => {
     if (orderLocal?.length && remoteDate) {
@@ -244,6 +260,7 @@ const OrderItemList: React.FC = () => {
     }
     return false;
   };
+
   // 展开渲染
   const handleExpendedRowRender = (record: API.OrderItem) => {
     if (remoteDate) {
@@ -253,8 +270,10 @@ const OrderItemList: React.FC = () => {
       return (
         <tr className="editable-row">
           <td>系统数据:</td>
+          <td style={{ padding: '5px 100px' }}>{item.sort}</td>
           <td style={{ padding: '5px 100px' }}>{item.material_name}</td>
           <td style={{ paddingRight: '50px' }}>{item.material_sku}</td>
+          <td style={{ paddingRight: '50px' }}>{item.used_site}</td>
           <td style={{ paddingRight: '50px' }}>{item.buy_num}</td>
           <td style={{ paddingRight: '50px' }}>{item.material_unit}</td>
         </tr>
@@ -265,23 +284,8 @@ const OrderItemList: React.FC = () => {
 
   return (
     <div>
-      <OrderTop orderForm={orderForm} order_id={order_id} is_new={is_new}></OrderTop>
-      <Descriptions.Item label="操作">
-        <span style={{ paddingRight: '10px' }}>
-          <Button
-            onClick={handleCommit}
-            type="primary"
-            style={{ marginBottom: 16 }}
-            loading={commitLoading}
-          >
-            提交
-          </Button>
-        </span>
-        <Button onClick={handleAdd} type="primary" style={{ marginBottom: 16 }}>
-          增加一行
-        </Button>
-      </Descriptions.Item>
-      <Table
+      <OrderTop orderForm={orderForm} order_id={order_id}></OrderTop>
+      <ProTable
         style={{ paddingTop: '20px' }}
         rowKey="id"
         locale={{ emptyText: 'empty' }}
@@ -294,13 +298,39 @@ const OrderItemList: React.FC = () => {
         // @ts-ignore
         columns={columns as ColumnTypes}
         pagination={false}
-        sticky={true}
+        // 吸顶
+        sticky
+        // scroll={{ x: 'max-content', y: 'calc(100vh - 300px)' }}
         size="small" // 紧凑
+        search={false}
+        options={{
+          // 全屏
+          fullScreen: true,
+        }}
+        // 右上角按钮
+        toolBarRender={() => [
+          <div key="proTableOption">
+            <span style={{ paddingRight: '10px' }}>
+              <Button
+                onClick={handleCommit}
+                type="primary"
+                style={{ marginBottom: 16 }}
+                loading={commitLoading}
+              >
+                提交
+              </Button>
+            </span>
+            <Button onClick={handleAdd} type="primary" style={{ marginBottom: 16 }}>
+              增加一行
+            </Button>
+          </div>,
+        ]}
         expandable={{
           expandedRowRender: handleExpendedRowRender,
           rowExpandable: handleRowExpandable,
         }}
       />
+      <div style={{ height: '600px' }}></div>
     </div>
   );
 };

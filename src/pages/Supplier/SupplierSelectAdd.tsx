@@ -6,19 +6,17 @@ import React, { useEffect, useState } from 'react';
 
 const SupplierSelectAdd: React.FC<{
   mode?: string;
-  defaultValue?: {
-    label?: string;
-    value?: string;
-  }[];
+  initialValue?: any;
   onChange?: (value: any) => void;
-}> = ({ mode, defaultValue, onChange }) => {
+  bordered?: boolean;
+}> = ({ mode, initialValue, onChange, bordered }) => {
   const [supplierModalOpen, setSupplierModalOpen] = useState<boolean>(false);
   const [supplierList, setSupplierList] =
     useState<{ value: string | undefined; label: string }[]>();
   const [value, setValue] = useState<
     { label?: string | undefined; value?: string | undefined }[] | undefined
   >();
-  const supplierSelectList = useModel('supplierSelectList');
+  const { supplierEnum } = useModel('selector');
   const handleChange = (value: any) => {
     setValue(value);
     if (onChange) {
@@ -26,19 +24,18 @@ const SupplierSelectAdd: React.FC<{
     }
   };
   useEffect(() => {
-    setSupplierList(supplierSelectList);
+    setSupplierList(supplierEnum);
   }, []);
-  useEffect(() => {
-    setValue(defaultValue);
-  }, [defaultValue]);
+
   return (
     <div>
       <Select
-        bordered={false}
+        bordered={bordered}
         mode={mode && mode === 'multiple' ? 'multiple' : undefined}
         value={value}
         style={{ minWidth: '100px' }}
         placeholder="请选择"
+        defaultValue={initialValue}
         onChange={handleChange}
         // @ts-ignore
         filterOption={(input, option) => (option?.label ?? '').includes(input)}

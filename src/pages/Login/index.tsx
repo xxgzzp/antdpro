@@ -1,6 +1,19 @@
-import { Avatar, Box, Button, Checkbox, Container, createTheme, CssBaseline, FormControlLabel, Grid, Link, TextField, ThemeProvider, Typography } from '@mui/material';
+import '@/pages/Login/index.less';
+import {
+  Box,
+  Button,
+  Checkbox,
+  Container,
+  createTheme,
+  CssBaseline,
+  FormControlLabel,
+  Grid,
+  Link,
+  TextField,
+  ThemeProvider,
+  Typography,
+} from '@mui/material';
 import React from 'react';
-import styles from './Login.less';
 
 function Copyright(props: any) {
   return (
@@ -67,12 +80,7 @@ export default function Page() {
               control={<Checkbox value="remember" color="primary" />}
               label="Remember me"
             />
-            <Button
-              type="submit"
-              fullWidth
-              variant="contained"
-              sx={{ mt: 3, mb: 2 }}
-            >
+            <Button type="submit" fullWidth variant="contained" sx={{ mt: 3, mb: 2 }}>
               Sign In
             </Button>
             <Grid container>

@@ -2,47 +2,45 @@ import Footer from '@/components/Footer';
 import RightContent from '@/components/RightContent';
 import { LinkOutlined } from '@ant-design/icons';
 import type { Settings as LayoutSettings } from '@ant-design/pro-components';
-import {PageLoading, SettingDrawer} from '@ant-design/pro-components';
+import { PageLoading, SettingDrawer } from '@ant-design/pro-components';
 import type { RequestConfig, RunTimeLayoutConfig } from '@umijs/max';
 import { history, Link } from '@umijs/max';
-import defaultSettings from '../config/defaultSettings';
-import React from 'react';
-import { apiOaCurrentuserList } from './services/ant-design-pro/api';
+import { notification } from 'antd';
 import Cookies from 'js-cookie';
-import {toast, ToastContainer} from "react-toastify";
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import defaultSettings from '../config/defaultSettings';
+import { apiOaCurrentuserList } from './services/ant-design-pro/api';
 const isDev = process.env.NODE_ENV === 'development';
 const loginPath = '/login';
-import 'react-toastify/dist/ReactToastify.css';
-
 
 /**
  * @see  https://umijs.org/zh-CN/plugins/plugin-initial-state
  * */
 export async function getInitialState(): Promise<{
-    settings?: Partial<LayoutSettings>;
-    currentUser?: API.User;
-    loading?: boolean;
-    fetchUserInfo?: () => Promise<API.User | undefined>;
+  settings?: Partial<LayoutSettings>;
+  currentUser?: API.User;
+  loading?: boolean;
+  fetchUserInfo?: () => Promise<API.User | undefined>;
 }> {
   const fetchUserInfo = async () => {
     try {
       const msg = await apiOaCurrentuserList({
         skipErrorHandler: true,
       });
-      console.log(msg)
-      console.log("初始化数据成功")
+      console.log(msg);
+      console.log('初始化数据成功');
       return msg;
     } catch (error) {
-        console.log("初始化时获取当前用户数据失败")
-        history.push(loginPath);
-        return undefined;
+      console.log('初始化时获取当前用户数据失败');
+      history.push(loginPath);
+      return undefined;
     }
   };
   // 如果不是登录页面，就初始化全局数据
   const { location } = history;
   if (location.pathname !== loginPath) {
-    // console.log(loginPath)
-    console.log(location.pathname)
+    console.log(location.pathname);
     const currentUser = await fetchUserInfo();
     return {
       fetchUserInfo,
@@ -64,15 +62,16 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
       content: initialState?.currentUser?.username,
     },
     footerRender: () => <Footer />,
-    onPageChange: () => {
-      const { location } = history;
-      // 如果没有登录，重定向到 login
-      if (!initialState?.currentUser && location.pathname !== loginPath) {
-        console.log("app.tsx中")
-        console.log(initialState?.currentUser)
-        // history.push(loginPath);
-      }
-    },
+    // onPageChange: () => {
+    //   const { location } = history;
+    //   // 如果没有登录，重定向到 login
+    //   if (!initialState?.currentUser && location.pathname !== loginPath) {
+    //     console.log('app.tsx中');
+    //     console.log(initialState?.currentUser);
+    //     // history.push(loginPath);
+    //   }
+    // },
+    onPageChange: () => {},
     layoutBgImgList: [
       {
         src: 'https://mdn.alipayobjects.com/yuyan_qk0oxh/afts/img/D2LWSqNny4sAAAAAAAAAAAAAFl94AQBr',
@@ -131,99 +130,152 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
 
 // request拦截器 添加csrf和Token参数
 const csrfTokenInterceptor = (url: string, options: RequestConfig) => {
-  return{
+  return {
     url: `${url}`,
-    options: { ...options, interceptors: true,
-      headers: {'X-CSRFToken':Cookies.get('csrftoken'),
-        'Authorization':` Token ${localStorage.getItem(' Token ')}`
-      }
+    options: {
+      ...options,
+      interceptors: true,
+      headers: {
+        'X-CSRFToken': Cookies.get('csrftoken'),
+        Authorization: ` Token ${localStorage.getItem(' Token ')}`,
+      },
     },
-  }
+  };
+};
+// 错误处理方案： 错误类型
+enum ErrorShowType {
+  SILENT = 0,
+  WARN_MESSAGE = 1,
+  ERROR_MESSAGE = 2,
+  NOTIFICATION = 3,
+  REDIRECT = 9,
+}
+// 与后端约定的响应数据格式
+interface ResponseStructure {
+  success: boolean;
+  data: any;
+  errorCode?: number;
+  errorMessage?: string;
+  showType?: ErrorShowType;
 }
 
 // 统一请求配置
 // @ts-ignore
 export const request: RequestConfig = {
-  // errorConfig: {
-  //   //自定义返回的数据
-  //   // adaptor: (resData) => {
-  //   //   // resData 是我们自己的数据
-  //   //   console.log(resData)
-  //   //   return {
-  //   //     ...resData,
-  //   //     total: resData.count,
-  //   //     // success: resData.ok,
-  //   //     data: resData.results,
-  //   //     errorMessage: resData.message,
-  //   //   };
-  //   // },
-  //   // 错误抛出
-  //   // errorThrower: (res) => {
-  //   //   const {success, data, errorCode, errorMessage, showType,} = res;
-  //   //   if (!success) {
-  //   //     const error: any = new Error(errorMessage);
-  //   //     error.name = 'BizError';
-  //   //     error.info = {errorCode, errorMessage, showType, data};
-  //   //     toast("错误", {
-  //   //       position: "top-right",
-  //   //       autoClose: 5000,
-  //   //       hideProgressBar: false,
-  //   //       closeOnClick: true,
-  //   //       pauseOnHover: true,
-  //   //       draggable: true,
-  //   //       progress: undefined,
-  //   //       theme: "light",
-  //   //     });
-  //   //     throw error; // 抛出自制的错误
-  //   //   }
-  //   // }
-  // },
-  headers: {'X-Requested-With': 'XMLHttpRequest'},
+  // errorConfig: errorConfig,
+  // 错误处理： umi@3 的错误处理方案。
+  errorConfig: {
+    // 错误抛出
+    errorThrower: (res: ResponseStructure) => {
+      const { success, data, errorCode, errorMessage, showType } = res;
+      if (!success) {
+        const error: any = new Error(errorMessage);
+        error.name = 'BizError';
+        error.info = { errorCode, errorMessage, showType, data };
+        throw error; // 抛出自制的错误
+      }
+    },
+    // 错误接收及处理
+    errorHandler: (error: any, opts: any) => {
+      if (opts?.skipErrorHandler) throw error;
+      // 我们的 errorThrower 抛出的错误。
+      if (error.name === 'BizError') {
+        const errorInfo: ResponseStructure | undefined = error.info;
+        if (errorInfo) {
+          const { errorMessage, errorCode } = errorInfo;
+          switch (errorInfo.showType) {
+            case ErrorShowType.SILENT:
+              // do nothing
+              break;
+            case ErrorShowType.WARN_MESSAGE:
+              toast.warn(errorMessage);
+              break;
+            case ErrorShowType.ERROR_MESSAGE:
+              toast.error(errorMessage);
+              break;
+            case ErrorShowType.NOTIFICATION:
+              notification.open({
+                description: errorMessage,
+                message: errorCode,
+              });
+              break;
+            case ErrorShowType.REDIRECT:
+              // TODO: redirect
+              break;
+            default:
+              toast.error(errorMessage);
+          }
+        }
+      } else if (error.response) {
+        // Axios 的错误
+        // 请求成功发出且服务器也响应了状态码，但状态代码超出了 2xx 的范围
+        toast.error(`Response status:${error.response.status}`);
+      } else if (error.request) {
+        // 请求已经成功发起，但没有收到响应
+        // \`error.request\` 在浏览器中是 XMLHttpRequest 的实例，
+        // 而在node.js中是 http.ClientRequest 的实例
+        toast.error('None response! Please retry.');
+      } else {
+        // 发送请求时出了点问题
+        toast.error('Request error, please retry.');
+      }
+    },
+  },
+
+  headers: { 'X-Requested-With': 'XMLHttpRequest' },
   // 新增自动添加AccessToken的请求前拦截器
   requestInterceptors: [csrfTokenInterceptor],
   responseInterceptors: [
     (response) => {
       // 拦截响应数据，进行个性化处理
-      const {data}:any = response;
+      const { data }: any = response;
       // 统一处理 响应后的message
-      if (typeof (data.message) !== "undefined" ) {
-        if(data.message !== ""){
-          if (data.success){
+      if (data?.code === 400) {
+        // 如果是表单错误的响应，对返回信息进行处理
+        const { message, ...errors } = data;
+        Object.keys(errors).forEach((key) => {
+          const pattern = new RegExp(key, 'g');
+          const errorMsg = errors[key][0].replace(pattern, `${key}字段`);
+          toast.error(errorMsg);
+        });
+      }
+      if (typeof data.message !== 'undefined') {
+        if (data.message !== '') {
+          if (data.success) {
             toast.success(data.message, {
-              position: "top-right",
+              position: 'top-right',
               autoClose: 5000,
               hideProgressBar: false,
               closeOnClick: true,
               pauseOnHover: true,
               draggable: true,
               progress: undefined,
-              theme: "light",
-            })
-          }else {
+              theme: 'light',
+            });
+          } else {
             toast.error(data.message, {
-              position: "top-right",
+              position: 'top-right',
               autoClose: 5000,
               hideProgressBar: false,
               closeOnClick: true,
               pauseOnHover: true,
               draggable: true,
               progress: undefined,
-              theme: "light",
-            })
+              theme: 'light',
+            });
           }
-
         }
       }
       // 处理响应后的格式
-      if ("undefined" !== typeof (data.results)) {
+      if ('undefined' !== typeof data.results) {
         // @ts-ignore
-        response["data"]["data"] = response['data']['results']
+        response['data']['data'] = response['data']['results'];
       }
-      if ("undefined" !== typeof (data.count)) {
+      if ('undefined' !== typeof data.count) {
         // @ts-ignore
-        response["data"]["total"] = response['data']['count']
+        response['data']['total'] = response['data']['count'];
       }
       return response;
-    }],
-
+    },
+  ],
 };

@@ -96,7 +96,7 @@ const SupplierForm: React.FC<{
             <Select.Option value={'其他'}>其他</Select.Option>
           </Select>
         </ProForm.Item>
-        <ProFormItem label="联系人">
+        <ProFormItem label="联系人" name="manager">
           <UserSelectAdd></UserSelectAdd>
         </ProFormItem>
       </ModalForm>

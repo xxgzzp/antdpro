@@ -1,53 +1,42 @@
+import renderBadge from '@/components/Utils/renderBadge';
 import OrderForm from '@/pages/Order/OrderForm';
 import {
   apiMaterialOrdercategoryList,
   apiMaterialOrderDelete,
   apiMaterialOrderList,
-  apiOaProjectList,
-} from '@/services/ant-design-pro/api'
+} from '@/services/ant-design-pro/api';
+import { useModel } from '@@/exports';
 import type { ActionType, ProColumns } from '@ant-design/pro-components';
 import { ProTable } from '@ant-design/pro-components';
 import { ProFormDateRangePicker } from '@ant-design/pro-form';
-import { Badge, Button, Modal, Radio, RadioChangeEvent } from 'antd';
+import { useToggle } from 'ahooks';
+import { Button, Popconfirm, Radio } from 'antd';
 import { keyBy } from 'lodash';
-import { useEffect, useRef, useState } from 'react';
+import { Key, useEffect, useRef, useState } from 'react';
 import { history } from 'umi';
+
 export default function Page() {
   const proTableRef = useRef<ActionType>();
+
   // 关闭和打开"用户"模态框
   const [ModalOpen, setModalOpen] = useState<boolean>(false);
   const [updateOrder, setUpdateOrder] = useState<API.Order>();
   const [typeAddOrUpdate, setTypeAddOrUpdate] = useState<boolean>(true);
-  // 删除用户中 控制删除model
-  const [deleteModalVisit, setDeleteModalVisit] = useState<boolean>(false);
-  const [deleteModalLoading, setDeleteModalLoading] = useState<boolean>(false);
-  const [deleteOrder, setDeleteOrder] = useState<{
-    id: number | undefined;
-    name: string | undefined;
-  }>();
+
   // 在 onSearch 方法中更新搜索条件
   const [searchParams, setSearchParams] = useState({});
-  // 上面的菜单中的project下拉选择
-  const [projectEnum, setProjectEnum] = useState({});
+
   // 标签页分类
   const [categoryEnum, setCategoryEnum] = useState({});
+  const [radioState, { toggle }] = useToggle('类别', '项目');
   const [activeKey, setActiveKey] = useState('tab1');
-  // 用于上方筛选方式 默认是 项目
-  const [toolbarEnumType, setToolbarEnumType] = useState('类别');
+  const { projectEnumKeyBy } = useModel('selector');
 
   useEffect(() => {
     // 用于上方筛选项目的订单
-    apiOaProjectList().then((r) => {
-      const res = r.results.map((r) => ({
-        id: r.id,
-        text: r.name,
-      }));
-      const resProjectEnum = keyBy(res, 'id');
-      setProjectEnum(resProjectEnum);
-    });
     // 用于选项卡筛选;
     apiMaterialOrdercategoryList().then((r) => {
-      const res = r.results.map((r) => ({
+      const res = r.results.map((r: any) => ({
         id: r.category,
         text: r.category,
         count: r.count,
@@ -57,46 +46,37 @@ export default function Page() {
     });
   }, []);
 
+  //  TODO:增
+  const handleAdd = () => {
+    setTypeAddOrUpdate(true);
+    setModalOpen(true);
+  };
+
+  // TODO:删
+  const handleDelete = (id: string) => {
+    apiMaterialOrderDelete({
+      id: id,
+    }).then(() => {
+      proTableRef.current?.reload();
+    });
+  };
+
+  // TODO:查
   const handleSearch = (value: string) => {
     setSearchParams({ search: value });
   };
-  const handleDelete = (row: API.Order) => {
-    setTypeAddOrUpdate(true);
-    setDeleteOrder({
-      id: row.id,
-      name: row.name,
-    });
-    setDeleteModalVisit(true);
-  };
+
+  // TODO:改
   const handleUpdate = (row: API.Order) => {
     setTypeAddOrUpdate(false); // 将表单方式切回更新
     setModalOpen(true);
     setUpdateOrder(row);
   };
-  const handleAdd = () => {
-    setTypeAddOrUpdate(true);
-    setModalOpen(true);
-  };
+
   const handleRowClick = (record: API.Order) => {
     history.push(`/order/${record.id}/orderitems`);
   };
-  const handleMenuChange = (key: React.Key| undefined) => {
-    setActiveKey(key as string);
-    if (toolbarEnumType === '项目') {
-      setSearchParams({ project_name: key });
-    } else {
-      setSearchParams({ category: key });
-    }
-  };
-  // 上方查询表单按钮
-  const handleCategoryRadio = (e: RadioChangeEvent) => {
-    const value = e.target.value;
-    if (value === '项目') {
-      setToolbarEnumType('项目');
-    } else if (value === '类别') {
-      setToolbarEnumType('类别');
-    }
-  };
+
   // 转化时间请求参数
   const handleSearchParams = (params: any) => {
     if (params.created_time_range) {
@@ -107,6 +87,50 @@ export default function Page() {
     }
     return params;
   };
+
+  // 表格上方的menu的选择更改
+  const handleMenuChange = (activeKey?: Key | undefined) => {
+    setActiveKey(activeKey as string);
+    if (radioState === '项目') {
+      setSearchParams({ project__name: activeKey });
+    } else {
+      setSearchParams({ category: activeKey });
+    }
+  };
+
+  function getItems() {
+    interface EnumObject {
+      [key: string]: { text: string; count: number };
+    }
+    const enumObject: EnumObject | undefined =
+      radioState === '项目' ? projectEnumKeyBy : categoryEnum;
+    return [
+      {
+        key: '',
+        label: (
+          <span>
+            {'全部'}
+            {renderBadge(0, activeKey === '')}
+          </span>
+        ),
+      },
+      ...(enumObject
+        ? Object.keys(enumObject).map((key) => {
+            const value = enumObject[key];
+            return {
+              key: value.text,
+              label: (
+                <span>
+                  {value.text}
+                  {renderBadge(value.count, activeKey === key)}
+                </span>
+              ),
+            };
+          })
+        : []),
+    ];
+  }
+
   // ProTable 的 columns定义
   const columns: ProColumns<API.Order>[] = [
     {
@@ -119,8 +143,8 @@ export default function Page() {
               { label: '项目', value: '项目' },
               { label: '类别', value: '类别' },
             ]}
-            onChange={handleCategoryRadio}
-            value={toolbarEnumType}
+            onChange={toggle}
+            value={radioState}
             optionType="button"
             buttonStyle="solid"
           />
@@ -141,6 +165,16 @@ export default function Page() {
       title: '材料单名称',
       dataIndex: 'name',
       search: false,
+      render: (_, row) => [
+        <a
+          key="rowName"
+          onClick={() => {
+            history.push(`order/${row.id}/orderitems`);
+          }}
+        >
+          {row.name}
+        </a>,
+      ],
     },
     {
       title: '类别',
@@ -166,7 +200,7 @@ export default function Page() {
         // @ts-ignore
         key: 'project',
       },
-      valueEnum: projectEnum,
+      valueEnum: projectEnumKeyBy,
     },
     {
       title: '创建者',
@@ -189,7 +223,6 @@ export default function Page() {
           return (
             <ProFormDateRangePicker style={{ marginLeft: 0 }} name="dateRange_1" label="日期" />
           );
-          // return <ProFormDateRangePicker  {...rest}/>;
         }
         return defaultRender(_);
       },
@@ -204,25 +237,12 @@ export default function Page() {
         <Button size="small" key="update" type="link" onClick={() => handleUpdate(row)}>
           修改
         </Button>,
-        <Button size="small" key="delete" type="link" onClick={() => handleDelete(row)} danger>
-          删除
-        </Button>,
+        <Popconfirm key="delete" title="确认删除吗?" onConfirm={() => handleDelete(row.id!)}>
+          <a>删除</a>
+        </Popconfirm>,
       ],
     },
   ];
-  const renderBadge = (count: number, active = false) => {
-    return (
-      <Badge
-        count={count}
-        style={{
-          marginBlockStart: -2,
-          marginInlineStart: 4,
-          color: active ? '#1890FF' : '#999',
-          backgroundColor: active ? '#E6F7FF' : '#eee',
-        }}
-      />
-    );
-  };
 
   return (
     <>
@@ -257,30 +277,7 @@ export default function Page() {
           menu: {
             type: 'tab',
             activeKey: activeKey,
-            items: [
-              {
-                key: '',
-                label: (
-                  <span>
-                    {'全部'}
-                    {renderBadge(0, activeKey === '')}
-                  </span>
-                ),
-              },
-              ...Object.keys(toolbarEnumType === '项目' ? projectEnum : categoryEnum).map((key) => {
-                // @ts-ignore
-                const value = toolbarEnumType === '项目' ? projectEnum[key] : categoryEnum[key];
-                return {
-                  key: value.text,
-                  label: (
-                    <span>
-                      {value.text}
-                      {renderBadge(value.count, activeKey === key)}
-                    </span>
-                  ),
-                };
-              }),
-            ],
+            items: getItems(),
             onChange: handleMenuChange,
           },
         }}
@@ -298,29 +295,6 @@ export default function Page() {
           defaultCollapsed: false,
         }}
       ></ProTable>
-
-      <Modal
-        title="删除订单"
-        open={deleteModalVisit}
-        onCancel={() => {
-          setDeleteModalVisit(false);
-        }}
-        confirmLoading={deleteModalLoading}
-        key="userModal"
-        onOk={() => {
-          setDeleteModalLoading(true);
-          // 删除订单
-          apiMaterialOrderDelete({
-            id: deleteOrder?.id,
-          }).then(() => {
-            setDeleteModalVisit(false);
-            proTableRef.current?.reload();
-            setDeleteModalLoading(false);
-          });
-        }}
-      >
-        <p>请问你是否要删除{deleteOrder?.name}</p>
-      </Modal>
 
       <OrderForm
         typeAddOrUpdate={typeAddOrUpdate}
