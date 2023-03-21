@@ -37,6 +37,8 @@ const ContractItemList: React.FC = () => {
   // 重载
   const { reloadKey, setReloadKey } = useModel('tableReload');
 
+  const { user } = useModel('user');
+
   // TODO:读取数据
   useEffect(() => {
     getContractItemRemote({ contract: contract_id });

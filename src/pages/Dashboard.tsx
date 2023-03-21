@@ -8,18 +8,29 @@ import {
   UserOutlined,
 } from '@ant-design/icons';
 import { history } from '@umijs/max';
-import { Badge, Card, Col, Collapse, List, Row } from 'antd';
+import { Badge, Card, Col, Collapse, List, Modal, Row } from 'antd';
 
 import { apiDashboardList } from '@/services/ant-design-pro/api';
 import { useRequest } from 'ahooks';
 import { Panel } from 'rc-collapse';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'umi';
 
 const Dashboard: React.FC = () => {
+  const [modelOpen, setModelOpen] = useState(false);
   const { data: dashboardData, loading } = useRequest(() =>
     apiDashboardList().then((res) => res.results),
   );
+
+  const searchParams = new URLSearchParams(window.location.search);
+  const Token = searchParams.get('Token');
+
+  useEffect(() => {
+    if (Token) {
+      localStorage.setItem(' Token ', Token);
+    }
+  }, [Token]);
+
   const dashboardMap: any = {
     user_count: {
       title: '用户',
@@ -134,6 +145,11 @@ const Dashboard: React.FC = () => {
           </Collapse>
         </Col>
       </Row>
+      <Modal title="加入企业微信" open={modelOpen}>
+        <p>您还未加入企业微信!</p>
+        <p>加入企业微信后，你才能正常接受本站应用消息！</p>
+        <p>Some contents...</p>
+      </Modal>
     </div>
   );
 };

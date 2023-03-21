@@ -6,7 +6,7 @@ interface Option {
 }
 export default () => {
   const [map, { set: setOptions, get: getOptions }] = useMap<string, Option[]>([]);
-  const { sendMessage, latestMessage } = useWebSocket('ws://localhost:8001/ws/material/');
+  const { sendMessage, latestMessage } = useWebSocket('wss://zengzeping.com/ws/material/');
 
   // webSocket发送消息
   const handleSearch = (dataIndex: string, text: string) => {

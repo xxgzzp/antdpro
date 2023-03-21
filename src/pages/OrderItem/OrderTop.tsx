@@ -126,7 +126,7 @@ const OrderTop: React.FC<{
           // 创建一个链接，下载文件
           const link = document.createElement('a');
           link.href = fileUrl;
-          link.download = `${orderDetail?.name}.xlsx`;
+          link.download = `${orderDetail?.name}`;
           document.body.appendChild(link);
           link.click();
           // 释放URL对象

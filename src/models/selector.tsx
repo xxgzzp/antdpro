@@ -1,14 +1,18 @@
 import { apiSelectorList } from '@/services/ant-design-pro/api';
-import { useRequest } from 'ahooks';
+import { useRequest, useToggle } from 'ahooks';
 import { Dictionary } from 'express-serve-static-core';
 import { keyBy } from 'lodash';
 import { useEffect, useState } from 'react';
 
 export default () => {
-  const { data: allSelectorEnum } = useRequest(() => apiSelectorList({ select_type: 'all' }));
+  const [ready, { setRight: toggleSelector }] = useToggle(false);
+  const { data: allSelectorEnum } = useRequest(() => apiSelectorList({ select_type: 'all' }), {
+    ready,
+  });
   const [projectEnumKeyBy, setProjectEnumKeyBy] = useState<Dictionary<any>>();
   const [supplierEnumKeyBy, setSupplierEnumKeyBy] = useState<Dictionary<any>>();
   const [userEnumKeyBy, setUserEnumKeyBy] = useState<Dictionary<any>>();
+
   // @ts-ignore
   const { projectEnum, supplierEnum, userEnum } = allSelectorEnum?.results ?? {};
   useEffect(() => {
@@ -44,5 +48,6 @@ export default () => {
     projectEnumKeyBy,
     supplierEnumKeyBy,
     userEnumKeyBy,
+    toggleSelector,
   };
 };

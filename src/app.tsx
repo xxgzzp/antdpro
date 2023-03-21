@@ -2,64 +2,50 @@ import Footer from '@/components/Footer';
 import RightContent from '@/components/RightContent';
 import { LinkOutlined } from '@ant-design/icons';
 import type { Settings as LayoutSettings } from '@ant-design/pro-components';
-import { PageLoading, SettingDrawer } from '@ant-design/pro-components';
+import { SettingDrawer } from '@ant-design/pro-components';
 import type { RequestConfig, RunTimeLayoutConfig } from '@umijs/max';
-import { history, Link } from '@umijs/max';
+import { history, Link, useModel } from '@umijs/max';
 import { notification } from 'antd';
 import Cookies from 'js-cookie';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import defaultSettings from '../config/defaultSettings';
-import { apiOaCurrentuserList } from './services/ant-design-pro/api';
 const isDev = process.env.NODE_ENV === 'development';
 const loginPath = '/login';
 
 /**
  * @see  https://umijs.org/zh-CN/plugins/plugin-initial-state
  * */
+
 export async function getInitialState(): Promise<{
   settings?: Partial<LayoutSettings>;
-  currentUser?: API.User;
-  loading?: boolean;
-  fetchUserInfo?: () => Promise<API.User | undefined>;
 }> {
-  const fetchUserInfo = async () => {
-    try {
-      const msg = await apiOaCurrentuserList({
-        skipErrorHandler: true,
-      });
-      console.log(msg);
-      console.log('初始化数据成功');
-      return msg;
-    } catch (error) {
-      console.log('初始化时获取当前用户数据失败');
-      history.push(loginPath);
-      return undefined;
-    }
-  };
   // 如果不是登录页面，就初始化全局数据
   const { location } = history;
   if (location.pathname !== loginPath) {
-    console.log(location.pathname);
-    const currentUser = await fetchUserInfo();
+    // 没有token就返回登录地址
+    const token = localStorage.getItem(' Token ');
+    if (token === null) {
+      history.push(loginPath);
+    }
     return {
-      fetchUserInfo,
-      currentUser,
       settings: defaultSettings as Partial<LayoutSettings>,
     };
   }
+
   return {
-    fetchUserInfo,
     settings: defaultSettings as Partial<LayoutSettings>,
   };
 }
 
 // ProLayout 支持的api https://procomponents.ant.design/components/layout
 export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) => {
+  const { user } = useModel('user');
+
   return {
     rightContentRender: () => <RightContent />,
     waterMarkProps: {
-      content: initialState?.currentUser?.username,
+      content: user?.name,
     },
     footerRender: () => <Footer />,
     // onPageChange: () => {
@@ -105,7 +91,7 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
     // unAccessible: <div>unAccessible</div>,
     // 增加一个 loading 的状态
     childrenRender: (children) => {
-      if (initialState?.loading) return <PageLoading />;
+      // if (initialState?.loading) return <PageLoading />;
       return (
         <>
           <ToastContainer />
@@ -129,6 +115,7 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
 };
 
 // request拦截器 添加csrf和Token参数
+
 const csrfTokenInterceptor = (url: string, options: RequestConfig) => {
   return {
     url: `${url}`,
@@ -138,6 +125,7 @@ const csrfTokenInterceptor = (url: string, options: RequestConfig) => {
       headers: {
         'X-CSRFToken': Cookies.get('csrftoken'),
         Authorization: ` Token ${localStorage.getItem(' Token ')}`,
+        // Authorization: `Bearer ${localStorage.getItem('access')}`,
       },
     },
   };
@@ -159,7 +147,88 @@ interface ResponseStructure {
   showType?: ErrorShowType;
 }
 
-// 统一请求配置
+// function jwtInterceptor() {
+//   return async (response: { [x: string]: { [x: string]: any } }) => {
+//     const { headers } = response;
+//     const authorization = headers.get('Authorization');
+//     if (authorization && authorization.includes('Bearer ')) {
+//       const token = authorization.replace('Bearer ', '');
+//       // 检查token是否过期
+//       const decodedToken = jwt.decode(token);
+//       const expirationDate = new Date(decodedToken.exp * 1000);
+//       console.log(expirationDate);
+//       const currentDate = new Date();
+//       if (currentDate >= expirationDate) {
+//         // Access Token 已过期
+//         // 尝试使用 Refresh Token 获取新的 Access Token
+//         const refreshUrl = '/api/token/refresh/';
+//         const refreshHeaders = new Headers({
+//           'Content-Type': 'application/json',
+//           Authorization: `Bearer ${localStorage.getItem('refresh')}`,
+//         });
+//         try {
+//           const refreshResponse = await fetch(refreshUrl, {
+//             method: 'POST',
+//             headers: refreshHeaders,
+//           });
+//           const refreshJson = await refreshResponse.json();
+//           if (refreshJson.access && refreshJson.refresh) {
+//             // 更新 Access Token 和 Refresh Token
+//             localStorage.setItem('access', refreshJson.access);
+//             localStorage.setItem('refresh', refreshJson.refresh);
+//             // 更新 Authorization Header
+//             response.headers.set('Authorization', `Bearer ${refreshJson.access}`);
+//           }
+//         } catch (err) {
+//           // Refresh Token 无效或已过期
+//           // 清除本地存储中的 Token
+//           localStorage.removeItem('access');
+//           localStorage.removeItem('refresh');
+//           // TODO: 跳转到登录页面
+//           history.push('/login');
+//         }
+//       }
+//     }
+//   };
+// }
+
+// 响应拦截器
+function msgAndRespontDataFormat() {
+  return (response: { [x: string]: { [x: string]: any } }) => {
+    // 拦截响应数据，进行个性化处理
+    const { data }: any = response;
+    // 统一处理 响应后的message
+    if (data?.code === 400) {
+      // 如果是表单错误的响应，对返回信息进行处理
+      const { message, ...errors } = data;
+      Object.keys(errors).forEach((key) => {
+        const pattern = new RegExp(key, 'g');
+        const errorMsg = errors[key][0].replace(pattern, `${key}字段`);
+        toast.error(errorMsg);
+      });
+    }
+    if (typeof data.message !== 'undefined') {
+      if (data.message !== '') {
+        if (data.success) {
+          toast.success(data.message);
+        } else {
+          toast.error(data.message);
+        }
+      }
+    }
+    // 处理响应后的格式
+    if ('undefined' !== typeof data.results) {
+      // @ts-ignore
+      response['data']['data'] = response['data']['results'];
+    }
+    if ('undefined' !== typeof data.count) {
+      // @ts-ignore
+      response['data']['total'] = response['data']['count'];
+    }
+    return response;
+  };
+}
+
 // @ts-ignore
 export const request: RequestConfig = {
   // errorConfig: errorConfig,
@@ -221,61 +290,10 @@ export const request: RequestConfig = {
       }
     },
   },
+  // jwtInterceptor(),
 
   headers: { 'X-Requested-With': 'XMLHttpRequest' },
   // 新增自动添加AccessToken的请求前拦截器
   requestInterceptors: [csrfTokenInterceptor],
-  responseInterceptors: [
-    (response) => {
-      // 拦截响应数据，进行个性化处理
-      const { data }: any = response;
-      // 统一处理 响应后的message
-      if (data?.code === 400) {
-        // 如果是表单错误的响应，对返回信息进行处理
-        const { message, ...errors } = data;
-        Object.keys(errors).forEach((key) => {
-          const pattern = new RegExp(key, 'g');
-          const errorMsg = errors[key][0].replace(pattern, `${key}字段`);
-          toast.error(errorMsg);
-        });
-      }
-      if (typeof data.message !== 'undefined') {
-        if (data.message !== '') {
-          if (data.success) {
-            toast.success(data.message, {
-              position: 'top-right',
-              autoClose: 5000,
-              hideProgressBar: false,
-              closeOnClick: true,
-              pauseOnHover: true,
-              draggable: true,
-              progress: undefined,
-              theme: 'light',
-            });
-          } else {
-            toast.error(data.message, {
-              position: 'top-right',
-              autoClose: 5000,
-              hideProgressBar: false,
-              closeOnClick: true,
-              pauseOnHover: true,
-              draggable: true,
-              progress: undefined,
-              theme: 'light',
-            });
-          }
-        }
-      }
-      // 处理响应后的格式
-      if ('undefined' !== typeof data.results) {
-        // @ts-ignore
-        response['data']['data'] = response['data']['results'];
-      }
-      if ('undefined' !== typeof data.count) {
-        // @ts-ignore
-        response['data']['total'] = response['data']['count'];
-      }
-      return response;
-    },
-  ],
+  responseInterceptors: [msgAndRespontDataFormat()],
 };

@@ -105,14 +105,14 @@ export default [
   },
   {
     name: 'login_wecom',
-    path: '/login_wecom',
+    path: '/wecom',
     layout: false,
     component: './Wecom',
   },
   {
-    name: 'login_wecom',
-    path: '/websocket',
+    name: 'text',
+    path: '/text',
     layout: false,
-    component: './WebSocket',
+    component: '../components/Loading/TextLoading',
   },
 ];

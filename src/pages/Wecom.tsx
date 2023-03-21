@@ -2,7 +2,7 @@ import { Button } from 'antd';
 import React from 'react';
 const InfoCard: React.FC = () => {
   const url =
-    'https://open.work.weixin.qq.com/wwopen/sso/3rd_qrConnect?appid=ww43a1b769b5588d58&redirect_uri=120.46.180.93&state=web_login@gyoss9&usertype=admin';
+    'https://open.work.weixin.qq.com/wwopen/sso/qrConnect?appid=ww43a1b769b5588d58&agentid=1000003&redirect_uri=http://zengzeping.com/api/wecom&state=STATE';
 
   return (
     <div>
