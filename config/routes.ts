@@ -44,6 +44,13 @@ export default [
         layout: true,
         component: './Project/ProjectList',
       },
+      {
+        name: '部门',
+        path: '/department',
+        icon: 'TeamOutlined',
+        layout: true,
+        component: './Department/DepartmentList',
+      },
     ],
   },
   {

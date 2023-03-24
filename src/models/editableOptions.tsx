@@ -4,9 +4,16 @@ interface Option {
   value: string | undefined;
   label: string | undefined;
 }
+
 export default () => {
   const [map, { set: setOptions, get: getOptions }] = useMap<string, Option[]>([]);
-  const { sendMessage, latestMessage } = useWebSocket('wss://zengzeping.com/ws/material/');
+
+  const { readyState, sendMessage, latestMessage, connect, disconnect } = useWebSocket(
+    'wss://zengzeping.com/ws/material/',
+    // {
+    //   manual: true,
+    // },
+  );
 
   // webSocket发送消息
   const handleSearch = (dataIndex: string, text: string) => {
@@ -33,5 +40,6 @@ export default () => {
       }
     }
   }, [latestMessage]);
-  return { setOptions, getOptions, map, handleSearch };
+
+  return { setOptions, getOptions, map, handleSearch, connect, disconnect, readyState };
 };

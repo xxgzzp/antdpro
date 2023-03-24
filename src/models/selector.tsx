@@ -34,7 +34,7 @@ export default () => {
 
     if (userEnum) {
       const userEnumKeyBy = keyBy(
-        userEnum.map((r: any) => ({ id: r.value, text: r.label })),
+        userEnum.map((r: any) => ({ id: r.value, text: r.label, userid: r.userid })),
         'id',
       );
       setUserEnumKeyBy(userEnumKeyBy);
@@ -48,6 +48,7 @@ export default () => {
     projectEnumKeyBy,
     supplierEnumKeyBy,
     userEnumKeyBy,
+    ready,
     toggleSelector,
   };
 };

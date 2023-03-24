@@ -16,7 +16,14 @@ const UserSelectAdd: React.FC<{
   const [value, setValue] = useState<
     { label?: string | undefined; value?: string | undefined }[] | undefined
   >();
-  const { userEnum } = useModel('selector');
+  const { userEnum, ready, toggleSelector } = useModel('selector');
+
+  useEffect(() => {
+    if (!ready) {
+      toggleSelector();
+    }
+  }, []);
+
   const handleChange = (value: any) => {
     setValue(value);
     if (onChange) {
@@ -26,7 +33,7 @@ const UserSelectAdd: React.FC<{
 
   useEffect(() => {
     setUserList(userEnum);
-  }, []);
+  }, [userEnum]);
 
   return (
     <div>

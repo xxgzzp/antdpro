@@ -35,7 +35,7 @@ const Name = () => {
 };
 
 const AvatarLogo = () => {
-  const { user } = useModel('user');
+  const { user } = useModel('user') as { user: API.User };
 
   const avatarClassName = useEmotionCss(({ token }) => {
     return {
@@ -66,12 +66,14 @@ const AvatarDropdown: React.FC<GlobalHeaderRightProps> = ({ menu }) => {
   const loginOut = async () => {
     // 以下是我的退出，先简单将Token移除，后续再加强
     localStorage.setItem(' Token ', '');
+
     // 以下的代码是antd的尽量不要改
-    // await outLogin();
+
     const { search, pathname } = window.location;
     const urlParams = new URL(window.location.href).searchParams;
     /** 此方法会跳转到 redirect 参数所在的位置 */
     const redirect = urlParams.get('redirect');
+
     // Note: There may be security issues, please note
     if (window.location.pathname !== '/user/login' && !redirect) {
       history.replace({
@@ -82,6 +84,7 @@ const AvatarDropdown: React.FC<GlobalHeaderRightProps> = ({ menu }) => {
       });
     }
   };
+
   const actionClassName = useEmotionCss(({ token }) => {
     return {
       display: 'flex',
@@ -125,12 +128,6 @@ const AvatarDropdown: React.FC<GlobalHeaderRightProps> = ({ menu }) => {
       />
     </span>
   );
-
-  if (!initialState) {
-    return loading;
-  }
-
-  const { currentUser } = initialState;
 
   // if (!currentUser || !currentUser.name) {
   //   return loading;

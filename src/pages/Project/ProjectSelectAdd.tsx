@@ -15,7 +15,14 @@ const ProjectSelectAdd: React.FC<{
     [],
   );
   const [value, setValue] = useState();
-  const { projectEnum } = useModel('selector');
+  const { projectEnum, ready, toggleSelector } = useModel('selector');
+
+  // 如果还没请求就先请求
+  useEffect(() => {
+    if (!ready) {
+      toggleSelector();
+    }
+  }, [ready, toggleSelector]);
   //Chatbot:
   // 根据代码，可以看出在 `<Form.Item name="created_by">` 和 `<Form.Item name="checked_by">` 中使用的是 Ant Design 的 Form 组件，
   // 同时内部嵌套了自定义的 `UserSelectAdd` 组件。在 `UserSelectAdd` 组件中，使用了 `Select` 组件来渲染下拉框，同时通过 `defaultValue` 属性设置了初始值。
@@ -31,7 +38,7 @@ const ProjectSelectAdd: React.FC<{
 
   useEffect(() => {
     setProjectList(projectEnum);
-  }, []);
+  }, [projectEnum]);
 
   return (
     <div>

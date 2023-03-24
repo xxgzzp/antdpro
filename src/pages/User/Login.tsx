@@ -14,14 +14,15 @@ import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import './Login.less';
 type LoginType = 'phone' | 'account';
-export default () => {
+
+const Login: React.FC = () => {
   // const [userLoginState, setUserLoginState] = useState<>({});
   const [loginType, setLoginType] = useState<LoginType>('phone');
   const captchaRef = useRef<CaptFieldRef | null | undefined>();
   const intl = useIntl();
   const { toggleUser } = useModel('user');
-  const { toggleSelector } = useModel('selector');
   const searchParams = new URLSearchParams(window.location.search);
+
   const msg = searchParams.get('message');
   const token = searchParams.get('Token');
   if (token) {
@@ -36,29 +37,20 @@ export default () => {
   }, [msg]);
 
   const handleSubmit = async (values: any) => {
-    try {
-      // 登录
-      const msg = await request('/api/oa/login/', {
-        method: 'POST',
-        data: values,
-      });
-      if (msg.Token !== undefined) {
-        localStorage.setItem(' Token ', msg.Token);
-        // 获取到Token后就 全局的user 可以请求
-        toggleUser();
-        toggleSelector();
+    const msg = await request('/api/oa/login/', {
+      method: 'POST',
+      data: values,
+    });
+    if (msg.Token !== undefined) {
+      localStorage.setItem(' Token ', msg.Token);
 
-        // TODO:跳转原来页面
-        const urlParams = new URL(window.location.href).searchParams;
-        history.push(urlParams.get('redirect') || '/');
-        return;
-      }
-    } catch (error) {
-      const defaultLoginFailureMessage = intl.formatMessage({
-        id: 'pages.login.failure',
-        defaultMessage: '登录失败，请重试！',
-      });
-      toast.error(defaultLoginFailureMessage);
+      // 获取到Token后就 全局的user 可以请求
+      toggleUser();
+
+      // TODO:跳转原来页面
+      const urlParams = new URL(window.location.href).searchParams;
+      history.push(urlParams.get('redirect') || '/');
+      return;
     }
   };
 
@@ -217,3 +209,4 @@ export default () => {
     </div>
   );
 };
+export default Login;

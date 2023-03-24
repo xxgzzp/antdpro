@@ -1,4 +1,5 @@
 import { apiMaterialMaterialAllList } from '@/services/ant-design-pro/api';
+import { history } from '@@/core/history';
 import { ProTable } from '@ant-design/pro-table';
 import { useModel } from '@umijs/max';
 import type { TableColumnsType } from 'antd';
@@ -49,13 +50,23 @@ const MaterialAll: React.FC = () => {
           compare: (a, b) => a.order_name.length - b.order_name.length,
           multiple: 2,
         },
-        onCell: (record: Material) => {
-          return {
-            onClick: () => {
-              window.open(`/order/${record.order_id}/orderitems`, '_blank');
-            },
-          };
-        },
+        render: (_, row) => [
+          <a
+            key="expanded_order_name"
+            onClick={() => {
+              history.push(`order/${row.order_id}/orderitems`);
+            }}
+          >
+            {row.order_name}
+          </a>,
+        ],
+        // onCell: (record: Material) => {
+        //   return {
+        //     onClick: () => {
+        //       window.open(`/order/${record.order_id}/orderitems`, '_blank');
+        //     },
+        //   };
+        // },
       },
       {
         title: '合同',
@@ -65,16 +76,26 @@ const MaterialAll: React.FC = () => {
           compare: (a, b) => a?.contract_name?.length - b?.contract_name?.length,
           multiple: 2,
         },
-        onCell: (record: Material) => {
-          return {
-            onClick: () => {
-              // history.push(`/order/${record.order_id}/orderitems`);
-              if (record?.contract) {
-                window.open(`/contract/${record.contract}/orderitems`, '_blank');
-              }
-            },
-          };
-        },
+        render: (_, row) => [
+          <a
+            key="expanded_order_name"
+            onClick={() => {
+              history.push(`contract/${row.contract}/contractitems`);
+            }}
+          >
+            {row.contract_name}
+          </a>,
+        ],
+        // onCell: (record: Material) => {
+        //   return {
+        //     onClick: () => {
+        //       // history.push(`/order/${record.order_id}/orderitems`);
+        //       if (record?.contract) {
+        //         window.open(`/contract/${record.contract}/orderitems`, '_blank');
+        //       }
+        //     },
+        //   };
+        // },
       },
       {
         title: '日期',

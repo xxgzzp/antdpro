@@ -44,16 +44,19 @@ const OrderItemList: React.FC = () => {
     }
   }, [reloadKey, order_id]);
 
-  // TODO:若远程数据和本地数据相等就删除本地数据
+  // TODO:远程数据加载完毕:
   useEffect(() => {
     if (remoteDate && orderLocal?.length) {
       // 去除时间戳后比较
       const _localDate = orderLocal[0].items.map((item) => ({ ...item, timestamp: undefined }));
       const _remoteDate = remoteDate.results.map((item) => ({ ...item, timestamp: undefined }));
       if (isEqual(_localDate, _remoteDate)) {
+        // TODO:若远程数据和本地数据相等就删除本地数据
         deleteOrderLocal(order_id!);
       }
     }
+
+    // TODO:有本地数据就加载本地的
     if (remoteDate && !orderLocal?.length) {
       setDataSource(remoteDate.results);
     }
@@ -99,6 +102,7 @@ const OrderItemList: React.FC = () => {
     const newData = [...dataSource];
     const index = newData.findIndex((item) => row.id === item.id);
     const item = newData[index];
+
     // 修改当前时间缀
     // const newTimestamp = new Date().toLocaleString({ timeZone: 'Asia/Shanghai' });
     const dateTime = new Date(+new Date() + 8 * 3600 * 1000);
@@ -255,6 +259,7 @@ const OrderItemList: React.FC = () => {
       const _localItem = { ...record, timestamp: undefined };
       const _remoteItem = { ...remoteItem[0], timestamp: undefined };
       const _isEqual = isEqual(_localItem, _remoteItem);
+
       // 修改了，并且修改后的内容不相等
       return record.timestamp! > timestamp! && !_isEqual;
     }

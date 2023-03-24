@@ -16,7 +16,14 @@ const SupplierSelectAdd: React.FC<{
   const [value, setValue] = useState<
     { label?: string | undefined; value?: string | undefined }[] | undefined
   >();
-  const { supplierEnum } = useModel('selector');
+  const { supplierEnum, ready, toggleSelector } = useModel('selector');
+  // 如果还没请求就先请求
+  useEffect(() => {
+    if (!ready) {
+      toggleSelector();
+    }
+  }, [ready, toggleSelector]);
+
   const handleChange = (value: any) => {
     setValue(value);
     if (onChange) {
@@ -25,7 +32,7 @@ const SupplierSelectAdd: React.FC<{
   };
   useEffect(() => {
     setSupplierList(supplierEnum);
-  }, []);
+  }, [supplierEnum]);
 
   return (
     <div>

@@ -1,15 +1,11 @@
 import '@/pages/Dashboard.less';
 
-import {
-  FileOutlined,
-  ProjectOutlined,
-  ShoppingOutlined,
-  SolutionOutlined,
-  UserOutlined,
-} from '@ant-design/icons';
-import { history } from '@umijs/max';
-import { Badge, Card, Col, Collapse, List, Modal, Row } from 'antd';
+import { FileOutlined, ShoppingOutlined, SolutionOutlined } from '@ant-design/icons';
+import { history, useModel } from '@umijs/max';
+import { Badge, Card, Col, Collapse, List, Modal, QRCode, Row } from 'antd';
 
+import UserCard from '@/components/User/UserCard';
+import UserForm from '@/pages/User/UserForm';
 import { apiDashboardList } from '@/services/ant-design-pro/api';
 import { useRequest } from 'ahooks';
 import { Panel } from 'rc-collapse';
@@ -18,13 +14,23 @@ import { Link } from 'umi';
 
 const Dashboard: React.FC = () => {
   const [modelOpen, setModelOpen] = useState(false);
+
   const { data: dashboardData, loading } = useRequest(() =>
     apiDashboardList().then((res) => res.results),
   );
+  const { user, userModalOpen, setUserModalOpen } = useModel('user');
 
   const searchParams = new URLSearchParams(window.location.search);
   const Token = searchParams.get('Token');
 
+  useEffect(() => {
+    // 如果没有绑定企业微信就提醒绑定
+    if (user?.userid === 'undefined') {
+      setModelOpen(true);
+    }
+  }, []);
+
+  // 企业微信回调Token
   useEffect(() => {
     if (Token) {
       localStorage.setItem(' Token ', Token);
@@ -32,18 +38,18 @@ const Dashboard: React.FC = () => {
   }, [Token]);
 
   const dashboardMap: any = {
-    user_count: {
-      title: '用户',
-      icon: <UserOutlined style={{ fontSize: 40 }} />,
-      value: dashboardData?.user_count,
-      url: 'user',
-    },
-    project_count: {
-      title: '项目',
-      icon: <ProjectOutlined style={{ fontSize: 40 }} className={'criclebox'} />,
-      value: dashboardData?.project_count,
-      url: 'project',
-    },
+    // user_count: {
+    //   title: '用户',
+    //   icon: <UserOutlined style={{ fontSize: 40 }} />,
+    //   value: dashboardData?.user_count,
+    //   url: 'user',
+    // },
+    // project_count: {
+    //   title: '项目',
+    //   icon: <ProjectOutlined style={{ fontSize: 40 }} className={'criclebox'} />,
+    //   value: dashboardData?.project_count,
+    //   url: 'project',
+    // },
     supplier_count: {
       title: '供应商',
       icon: <SolutionOutlined style={{ fontSize: 40 }} />,
@@ -72,9 +78,13 @@ const Dashboard: React.FC = () => {
 
   return (
     <div className="site-card-wrapper">
-      <Row gutter={[16, 16]} justify="center">
+      <Row gutter={[16, 16]}>
+        <Col key="user-card" className="user-card">
+          <UserCard></UserCard>
+        </Col>
+
         {Object.keys(dashboardMap).map((key) => (
-          <Col span={4} key={key}>
+          <Col span={4} key={key} className="count-card">
             <Card
               hoverable
               loading={loading}
@@ -91,11 +101,6 @@ const Dashboard: React.FC = () => {
                 </Col>
                 <Col flex="none">{dashboardMap[key].icon}</Col>
               </Row>
-              {/*{dashboardMap[key].title === '材料单' && (*/}
-              {/*  <div style={{ position: 'absolute', bottom: '0', right: '0' }}>*/}
-              {/*    <Button icon={<ToTopOutlined />}>新增材料单</Button>*/}
-              {/*  </div>*/}
-              {/*)}*/}
             </Card>
           </Col>
         ))}
@@ -145,11 +150,30 @@ const Dashboard: React.FC = () => {
           </Collapse>
         </Col>
       </Row>
-      <Modal title="加入企业微信" open={modelOpen}>
-        <p>您还未加入企业微信!</p>
-        <p>加入企业微信后，你才能正常接受本站应用消息！</p>
-        <p>Some contents...</p>
+
+      <Modal
+        title="请使用'微信'扫码,加入本企业"
+        open={modelOpen}
+        onOk={() => {
+          setModelOpen(false);
+        }}
+        onCancel={() => {
+          setModelOpen(false);
+        }}
+      >
+        <QRCode
+          errorLevel="H"
+          // value={`https://open.work.weixin.qq.com/wwopen/sso/qrConnect?appid=ww43a1b769b5588d58&agentid=1000003&redirect_uri=http://zengzeping.com/api/wecom/login&state=${user?.id}`}
+          value="https://work.weixin.qq.com/join/IQGRCavbXONRXHLWkvzILw/hb_share_mng_index"
+        />
       </Modal>
+
+      <UserForm
+        typeAddOrUpdate={false}
+        updateUserInit={user}
+        modalOpen={userModalOpen}
+        setModalOpen={setUserModalOpen}
+      />
     </div>
   );
 };

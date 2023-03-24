@@ -1,9 +1,8 @@
 import { QuestionCircleOutlined } from '@ant-design/icons';
 import { useEmotionCss } from '@ant-design/use-emotion-css';
-import { SelectLang, useModel } from '@umijs/max';
+import { SelectLang } from '@umijs/max';
 import React from 'react';
 import Avatar from './AvatarDropdown';
-
 
 export type SiderTheme = 'light' | 'dark';
 
@@ -33,12 +32,6 @@ const GlobalHeaderRight: React.FC = () => {
       },
     };
   });
-
-  const { initialState } = useModel('@@initialState');
-
-  if (!initialState || !initialState.settings) {
-    return null;
-  }
 
   return (
     <div className={className}>
