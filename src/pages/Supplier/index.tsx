@@ -4,7 +4,7 @@ import type { ActionType, ProColumns } from '@ant-design/pro-components';
 import { ProTable } from '@ant-design/pro-components';
 import { Button, Modal } from 'antd';
 import { useRef, useState } from 'react';
-export default function SupplierList() {
+export default function Index() {
   const proTableRef = useRef<ActionType>();
   // 关闭和打开SupplierForm模态框
   const [ModalOpen, setModalOpen] = useState<boolean>(false);

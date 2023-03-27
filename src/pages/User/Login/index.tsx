@@ -12,10 +12,10 @@ import { Card, Space, Tabs } from 'antd';
 import { useEffect, useRef, useState } from 'react';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import './Login.less';
+import './index.less';
 type LoginType = 'phone' | 'account';
 
-const Login: React.FC = () => {
+const Index: React.FC = () => {
   // const [userLoginState, setUserLoginState] = useState<>({});
   const [loginType, setLoginType] = useState<LoginType>('phone');
   const captchaRef = useRef<CaptFieldRef | null | undefined>();
@@ -209,4 +209,4 @@ const Login: React.FC = () => {
     </div>
   );
 };
-export default Login;
+export default Index;

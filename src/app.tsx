@@ -1,7 +1,7 @@
 import Footer from '@/components/Footer';
 import RightContent from '@/components/RightContent';
 import { LinkOutlined } from '@ant-design/icons';
-import type { Settings as LayoutSettings } from '@ant-design/pro-components';
+import {PageLoading, Settings as LayoutSettings } from '@ant-design/pro-components';
 import { SettingDrawer } from '@ant-design/pro-components';
 import type { RequestConfig, RunTimeLayoutConfig } from '@umijs/max';
 import { history, Link, useModel } from '@umijs/max';
@@ -12,8 +12,12 @@ import 'react-toastify/dist/ReactToastify.css';
 import { AxiosResponse } from '@umijs/utils/compiled/axios';
 import { notification } from 'antd';
 import defaultSettings from '../config/defaultSettings';
-const isDev = process.env.NODE_ENV === 'development';
+import React from "react";
 const loginPath = '/login';
+
+// 更改loading
+// import { Spin } from 'antd';
+// Spin.setDefaultIndicator(<div>123</div>);
 
 /**
  * @see  https://umijs.org/zh-CN/plugins/plugin-initial-state
@@ -35,12 +39,13 @@ interface ResponseStructure {
   showType?: ErrorShowType;
 }
 
+
 export async function getInitialState(): Promise<{
   settings?: Partial<LayoutSettings>;
+  loading?: boolean;
 }> {
-  // 如果不是登录页面，就初始化全局数据
-  const { location } = history;
 
+  const { location } = history;
   if (location.pathname !== loginPath) {
     // 没有token就返回登录地址
     const token = localStorage.getItem(' Token ');
@@ -59,24 +64,23 @@ export async function getInitialState(): Promise<{
 
 // ProLayout 支持的api https://procomponents.ant.design/components/layout
 export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) => {
-  const { user } = useModel('user');
+  const { user, toggleUser } = useModel('user');
+  const { toggleSelector } = useModel('selector');
 
   return {
     rightContentRender: () => <RightContent />,
     waterMarkProps: {
       content: user?.name,
     },
-    footerRender: () => <Footer />,
-    // onPageChange: () => {
-    //   const { location } = history;
-    //   // 如果没有登录，重定向到 login
-    //   if (!initialState?.currentUser && location.pathname !== loginPath) {
-    //     console.log('app.tsx中');
-    //     console.log(initialState?.currentUser);
-    //     // history.push(loginPath);
-    //   }
-    // },
-    onPageChange: () => {},
+    // footerRender: () => <Footer />,
+    onPageChange: () => {
+      const { location } = history;
+      if (location.pathname !== loginPath) {
+        // 如果不是登录页面 可以请求一些全局数据
+        toggleUser();
+        toggleSelector();
+      }
+    },
     layoutBgImgList: [
       {
         src: 'https://mdn.alipayobjects.com/yuyan_qk0oxh/afts/img/D2LWSqNny4sAAAAAAAAAAAAAFl94AQBr',
@@ -97,20 +101,18 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
         width: '331px',
       },
     ],
-    links: isDev
-      ? [
-          <Link key="openapi" to="/umi/plugin/openapi" target="_blank">
-            <LinkOutlined />
-            <span>OpenAPI 文档</span>
-          </Link>,
-        ]
-      : [],
+    links: [
+      <Link key="openapi" to="/umi/plugin/openapi" target="_blank">
+        <LinkOutlined />
+        <span>OpenAPI 文档</span>
+      </Link>,
+    ],
     menuHeaderRender: undefined,
     // 自定义 403 页面
     // unAccessible: <div>unAccessible</div>,
     // 增加一个 loading 的状态
     childrenRender: (children) => {
-      // if (initialState?.loading) return <PageLoading />;
+      // if (initialState?.loading) return <div>123</div>;
       return (
         <>
           <ToastContainer />
@@ -206,6 +208,7 @@ function responseInterceptor() {
   };
 }
 
+
 export const request: RequestConfig = {
   // errorConfig: errorConfig,
   errorConfig: {
@@ -216,6 +219,8 @@ export const request: RequestConfig = {
         const error: any = new Error(errorMessage);
         error.name = 'BizError';
         error.info = { errorCode, errorMessage, showType, data };
+        error.response = res
+        error.status = errorCode
         throw error; // 抛出自制的错误
       }
     },
@@ -253,21 +258,22 @@ export const request: RequestConfig = {
       } else if (error.response) {
         // Axios 的错误
         // 请求成功发出且服务器也响应了状态码，但状态代码超出了 2xx 的范围
-        toast.error(`Response status:${error.response.status}`);
+        toast.error(`服务器出错:Response status:${error.response.status}`);
       } else if (error.request) {
         // 请求已经成功发起，但没有收到响应
         // \`error.request\` 在浏览器中是 XMLHttpRequest 的实例，
         // 而在node.js中是 http.ClientRequest 的实例
-        toast.error('None response! Please retry.');
+        toast.error('服务器问题,请联系管理员');
       } else {
         // 发送请求时出了点问题
-        toast.error('Request error, please retry.');
+        toast.error('服务器问题,请联系管理员');
       }
     },
   },
   headers: { 'X-Requested-With': 'XMLHttpRequest' },
   // 新增自动添加AccessToken的请求前拦截器
   requestInterceptors: [csrfTokenInterceptor],
+  // @ts-ignore
   responseInterceptors: [responseDataFormat(), responseInterceptor()],
 };
 

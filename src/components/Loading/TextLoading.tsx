@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import './TextLoading.less';
 
+
 const TextMorph: React.FC<{
   texts: string[];
   morphTime: number;

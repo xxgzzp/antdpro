@@ -1,9 +1,9 @@
 import { EditableCell, EditableRow } from '@/components/Utils/Editable';
-import '@/pages/ContractItem/ContractItemList.less';
-import ContractTop from '@/pages/ContractItem/ContractTop';
+import '@/pages/Contract/ContractItem/ContractItemList.less';
+import ContractTop from '@/pages/Contract/ContractItem/ContractTop';
 import useContractLocalStorage, {
   ContractLocal,
-} from '@/pages/ContractItem/useContractLocalStorage';
+} from '@/pages/Contract/ContractItem/useContractLocalStorage';
 import {
   apiMaterialContractItemList,
   apiMaterialContractUpdate,
@@ -17,8 +17,9 @@ import { isEqual } from 'lodash';
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router';
 import { v4 as uuidv4 } from 'uuid';
+import {PlusOutlined} from "@ant-design/icons";
 
-const ContractItemList: React.FC = () => {
+const Index: React.FC = () => {
   // 请求订单项
   const {
     data: remoteDate,
@@ -343,8 +344,16 @@ const ContractItemList: React.FC = () => {
           rowExpandable: handleRowExpandable,
         }}
       />
+      <Button
+        type="dashed"
+        onClick={handleAdd}
+        style={{ width: '100%', marginBottom: 8 }}
+      >
+        <PlusOutlined />
+        添加一行
+      </Button>
     </div>
   );
 };
 
-export default ContractItemList;
+export default Index;

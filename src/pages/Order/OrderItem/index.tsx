@@ -1,7 +1,7 @@
 import { EditableCell, EditableRow } from '@/components/Utils/Editable';
-import '@/pages/OrderItem/OrderItemList.less';
-import OrderTop from '@/pages/OrderItem/OrderTop';
-import useOrderLocalStorage, { OrderLocal } from '@/pages/OrderItem/useOrderLocalStorage';
+import '@/pages/Order/OrderItem/index.less';
+import OrderTop from '@/pages/Order/OrderItem/OrderTop';
+import useOrderLocalStorage, { OrderLocal } from '@/pages/Order/OrderItem/useOrderLocalStorage';
 import { apiMaterialOrderItemList, apiMaterialOrderUpdate } from '@/services/ant-design-pro/api';
 import { ProTable } from '@ant-design/pro-table';
 import { request, useModel } from '@umijs/max';
@@ -11,8 +11,9 @@ import { isEqual } from 'lodash';
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router';
 import { v4 as uuidv4 } from 'uuid';
+import {PlusOutlined} from "@ant-design/icons";
 
-const OrderItemList: React.FC = () => {
+const Index: React.FC = () => {
   // 请求订单项
   const {
     data: remoteDate,
@@ -335,9 +336,17 @@ const OrderItemList: React.FC = () => {
           rowExpandable: handleRowExpandable,
         }}
       />
+      <Button
+        type="dashed"
+        onClick={handleAdd}
+        style={{ width: '100%', marginBottom: 8 }}
+      >
+        <PlusOutlined />
+        添加一行
+      </Button>
       <div style={{ height: '600px' }}></div>
     </div>
   );
 };
 
-export default OrderItemList;
+export default Index;

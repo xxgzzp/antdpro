@@ -4,7 +4,7 @@ import { FileOutlined, ShoppingOutlined, SolutionOutlined } from '@ant-design/ic
 import { history, useModel } from '@umijs/max';
 import { Badge, Card, Col, Collapse, List, Modal, QRCode, Row } from 'antd';
 
-import UserCard from '@/components/User/UserCard';
+import UserCard from '@/pages/User/UserCard';
 import UserForm from '@/pages/User/UserForm';
 import { apiDashboardList } from '@/services/ant-design-pro/api';
 import { useRequest } from 'ahooks';
