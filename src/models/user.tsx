@@ -7,7 +7,7 @@ export default () => {
   const [ready, { setRight: toggleUser }] = useToggle(false);
   const [userModalOpen, setUserModalOpen] = useState(false);
 
-  const { data: user } = useRequest<API.User, any>(
+  const { data: user,loading } = useRequest<API.User, any>(
     () =>
       apiOaCurrentuserList({
         // skipErrorHandler: true,
@@ -18,6 +18,7 @@ export default () => {
   );
 
   return {
+    loading,
     ready,
     user,
     toggleUser,

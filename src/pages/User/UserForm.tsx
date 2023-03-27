@@ -131,10 +131,7 @@ const UserForm: React.FC<{
           {/*注意，disabled={!editPassword}的意思是，新增用户能为他设置密码，更新用户不能更改他的密码*/}
           <ProFormText width="md" name="password" label="密码" disabled={!typeAddOrUpdate} />
         </ProFormGroup>
-        <ProFormGroup>
           <ProFormText width="md" name="name" label="真实姓名" placeholder="请输入真实姓名" />
-          <ProFormText width="md" name="id_card_no" label="身份证" placeholder="请输入身份证号码" />
-        </ProFormGroup>
         <ProForm.Item label="身份/职位" name="identity" initialValue={14}>
           <Select
             /*注意,这里的默认值是值默认显示的，不会默认发送表单，上面的那个默认才会*/

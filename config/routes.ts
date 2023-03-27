@@ -128,4 +128,10 @@ export default [
     layout: false,
     component: './User/Register',
   },
+  {
+    name: 'text',
+    path: '/center',
+    layout: false,
+    component: './User/UserCenter',
+  },
 ];

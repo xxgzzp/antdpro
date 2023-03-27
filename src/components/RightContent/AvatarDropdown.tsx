@@ -31,7 +31,7 @@ const Name = () => {
     };
   });
 
-  return <span className={`${nameClassName} anticon`}>{user?.name}</span>;
+  return <span className={`${nameClassName} anticon`} style={{fontWeight: 'bold'}}>{user?.name}</span>;
 };
 
 const AvatarLogo = () => {
