@@ -1,45 +1,30 @@
 import { formatDate } from '@/components/Utils/formatDate';
-import UploadMy from '@/components/Utils/UploadMy';
 import ProjectSelectAdd from '@/pages/Project/ProjectSelectAdd';
 import SupplierSelectAdd from '@/pages/Supplier/SupplierSelectAdd';
 import UserSelectAdd from '@/pages/User/UserSelectAdd';
 import {
-  apiMaterialOrderCheckedList, apiMaterialOrderPartialUpdate,
-  apiMaterialOrderRead,
+  apiMaterialOrderCheckedList,
+  apiMaterialOrderPartialUpdate,
   apiMaterialOrderUpdate,
   apiMaterialOrderUploadToWecomList,
 } from '@/services/ant-design-pro/api';
 
+import UploadMy from '@/components/Utils/UploadMy';
 import { KeepAliveContext, useLocation } from '@@/exports';
-import {
-  CloudDownloadOutlined,
-  FormOutlined,
-  UploadOutlined
-} from '@ant-design/icons';
+import { CloudDownloadOutlined, FormOutlined, UploadOutlined } from '@ant-design/icons';
 import { request, useModel } from '@umijs/max';
 import { useRequest } from 'ahooks';
-import {
-  Badge,
-  Button,
-  Card,
-  Descriptions,
-  Form,
-  Input, Rate,
-  Skeleton,
-  Tag,
-  Tooltip,
-} from 'antd';
+import { Badge, Button, Descriptions, Form, Input, Rate, Skeleton, Tag, Tooltip } from 'antd';
 import { FormInstance } from 'antd/es/form';
 import { CustomTagProps } from 'rc-select/es/BaseSelect';
-import React, {useEffect, useRef, useState} from 'react';
-import {useForm} from "rc-field-form";
-import {toast} from "react-toastify";
+import React, { useEffect, useState } from 'react';
+import { toast } from 'react-toastify';
 interface OrderCheckedResponse {
   results: API.OrderChecked[]; // 将结果数组中的每个对象都指定为 OrderCheckedResult 类型
 }
 
 // TODO:审核人颜色-Tooltip
-const tagRender = (props: CustomTagProps, userEnum: any[], orderChecked?:  OrderCheckedResponse) => {
+const tagRender = (props: CustomTagProps, userEnum: any[], orderChecked?: OrderCheckedResponse) => {
   const { label, value, closable, onClose } = props;
   const [showTooltip, setShowTooltip] = useState(false);
 
@@ -66,9 +51,9 @@ const tagRender = (props: CustomTagProps, userEnum: any[], orderChecked?:  Order
 
   useEffect(() => {
     if (!_user?.userid || orderCheckItem?.speech || orderCheckItem?.sp_status_name) {
-      setShowTooltip(true)
+      setShowTooltip(true);
     }
-  },[_user])
+  }, [_user]);
 
   return (
     <Tooltip
@@ -84,7 +69,9 @@ const tagRender = (props: CustomTagProps, userEnum: any[], orderChecked?:  Order
       }
     >
       <Tag
-        onMouseOver={() => {setShowTooltip(true)}}
+        onMouseOver={() => {
+          setShowTooltip(true);
+        }}
         color={orderCheckItem?.sp_status ? tagColor[orderCheckItem.sp_status] : 'cyan'}
         onMouseDown={onPreventMouseDown}
         closable={closable}
@@ -94,23 +81,17 @@ const tagRender = (props: CustomTagProps, userEnum: any[], orderChecked?:  Order
         {label}
       </Tag>
     </Tooltip>
-
   );
 };
-
 
 const OrderTop: React.FC<{
   orderForm: FormInstance<any> | undefined;
   order_id: string | undefined;
-}> = ({ orderForm, order_id }) => {
+  orderDetail: API.Order | undefined;
+  orderDetailLoading: boolean | undefined;
+  getOrderDetail: any;
+}> = ({ orderForm, order_id, orderDetail, orderDetailLoading, getOrderDetail }) => {
   // 加载远程数据
-  const {
-    data: orderDetail,
-    loading: orderDetailLoading,
-    run: getOrderDetail,
-  } = useRequest<API.Order, any>(apiMaterialOrderRead, {
-    manual: true,
-  });
 
   const { data: orderChecked } = useRequest<OrderCheckedResponse, any>(() =>
     apiMaterialOrderCheckedList({ order: order_id }),
@@ -121,6 +102,7 @@ const OrderTop: React.FC<{
   const [exportWecomLoading, setExportWecomLoading] = useState(false);
   // 更改标签页标题
   const location = useLocation();
+  // @ts-ignore
   const { updateTab } = React.useContext(KeepAliveContext);
   const [applyeventLoading, setApplyeventLoading] = useState(false);
 
@@ -167,8 +149,6 @@ const OrderTop: React.FC<{
     10: 'green',
   };
 
-
-
   // TODO:导出excel
   const handelExport = () => {
     window.open(`/api/material/order/${order_id}/export_to_excel/`);
@@ -185,29 +165,27 @@ const OrderTop: React.FC<{
 
   // TODO:创建审核单
   const handelApplyevent = async () => {
-    setApplyeventLoading(true)
+    setApplyeventLoading(true);
     // 先提交订单信息 再审核
-    await apiMaterialOrderUpdate({id: order_id!}, {...orderForm?.getFieldsValue()});
+    await apiMaterialOrderUpdate({ id: order_id! }, { ...orderForm?.getFieldsValue() });
     await request(`/api/material/order/${order_id}/applyevent/`);
-    setApplyeventLoading(false)
+    setApplyeventLoading(false);
   };
 
   // TODO:对供应商评价
-  const handleSupplierRate = (value:number) => {
+  const handleSupplierRate = (value: number) => {
     const intValue = Math.round(value * 2);
     if (intValue !== rateValue && intValue >= 0 && intValue <= 10) {
       setRateValue(intValue);
-      apiMaterialOrderPartialUpdate({ id: order_id! }, { supplier_rate: intValue }).then(
-        () => {
-          toast.success('打分成功')
-        }
-      ).catch(
-        () => {
-          toast.error('打分失败')
-        }
-      );
+      apiMaterialOrderPartialUpdate({ id: order_id! }, { supplier_rate: intValue })
+        .then(() => {
+          toast.success('打分成功');
+        })
+        .catch(() => {
+          toast.error('打分失败');
+        });
     }
-  }
+  };
 
   return (
     <Skeleton loading={orderDetailLoading} active={true}>
@@ -216,100 +194,110 @@ const OrderTop: React.FC<{
           text={orderDetail?.sp_status_name}
           color={orderDetail?.sp_status ? badgeColor[orderDetail?.sp_status] : 'cyan'}
         >
-          <Card>
-            <Descriptions bordered size="small">
-              <Descriptions.Item label="标题">
-                <Form.Item name="name">
-                  <Input placeholder="请输入" bordered={false} />
-                </Form.Item>
-              </Descriptions.Item>
+          <Descriptions size="small" bordered>
+            <Descriptions.Item label="标题">
+              <Form.Item name="name">
+                <Input placeholder="请输入" bordered={false} />
+              </Form.Item>
+            </Descriptions.Item>
 
-              <Descriptions.Item label="创建者">
-                <Form.Item name="created_by">
-                  <UserSelectAdd
-                    bordered={false}
-                    initialValues={orderDetail?.created_by}
-                  ></UserSelectAdd>
-                </Form.Item>
-              </Descriptions.Item>
+            <Descriptions.Item label="创建者">
+              <Form.Item name="created_by">
+                <UserSelectAdd
+                  style={{ width: '200px' }}
+                  bordered={false}
+                  initialValues={orderDetail?.created_by}
+                ></UserSelectAdd>
+              </Form.Item>
+            </Descriptions.Item>
 
-              <Descriptions.Item label="审核人">
-                <Form.Item name="checkers">
-                  <UserSelectAdd
-                    bordered={false}
-                    mode="multiple"
-                    tagRender={(props: CustomTagProps)=>tagRender(props,userEnum,orderChecked)}
-                    initialValues={orderDetail?.checked_by?.map((r) => r.checked_by)}
-                  ></UserSelectAdd>
-                </Form.Item>
-                <Button onClick={handelApplyevent} icon={<FormOutlined />} loading={applyeventLoading} type="dashed">生成审批单</Button>
-              </Descriptions.Item>
+            <Descriptions.Item label="审核人">
+              <Form.Item name="checkers">
+                <UserSelectAdd
+                  style={{ width: '200px' }}
+                  bordered={false}
+                  mode="multiple"
+                  tagRender={(props: CustomTagProps) => tagRender(props, userEnum, orderChecked)}
+                  initialValues={orderDetail?.checked_by?.map((r) => r.checked_by)}
+                ></UserSelectAdd>
+              </Form.Item>
+              <Button
+                onClick={handelApplyevent}
+                icon={<FormOutlined />}
+                loading={applyeventLoading}
+                type="dashed"
+              >
+                生成审批单
+              </Button>
+            </Descriptions.Item>
 
-              <Descriptions.Item label="供应商">
-                <Form.Item name="supplier">
-                  <SupplierSelectAdd
-                    bordered={false}
-                    initialValue={orderDetail?.supplier}
-                  ></SupplierSelectAdd>
-                </Form.Item>
-                {orderDetail?.supplier && (<Rate allowHalf style={{padding:'0px'}} value={rateValue} defaultValue={orderDetail?.supplier_rate} onChange={handleSupplierRate} />)}
-              </Descriptions.Item>
-
-              <Descriptions.Item label="项目">
-                <Form.Item name="project">
-                  <ProjectSelectAdd
-                    bordered={false}
-                    initialValue={orderDetail?.project}
-                  ></ProjectSelectAdd>
-                </Form.Item>
-              </Descriptions.Item>
-
-              <Descriptions.Item label="类别">
-                <Form.Item name="category">
-                  <Input placeholder="请输入" bordered={false} />
-                </Form.Item>
-              </Descriptions.Item>
-              {orderDetail?.created_time && (
-                <Descriptions.Item label="创建时间">
-                  {orderDetail?.created_time ? formatDate(orderDetail?.created_time) : null}
-                </Descriptions.Item>
+            <Descriptions.Item label="供应商">
+              <Form.Item name="supplier">
+                <SupplierSelectAdd
+                  style={{ width: '200px' }}
+                  bordered={false}
+                  initialValue={orderDetail?.supplier}
+                ></SupplierSelectAdd>
+              </Form.Item>
+              {orderDetail?.supplier && (
+                <Rate
+                  allowHalf
+                  style={{ padding: '0px' }}
+                  value={rateValue}
+                  defaultValue={orderDetail?.supplier_rate}
+                  onChange={handleSupplierRate}
+                />
               )}
+            </Descriptions.Item>
 
-              <Descriptions.Item label="导入/导出" span={2}>
-                <div style={{ display: 'flex', alignItems: 'center' }}>
-                  <UploadMy order_id={orderDetail?.id}></UploadMy>
-                  <Button
-                    style={{ display: 'inline-block' }}
-                    icon={<UploadOutlined rotate={180} />}
-                    type="text"
-                    onClick={handelExport}
-                  >
-                    导出材料单
-                  </Button>
-                  <Button
-                    style={{ display: 'inline-block' }}
-                    loading={exportWecomLoading}
-                    icon={<CloudDownloadOutlined />}
-                    type="text"
-                    onClick={handelUploadToWecom}
-                  >
-                    创建"腾讯文档"
-                  </Button>
-                  {orderDetail?.share_url && (
-                    <a
-                      style={{ display: 'inline-block' }}
-                      type="text"
-                      onClick={() => {
-                        window.open(`${orderDetail?.share_url}`);
-                      }}
-                    >
-                      腾讯文档
-                    </a>
-                  )}
-                </div>
+            <Descriptions.Item label="项目">
+              <Form.Item name="project">
+                <ProjectSelectAdd
+                  style={{ width: '200px' }}
+                  bordered={false}
+                  initialValue={orderDetail?.project}
+                ></ProjectSelectAdd>
+              </Form.Item>
+            </Descriptions.Item>
+
+            <Descriptions.Item label="类别">
+              <Form.Item name="category">
+                <Input placeholder="请输入" bordered={false} />
+              </Form.Item>
+            </Descriptions.Item>
+            {orderDetail?.created_time && (
+              <Descriptions.Item label="创建时间">
+                {orderDetail?.created_time ? formatDate(orderDetail?.created_time) : null}
               </Descriptions.Item>
-            </Descriptions>
-          </Card>
+            )}
+
+            <Descriptions.Item label="导入/导出" span={2}>
+              <div style={{ display: 'flex', alignItems: 'center' }}>
+                <UploadMy order_id={orderDetail?.id}></UploadMy>
+                <Button icon={<UploadOutlined rotate={180} />} type="text" onClick={handelExport}>
+                  导出材料单
+                </Button>
+                <Button
+                  loading={exportWecomLoading}
+                  icon={<CloudDownloadOutlined />}
+                  type="text"
+                  onClick={handelUploadToWecom}
+                >
+                  创建"腾讯文档"
+                </Button>
+                {orderDetail?.share_url && (
+                  <a
+                    type="text"
+                    onClick={() => {
+                      window.open(`${orderDetail?.share_url}`);
+                    }}
+                  >
+                    腾讯文档
+                  </a>
+                )}
+              </div>
+            </Descriptions.Item>
+          </Descriptions>
         </Badge.Ribbon>
       </Form>
     </Skeleton>

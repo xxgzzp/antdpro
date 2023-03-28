@@ -43,7 +43,7 @@ const UploadMy: React.FC<{
   };
   return (
     <Upload {...props}>
-      <Button icon={<UploadOutlined />} type="text" style={{ display: 'inline-block' }}>
+      <Button icon={<UploadOutlined />} type="text">
         导入材料单
       </Button>
     </Upload>

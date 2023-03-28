@@ -9,7 +9,8 @@ const ProjectSelectAdd: React.FC<{
   initialValue?: any;
   onChange?: (value: any) => void;
   bordered?: boolean;
-}> = ({ mode, initialValue, onChange, bordered }) => {
+  [key: string]: any;
+}> = ({ mode, initialValue, onChange, bordered, ...restProps }) => {
   const [projectModalOpen, setProjectModalOpen] = useState<boolean>(false);
   const [projectList, setProjectList] = useState<{ value: string | undefined; label: string }[]>(
     [],
@@ -75,6 +76,7 @@ const ProjectSelectAdd: React.FC<{
             </Space>
           </>
         )}
+        {...restProps}
       />
       <ProjectForm
         modalOpen={projectModalOpen}

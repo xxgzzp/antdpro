@@ -9,7 +9,8 @@ const SupplierSelectAdd: React.FC<{
   initialValue?: any;
   onChange?: (value: any) => void;
   bordered?: boolean;
-}> = ({ mode, initialValue, onChange, bordered }) => {
+  [key: string]: any;
+}> = ({ mode, initialValue, onChange, bordered, ...restProps }) => {
   const [supplierModalOpen, setSupplierModalOpen] = useState<boolean>(false);
   const [supplierList, setSupplierList] =
     useState<{ value: string | undefined; label: string }[]>();
@@ -69,6 +70,7 @@ const SupplierSelectAdd: React.FC<{
             </Space>
           </>
         )}
+        {...restProps}
       />
       <SupplierForm
         modalOpen={supplierModalOpen}

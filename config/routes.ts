@@ -121,4 +121,10 @@ export default [
     layout: false,
     component: './User/UserCenter',
   },
+  {
+    name: 'text',
+    path: '/rate',
+    layout: false,
+    component: './Order/SupplierRate',
+  },
 ];

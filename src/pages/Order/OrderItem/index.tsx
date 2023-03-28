@@ -1,17 +1,25 @@
 import { EditableCell, EditableRow } from '@/components/Utils/Editable';
+import { formatDate } from '@/components/Utils/formatDate';
 import '@/pages/Order/OrderItem/index.less';
 import OrderTop from '@/pages/Order/OrderItem/OrderTop';
 import useOrderLocalStorage, { OrderLocal } from '@/pages/Order/OrderItem/useOrderLocalStorage';
-import { apiMaterialOrderItemList, apiMaterialOrderUpdate } from '@/services/ant-design-pro/api';
-import { PlusOutlined } from '@ant-design/icons';
+import SupplierRate from '@/pages/Order/SupplierRate';
+import {
+  apiMaterialOrderItemList,
+  apiMaterialOrderRead,
+  apiMaterialOrderUpdate,
+} from '@/services/ant-design-pro/api';
+import { DingdingOutlined, PlusOutlined } from '@ant-design/icons';
+import { PageContainer } from '@ant-design/pro-components';
 import { ProTable } from '@ant-design/pro-table';
 import { request, useModel } from '@umijs/max';
 import { useRequest } from 'ahooks';
-import { Button, Form, Popconfirm, Table } from 'antd';
+import { Button, Card, Form, Popconfirm, Steps, Table } from 'antd';
 import { isEqual } from 'lodash';
-import React, { useEffect, useState } from 'react';
+import React, { Fragment, useEffect, useState } from 'react';
 import { useParams } from 'react-router';
 import { v4 as uuidv4 } from 'uuid';
+const { Step } = Steps;
 
 const Index: React.FC = () => {
   // 请求订单项
@@ -20,6 +28,14 @@ const Index: React.FC = () => {
     loading: orderRemoteLoading,
     run: getOrderItemRemote,
   } = useRequest(apiMaterialOrderItemList, { manual: true });
+
+  const {
+    data: orderDetail,
+    loading: orderDetailLoading,
+    run: getOrderDetail,
+  } = useRequest<API.Order, any>(apiMaterialOrderRead, {
+    manual: true,
+  });
 
   // URL中的order_id
   const { order_id } = useParams<{ order_id?: string }>();
@@ -50,7 +66,10 @@ const Index: React.FC = () => {
     if (remoteDate && orderLocal?.length) {
       // 去除时间戳后比较
       const _localDate = orderLocal[0].items.map((item) => ({ ...item, timestamp: undefined }));
-      const _remoteDate = remoteDate.results.map((item) => ({ ...item, timestamp: undefined }));
+      const _remoteDate = remoteDate.results.map((item: any) => ({
+        ...item,
+        timestamp: undefined,
+      }));
       if (isEqual(_localDate, _remoteDate)) {
         // TODO:若远程数据和本地数据相等就删除本地数据
         deleteOrderLocal(order_id!);
@@ -138,11 +157,11 @@ const Index: React.FC = () => {
     })
       .then(() => {
         setReloadKey(reloadKey + 1);
+        getOrderDetail();
       })
       .catch(() => {
         setCommitLoading(false);
       });
-
     setCommitLoading(false);
     // 提交了就在本地删除
     deleteOrderLocal(order_id!);
@@ -255,8 +274,8 @@ const Index: React.FC = () => {
   const handleRowExpandable = (record: API.OrderItem) => {
     if (orderLocal?.length && remoteDate) {
       // 按时间戳判断，如果是修改了就展开
-      const remoteItem = remoteDate.results.filter((item) => item.id === record.id);
-      const timestamp = remoteItem.map((item) => item.timestamp)[0];
+      const remoteItem = remoteDate.results.filter((item: any) => item.id === record.id);
+      const timestamp = remoteItem.map((item: any) => item.timestamp)[0];
       const _localItem = { ...record, timestamp: undefined };
       const _remoteItem = { ...remoteItem[0], timestamp: undefined };
       const _isEqual = isEqual(_localItem, _remoteItem);
@@ -288,56 +307,139 @@ const Index: React.FC = () => {
     return <p>远程获取数据失败</p>;
   };
 
+  const desc1 = (
+    <div>
+      <Fragment>
+        {orderDetail?.created_by_name}
+        <DingdingOutlined style={{ marginLeft: 8 }} />
+      </Fragment>
+      <div>{orderDetail?.created_time ? formatDate(orderDetail?.created_time) : null}</div>
+    </div>
+  );
+
+  const desc2 = (
+    <div>
+      <Button type="link" onClick={handleCommit}>
+        提交
+      </Button>
+    </div>
+  );
+
+  const [tabStatus, seTabStatus] = useState({
+    operationKey: 'tab1',
+    tabActiveKey: 'detail',
+  });
+  const onTabChange = (tabActiveKey: string) => {
+    seTabStatus({ ...tabStatus, tabActiveKey });
+  };
+
   return (
     <div>
-      <OrderTop orderForm={orderForm} order_id={order_id}></OrderTop>
-      <ProTable
-        style={{ paddingTop: '20px' }}
-        rowKey="id"
-        locale={{ emptyText: 'empty' }}
-        // 有本地数据就不显示加载
-        loading={orderLocal?.length ? false : orderRemoteLoading}
-        components={components}
-        rowClassName={() => 'editable-row'}
-        bordered
-        dataSource={dataSource}
-        // @ts-ignore
-        columns={columns as ColumnTypes}
-        pagination={false}
-        // 吸顶
-        sticky
-        // scroll={{ x: 'max-content', y: 'calc(100vh - 300px)' }}
-        size="small" // 紧凑
-        search={false}
-        options={{
-          // 全屏
-          fullScreen: true,
-        }}
-        // 右上角按钮
-        toolBarRender={() => [
-          <div key="proTableOption">
-            <span style={{ paddingRight: '10px' }}>
-              <Button
-                onClick={handleCommit}
-                type="primary"
-                style={{ marginBottom: 16 }}
-                loading={commitLoading}
-              >
-                提交
-              </Button>
-            </span>
-          </div>,
+      <PageContainer
+        title={orderDetail?.name}
+        waterMarkProps={{ fontSize: 0 }}
+        content={
+          <OrderTop
+            orderForm={orderForm}
+            order_id={order_id}
+            orderDetail={orderDetail}
+            orderDetailLoading={orderDetailLoading}
+            getOrderDetail={getOrderDetail}
+          ></OrderTop>
+        }
+        tabActiveKey={tabStatus.tabActiveKey}
+        onTabChange={onTabChange}
+        tabList={[
+          {
+            key: 'detail',
+            tab: '材料单',
+          },
+          {
+            key: 'supplier_rate',
+            tab: '供应商评价',
+          },
         ]}
-        expandable={{
-          expandedRowRender: handleExpendedRowRender,
-          rowExpandable: handleRowExpandable,
-        }}
-      />
-      <Button type="dashed" onClick={handleAdd} style={{ width: '100%', marginBottom: 8 }}>
-        <PlusOutlined />
-        添加一行
-      </Button>
-      <div style={{ height: '600px' }}></div>
+      >
+        {tabStatus.tabActiveKey === 'detail' && (
+          <div>
+            <Card title="流程进度">
+              <Steps
+                direction={'horizontal'}
+                current={orderDetail?.step ? orderDetail?.step + 1 : 0}
+                percent={60}
+                labelPlacement="vertical"
+              >
+                <Step title="创建" description={desc1} />
+                <Step title="提交材料单" description={desc2} />
+                <Step title="创建审核单" />
+                <Step title="审核" />
+                <Step title="供货商评价" />
+                <Step title="完成" />
+              </Steps>
+            </Card>
+
+            <ProTable
+              style={{ paddingTop: '20px' }}
+              rowKey="id"
+              locale={{ emptyText: 'empty' }}
+              // 有本地数据就不显示加载
+              loading={orderLocal?.length ? false : orderRemoteLoading}
+              components={components}
+              rowClassName={() => 'editable-row'}
+              bordered
+              dataSource={dataSource}
+              // @ts-ignore
+              columns={columns as ColumnTypes}
+              pagination={false}
+              // 吸顶
+              sticky
+              // scroll={{ x: 'max-content', y: 'calc(100vh - 300px)' }}
+              size="small" // 紧凑
+              search={false}
+              options={{
+                // 全屏
+                fullScreen: true,
+              }}
+              // 右上角按钮
+              toolBarRender={() => [
+                <div key="proTableOption">
+                  <span style={{ paddingRight: '10px' }}>
+                    <Button
+                      onClick={handleCommit}
+                      type="primary"
+                      style={{ marginBottom: 16 }}
+                      loading={commitLoading}
+                    >
+                      提交
+                    </Button>
+                    <Button
+                      onClick={handleAdd}
+                      type="primary"
+                      style={{ marginBottom: 16, marginLeft: 10 }}
+                    >
+                      增加一行
+                    </Button>
+                  </span>
+                </div>,
+              ]}
+              expandable={{
+                expandedRowRender: handleExpendedRowRender,
+                rowExpandable: handleRowExpandable,
+              }}
+            />
+            <Button type="dashed" onClick={handleAdd} style={{ width: '100%', marginBottom: 8 }}>
+              <PlusOutlined />
+              添加一行
+            </Button>
+
+            <div style={{ height: '600px' }}></div>
+          </div>
+        )}
+
+        {tabStatus.tabActiveKey === 'supplier_rate' && (
+          <SupplierRate order_id={order_id!} supplier_id={orderDetail?.supplier} />
+        )}
+      </PageContainer>
     </div>
   );
 };
