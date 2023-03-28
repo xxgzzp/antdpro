@@ -6,12 +6,7 @@ import { useRequest } from 'ahooks';
 import { Menu, MenuProps } from 'antd';
 import React, { useState } from 'react';
 
-const InfoCard: React.FC<{
-  title: string;
-  index: number;
-  desc: string;
-  href: string;
-}> = ({ title, href, index, desc }) => {
+const InfoCard: React.FC = () => {
   const { data } = useRequest(apiOaProjectList);
   const [searchParams, setSearchParams] = useState({});
 
@@ -29,7 +24,7 @@ const InfoCard: React.FC<{
       children,
       label,
       onClick: (e) => {
-        setSearchParams({ now_project: e.keyPath[1], search: e.key });
+        setSearchParams({ now_project: e.keyPath[1], department: e.key });
       },
     } as MenuItem;
   }
@@ -45,8 +40,10 @@ const InfoCard: React.FC<{
   };
 
   const items: MenuItem[] = (data?.results || [])?.map((item) => {
+    // @ts-ignore
     const departmentItems = item?.departments?.slice(1).map(
-      (department) => getItem(department, department, <BranchesOutlined />, undefined), // 将部门的值作为参数传递给 getItem
+      (department: API.Department) =>
+        getItem(department?.name, department?.id, <BranchesOutlined />, undefined), // 将部门的值作为参数传递给 getItem
     );
 
     return getItem(

@@ -10,7 +10,8 @@ const UserSelectAdd: React.FC<{
   initialValues?: any;
   bordered?: boolean;
   tagRender?: any;
-}> = ({ mode, onChange, initialValues, bordered, tagRender }) => {
+  [key: string]: any;
+}> = ({ mode, onChange, initialValues, bordered, tagRender, ...restProps }) => {
   const [userModalOpen, setUserModalOpen] = useState<boolean>(false);
   const [userList, setUserList] = useState<{ value: string | undefined; label: string }[]>();
   const [value, setValue] = useState<
@@ -71,6 +72,7 @@ const UserSelectAdd: React.FC<{
             </Space>
           </>
         )}
+        {...restProps}
       />
       <UserForm
         modalOpen={userModalOpen}

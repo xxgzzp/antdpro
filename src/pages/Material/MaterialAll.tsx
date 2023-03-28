@@ -142,9 +142,22 @@ const MaterialAll: React.FC<{
   };
 
   const columns = [
-    { title: '材料编号', dataIndex: 'material_id', key: 'material_id', search: false },
-    { title: '材料与设备名称', dataIndex: 'material_name', key: 'material_name' },
-    { title: '规格', dataIndex: 'material_sku', key: 'material_sku' },
+    {
+      title: '材料编号',
+      dataIndex: 'material_id',
+      key: 'material_id',
+      search: false,
+    },
+    {
+      title: '材料与设备名称',
+      dataIndex: 'material_name',
+      key: 'material_name',
+    },
+    {
+      title: '规格',
+      dataIndex: 'material_sku',
+      key: 'material_sku',
+    },
     { title: '数量', dataIndex: 'total_buy_num', key: 'total_buy_num', search: false },
     { title: '单位', dataIndex: 'material_unit', key: 'material_unit', search: false },
     {
