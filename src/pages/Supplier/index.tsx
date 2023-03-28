@@ -126,6 +126,7 @@ export default function Index() {
         }}
         // 右上角三个调整按钮
         options={{
+          fullScreen: true,
           search: true,
         }}
         // 左上角搜索栏

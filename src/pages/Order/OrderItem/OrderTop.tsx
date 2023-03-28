@@ -4,14 +4,18 @@ import ProjectSelectAdd from '@/pages/Project/ProjectSelectAdd';
 import SupplierSelectAdd from '@/pages/Supplier/SupplierSelectAdd';
 import UserSelectAdd from '@/pages/User/UserSelectAdd';
 import {
-  apiMaterialOrderCheckedList,
+  apiMaterialOrderCheckedList, apiMaterialOrderPartialUpdate,
   apiMaterialOrderRead,
   apiMaterialOrderUpdate,
   apiMaterialOrderUploadToWecomList,
 } from '@/services/ant-design-pro/api';
 
 import { KeepAliveContext, useLocation } from '@@/exports';
-import { CloudDownloadOutlined, ShakeOutlined, UploadOutlined } from '@ant-design/icons';
+import {
+  CloudDownloadOutlined,
+  FormOutlined,
+  UploadOutlined
+} from '@ant-design/icons';
 import { request, useModel } from '@umijs/max';
 import { useRequest } from 'ahooks';
 import {
@@ -20,18 +24,81 @@ import {
   Card,
   Descriptions,
   Form,
-  Input,
-  Popconfirm,
+  Input, Rate,
   Skeleton,
   Tag,
   Tooltip,
 } from 'antd';
 import { FormInstance } from 'antd/es/form';
 import { CustomTagProps } from 'rc-select/es/BaseSelect';
-import React, { useEffect, useState } from 'react';
+import React, {useEffect, useRef, useState} from 'react';
+import {useForm} from "rc-field-form";
+import {toast} from "react-toastify";
 interface OrderCheckedResponse {
   results: API.OrderChecked[]; // 将结果数组中的每个对象都指定为 OrderCheckedResult 类型
 }
+
+// TODO:审核人颜色-Tooltip
+const tagRender = (props: CustomTagProps, userEnum: any[], orderChecked?:  OrderCheckedResponse) => {
+  const { label, value, closable, onClose } = props;
+  const [showTooltip, setShowTooltip] = useState(false);
+
+  useEffect(() => {
+    // Wait 2 seconds before showing Tooltip
+    const timer = setTimeout(() => setShowTooltip(false), 3000);
+    // Clean up timer on unmount
+    return () => clearTimeout(timer);
+  }, [showTooltip]);
+
+  const orderCheckItem = orderChecked?.results.find((item) => item.checked_by === value);
+  const onPreventMouseDown = (event: React.MouseEvent<HTMLSpanElement>) => {
+    event.preventDefault();
+    event.stopPropagation();
+  };
+
+  const tagColor: { [key: string]: string } = {
+    '1': '#262626', // 审批中
+    '2': '#52C41A', // 已同意
+    '3': '#F5222D', // 已驳回
+    '4': 'blue', // 已转审
+  };
+  const _user = userEnum?.find((user: any) => user.value === value);
+
+  useEffect(() => {
+    if (!_user?.userid || orderCheckItem?.speech || orderCheckItem?.sp_status_name) {
+      setShowTooltip(true)
+    }
+  },[_user])
+
+  return (
+    <Tooltip
+      destroyTooltipOnHide={true}
+      color={orderCheckItem?.sp_status ? tagColor[orderCheckItem.sp_status] : 'break'}
+      open={showTooltip} // only show Tooltip when showTooltip state is true
+      title={
+        _user?.userid
+          ? orderCheckItem?.speech
+            ? orderCheckItem?.speech
+            : orderCheckItem?.sp_status_name
+          : '该用户未加入企业微信,无法发送'
+      }
+    >
+      <Tag
+        onMouseOver={() => {setShowTooltip(true)}}
+        color={orderCheckItem?.sp_status ? tagColor[orderCheckItem.sp_status] : 'cyan'}
+        onMouseDown={onPreventMouseDown}
+        closable={closable}
+        onClose={onClose}
+        style={{ marginRight: 3 }}
+      >
+        {label}
+      </Tag>
+    </Tooltip>
+
+  );
+};
+
+
 const OrderTop: React.FC<{
   orderForm: FormInstance<any> | undefined;
   order_id: string | undefined;
@@ -44,6 +111,7 @@ const OrderTop: React.FC<{
   } = useRequest<API.Order, any>(apiMaterialOrderRead, {
     manual: true,
   });
+
   const { data: orderChecked } = useRequest<OrderCheckedResponse, any>(() =>
     apiMaterialOrderCheckedList({ order: order_id }),
   );
@@ -54,6 +122,10 @@ const OrderTop: React.FC<{
   // 更改标签页标题
   const location = useLocation();
   const { updateTab } = React.useContext(KeepAliveContext);
+  const [applyeventLoading, setApplyeventLoading] = useState(false);
+
+  // 评分
+  const [rateValue, setRateValue] = useState<number>();
 
   useEffect(() => {
     getOrderDetail({ id: order_id! });
@@ -95,67 +167,11 @@ const OrderTop: React.FC<{
     10: 'green',
   };
 
-  // TODO:审核人颜色-Tooltip
-  const tagRender = (props: CustomTagProps) => {
-    const { label, value, closable, onClose } = props;
-    const orderCheckItem = orderChecked?.results.find((item) => item.checked_by === value);
-    const onPreventMouseDown = (event: React.MouseEvent<HTMLSpanElement>) => {
-      event.preventDefault();
-      event.stopPropagation();
-    };
 
-    const tagColor: { [key: string]: string } = {
-      '1': '#262626', // 审批中
-      '2': '#52C41A', // 已同意
-      '3': '#F5222D', // 已驳回
-      '4': 'blue', // 已转审
-    };
-    const _user = userEnum?.find((user: any) => user.value === value);
-
-    return (
-      <Tooltip
-        defaultOpen={true}
-        destroyTooltipOnHide={true}
-        placement="topLeft"
-        color={orderCheckItem?.sp_status ? tagColor[orderCheckItem.sp_status] : 'break'}
-        title={
-          _user?.userid
-            ? orderCheckItem?.speech
-              ? orderCheckItem?.speech
-              : orderCheckItem?.sp_status_name
-            : '该用户未加入企业微信,无法发送'
-        }
-      >
-        <Tag
-          color={orderCheckItem?.sp_status ? tagColor[orderCheckItem.sp_status] : 'cyan'}
-          onMouseDown={onPreventMouseDown}
-          closable={closable}
-          onClose={onClose}
-          style={{ marginRight: 3 }}
-        >
-          {label}
-        </Tag>
-      </Tooltip>
-    );
-  };
 
   // TODO:导出excel
   const handelExport = () => {
     window.open(`/api/material/order/${order_id}/export_to_excel/`);
-    // request(`/api/material/order/${order_id}/export_to_excel/`, { responseType: 'blob' })
-    //   .then((response) => {
-    //     const url = window.URL.createObjectURL(new Blob([response.data]));
-    //     const link = document.createElement('a');
-    //     link.href = url;
-    //     link.setAttribute('download', '123.xlsx'); // 可以将文件名设置为你想要的名字
-    //     document.body.appendChild(link);
-    //     link.click();
-    //     setExportLoading(false);
-    //   })
-    //   .catch(() => {
-    //     setExportLoading(false);
-    //     toast.error('导出失败');
-    //   });
   };
 
   // TODO:生成腾讯文档
@@ -168,11 +184,30 @@ const OrderTop: React.FC<{
   };
 
   // TODO:创建审核单
-  const handelApplyevent = () => {
+  const handelApplyevent = async () => {
+    setApplyeventLoading(true)
     // 先提交订单信息 再审核
-    apiMaterialOrderUpdate({ id: order_id! }, { ...orderForm?.getFieldsValue() });
-    request(`/api/material/order/${order_id}/applyevent/`);
+    await apiMaterialOrderUpdate({id: order_id!}, {...orderForm?.getFieldsValue()});
+    await request(`/api/material/order/${order_id}/applyevent/`);
+    setApplyeventLoading(false)
   };
+
+  // TODO:对供应商评价
+  const handleSupplierRate = (value:number) => {
+    const intValue = Math.round(value * 2);
+    if (intValue !== rateValue && intValue >= 0 && intValue <= 10) {
+      setRateValue(intValue);
+      apiMaterialOrderPartialUpdate({ id: order_id! }, { supplier_rate: intValue }).then(
+        () => {
+          toast.success('打分成功')
+        }
+      ).catch(
+        () => {
+          toast.error('打分失败')
+        }
+      );
+    }
+  }
 
   return (
     <Skeleton loading={orderDetailLoading} active={true}>
@@ -188,6 +223,7 @@ const OrderTop: React.FC<{
                   <Input placeholder="请输入" bordered={false} />
                 </Form.Item>
               </Descriptions.Item>
+
               <Descriptions.Item label="创建者">
                 <Form.Item name="created_by">
                   <UserSelectAdd
@@ -196,26 +232,19 @@ const OrderTop: React.FC<{
                   ></UserSelectAdd>
                 </Form.Item>
               </Descriptions.Item>
+
               <Descriptions.Item label="审核人">
                 <Form.Item name="checkers">
                   <UserSelectAdd
                     bordered={false}
                     mode="multiple"
-                    tagRender={tagRender}
+                    tagRender={(props: CustomTagProps)=>tagRender(props,userEnum,orderChecked)}
                     initialValues={orderDetail?.checked_by?.map((r) => r.checked_by)}
                   ></UserSelectAdd>
                 </Form.Item>
-                <Popconfirm
-                  title="是否要发送审核信息"
-                  onConfirm={handelApplyevent}
-                  okText="Yes"
-                  cancelText="No"
-                  style={{ paddingRight: 0 }}
-                >
-                  <ShakeOutlined />
-                  <a>发送审核信息</a>
-                </Popconfirm>
+                <Button onClick={handelApplyevent} icon={<FormOutlined />} loading={applyeventLoading} type="dashed">生成审批单</Button>
               </Descriptions.Item>
+
               <Descriptions.Item label="供应商">
                 <Form.Item name="supplier">
                   <SupplierSelectAdd
@@ -223,7 +252,9 @@ const OrderTop: React.FC<{
                     initialValue={orderDetail?.supplier}
                   ></SupplierSelectAdd>
                 </Form.Item>
+                {orderDetail?.supplier && (<Rate allowHalf style={{padding:'0px'}} value={rateValue} defaultValue={orderDetail?.supplier_rate} onChange={handleSupplierRate} />)}
               </Descriptions.Item>
+
               <Descriptions.Item label="项目">
                 <Form.Item name="project">
                   <ProjectSelectAdd
@@ -232,6 +263,7 @@ const OrderTop: React.FC<{
                   ></ProjectSelectAdd>
                 </Form.Item>
               </Descriptions.Item>
+
               <Descriptions.Item label="类别">
                 <Form.Item name="category">
                   <Input placeholder="请输入" bordered={false} />
@@ -242,6 +274,7 @@ const OrderTop: React.FC<{
                   {orderDetail?.created_time ? formatDate(orderDetail?.created_time) : null}
                 </Descriptions.Item>
               )}
+
               <Descriptions.Item label="导入/导出" span={2}>
                 <div style={{ display: 'flex', alignItems: 'center' }}>
                   <UploadMy order_id={orderDetail?.id}></UploadMy>

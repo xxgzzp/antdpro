@@ -11,9 +11,10 @@ const Settings: ProLayoutProps & {
   colorPrimary: '#1890ff',
   layout: 'side',
   contentWidth: 'Fluid',
-  fixedHeader: true,
+  fixedHeader: false,
+  fixSiderbar: true,
+  splitMenus: false,
   siderMenuType: 'sub',
-  headerRender: false,
   title: '建筑材料管理平台',
   pwa: true,
   logo: 'https://gw.alipayobjects.com/zos/rmsportal/KDpgvguMpGfqaHPjicRK.svg',
@@ -25,3 +26,4 @@ const Settings: ProLayoutProps & {
 };
 
 export default Settings;
+

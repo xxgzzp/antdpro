@@ -17,7 +17,7 @@ type LoginType = 'phone' | 'account';
 
 const Index: React.FC = () => {
   // const [userLoginState, setUserLoginState] = useState<>({});
-  const [loginType, setLoginType] = useState<LoginType>('phone');
+  const [loginType, setLoginType] = useState<LoginType>('account');
   const captchaRef = useRef<CaptFieldRef | null | undefined>();
   const intl = useIntl();
   const { toggleUser } = useModel('user');
@@ -86,9 +86,9 @@ const Index: React.FC = () => {
                   其他登录方式
                   <a
                     target="_blank"
-                    href="https://open.work.weixin.qq.com/wwopen/sso/qrConnect?appid=ww43a1b769b5588d58&agentid=1000003&redirect_uri=http://zengzeping.com/api/wecom/login"
+                    href="https://login.work.weixin.qq.com/wwlogin/sso/login?login_type=CorpApp&appid=ww43a1b769b5588d58&agentid=1000003&redirect_uri=http%3A%2F%2Fzengzeping.com%2Fapi%2Fwecom%2Flogin&state=WWLogin"
                   >
-                    企业微信扫码登录
+                    企业微信
                   </a>
                   {/*<AlipayCircleOutlined style={iconStyles} />*/}
                 </Space>

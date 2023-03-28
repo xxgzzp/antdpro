@@ -4,7 +4,7 @@ import { ProTable } from '@ant-design/pro-table';
 import { useModel } from '@umijs/max';
 import type { TableColumnsType } from 'antd';
 import { Badge, Table } from 'antd';
-import React, { useState } from 'react';
+import React from 'react';
 interface Material {
   material_sku: any;
   material_name: string;
@@ -33,9 +33,12 @@ interface MaterialGroup {
   total_buy_num: number;
   detail: Material[];
 }
-const MaterialAll: React.FC = () => {
+const MaterialAll: React.FC<{
+  searchParams: any;
+  setSearchParams: any;
+}> = ({ searchParams, setSearchParams }) => {
   // 在 onSearch 方法中更新搜索条件
-  const [searchParams, setSearchParams] = useState({});
+
   const { projectEnumKeyBy } = useModel('selector');
 
   // TODO:展开菜单
@@ -60,13 +63,6 @@ const MaterialAll: React.FC = () => {
             {row.order_name}
           </a>,
         ],
-        // onCell: (record: Material) => {
-        //   return {
-        //     onClick: () => {
-        //       window.open(`/order/${record.order_id}/orderitems`, '_blank');
-        //     },
-        //   };
-        // },
       },
       {
         title: '合同',
@@ -86,16 +82,6 @@ const MaterialAll: React.FC = () => {
             {row.contract_name}
           </a>,
         ],
-        // onCell: (record: Material) => {
-        //   return {
-        //     onClick: () => {
-        //       // history.push(`/order/${record.order_id}/orderitems`);
-        //       if (record?.contract) {
-        //         window.open(`/contract/${record.contract}/orderitems`, '_blank');
-        //       }
-        //     },
-        //   };
-        // },
       },
       {
         title: '日期',
@@ -163,6 +149,7 @@ const MaterialAll: React.FC = () => {
     { title: '单位', dataIndex: 'material_unit', key: 'material_unit', search: false },
     {
       title: '项目',
+      hideInTable: true,
       dataIndex: 'material_unit',
       valueType: 'select',
       key: 'project',
@@ -186,6 +173,7 @@ const MaterialAll: React.FC = () => {
       columns={columns}
       params={searchParams}
       options={{
+        fullScreen: true,
         search: true,
       }}
       toolbar={{

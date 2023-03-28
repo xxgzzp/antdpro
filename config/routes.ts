@@ -15,38 +15,38 @@ export default [
     name: '主页',
     path: '/',
     icon: 'home',
+    layout: true,
     component: './Dashboard',
   },
   {
-    // path: '/oa',
     name: 'oa系统',
     icon: 'crown',
-    // flatMenu: true,
+    path: '/oa',
     routes: [
       {
         name: '用户',
-        path: '/user',
+        path: '/oa/user',
         icon: 'idcard',
         layout: true,
         component: './User',
       },
       {
         name: '供应商',
-        path: '/supplier',
+        path: '/oa/supplier',
         icon: 'shop',
         layout: true,
         component: './Supplier',
       },
       {
         name: '项目',
-        path: '/project',
+        path: '/oa/project',
         icon: 'bank',
         layout: true,
         component: './Project',
       },
       {
         name: '部门',
-        path: '/department',
+        path: '/oa/department',
         icon: 'TeamOutlined',
         layout: true,
         component: './Department',
@@ -73,7 +73,7 @@ export default [
     path: '/material_all',
     icon: 'tool',
     layout: true,
-    component: './Material/MaterialAll',
+    component: './Material',
   },
   // https://v3.umijs.org/zh-CN/plugins/plugin-layout
   {
@@ -121,12 +121,6 @@ export default [
     path: '/text',
     layout: false,
     component: '../components/Loading/TextLoading',
-  },
-  {
-    name: 'text',
-    path: '/register',
-    layout: false,
-    component: './User/Register',
   },
   {
     name: 'text',

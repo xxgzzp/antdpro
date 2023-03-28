@@ -1,149 +1,87 @@
-// import {
-//   apiMaterialMaterialCreate,
-//   apiMaterialMaterialDelete,
-//   apiMaterialMaterialList,
-//   apiMaterialMaterialPartialUpdate,
-// } from '@/services/ant-design-pro/api';
-// import { PlusOutlined } from '@ant-design/icons';
-// import type { ActionType, ProColumns } from '@ant-design/pro-table';
-// import { EditableProTable } from '@ant-design/pro-table';
-// import { message } from 'antd';
-// import React, { useRef } from 'react';
-// import { v4 as uuidv4 } from 'uuid';
-// const MaterialList: React.FC = () => {
-//   const actionRef = useRef<ActionType>();
-//
-//   const columns: ProColumns<API.Material>[] = [
-//     {
-//       dataIndex: 'index',
-//       valueType: 'indexBorder',
-//       width: 48,
-//     },
-//     {
-//       title: 'ID',
-//       dataIndex: 'id',
-//       width: 80,
-//       hideInSearch: true,
-//       hideInTable: true,
-//     },
-//     {
-//       title: '名称',
-//       dataIndex: 'name',
-//       width: 200,
-//       formItemProps: {
-//         rules: [{ required: true }],
-//       },
-//     },
-//     {
-//       title: '规格',
-//       dataIndex: 'sku',
-//       width: 200,
-//       formItemProps: {
-//         rules: [{ required: true }],
-//       },
-//     },
-//     {
-//       title: '单位',
-//       dataIndex: 'unit',
-//       width: 100,
-//       formItemProps: {
-//         rules: [{ required: true }],
-//       },
-//       hideInSearch: true,
-//     },
-//     {
-//       title: '创建时间',
-//       dataIndex: 'created_time',
-//       width: 200,
-//       hideInSearch: true,
-//       editable: false,
-//     },
-//     {
-//       title: '创建者',
-//       dataIndex: 'created_by',
-//       width: 100,
-//       hideInSearch: true,
-//       editable: false,
-//     },
-//     {
-//       title: '操作',
-//       valueType: 'option',
-//       width: 100,
-//       render: (text, record, _, action) => [
-//         <a
-//           key="editable"
-//           onClick={() => {
-//             // @ts-ignore
-//             action?.startEditable?.(record.id);
-//           }}
-//         >
-//           编辑
-//         </a>,
-//         <a
-//           key="delete"
-//           onClick={() => {
-//             apiMaterialMaterialDelete({ id: record.id }).then(() => {
-//               message.success('删除成功');
-//               actionRef.current?.reload();
-//             });
-//           }}
-//         >
-//           删除
-//         </a>,
-//       ],
-//     },
-//   ];
-//   return (
-//     <EditableProTable<API.Material>
-//       actionRef={actionRef}
-//       rowKey="id"
-//       request={apiMaterialMaterialList}
-//       columns={columns}
-//       // scroll={{ y: 400 }} // 这样设置可以让它滚动起来
-//       editable={{
-//         type: 'single',
-//         onSave: async (key, record) => {
-//           try {
-//             const res =
-//               'newRow' in record
-//                 ? await apiMaterialMaterialCreate(record)
-//                 : await apiMaterialMaterialPartialUpdate({ id: record.id }, record);
-//             message.success('保存成功');
-//             actionRef.current?.reload();
-//           } catch (err) {
-//             console.log(err);
-//             message.error('保存失败，请重试');
-//           }
-//         },
-//         onDelete: async (key, record) => {
-//           await apiMaterialMaterialDelete({ id: record.id });
-//           message.success('删除成功');
-//           actionRef.current?.reload();
-//         },
-//       }}
-//       recordCreatorProps={{
-//         // 设置唯一的key 不设置不让下面的新增
-//         record: () => ({ id: uuidv4(), newRow: true }),
-//         // 设置初始值
-//         creatorButtonText: '添加新行',
-//         creatorButtonProps: {
-//           type: 'dashed',
-//           icon: <PlusOutlined />,
-//         },
-//       }}
-//       rowSelection={{}}
-//       search={{
-//         labelWidth: 'auto',
-//         defaultCollapsed: false,
-//       }}
-//       pagination={
-//         {
-//           // pageSize: 10,
-//         }
-//       }
-//       dateFormatter="string"
-//       headerTitle="材料列表"
-//     />
-//   );
-// };
-// export default MaterialList;
+import MaterialAll from '@/pages/Material/MaterialAll';
+import { apiOaProjectList } from '@/services/ant-design-pro/api';
+import { ApartmentOutlined, BranchesOutlined, FolderOpenOutlined } from '@ant-design/icons';
+import ProCard from '@ant-design/pro-card';
+import { useRequest } from 'ahooks';
+import { Menu, MenuProps } from 'antd';
+import React, { useState } from 'react';
+
+const InfoCard: React.FC<{
+  title: string;
+  index: number;
+  desc: string;
+  href: string;
+}> = ({ title, href, index, desc }) => {
+  const { data } = useRequest(apiOaProjectList);
+  const [searchParams, setSearchParams] = useState({});
+
+  type MenuItem = Required<MenuProps>['items'][number];
+
+  function getItem(
+    label: React.ReactNode,
+    key?: React.Key | null,
+    icon?: React.ReactNode,
+    children?: MenuItem[],
+  ): MenuItem {
+    return {
+      key,
+      icon,
+      children,
+      label,
+      onClick: (e) => {
+        setSearchParams({ project: e.keyPath[1], department: e.key });
+      },
+    } as MenuItem;
+  }
+
+  const oneAllItem = {
+    label: (
+      <div>
+        <FolderOpenOutlined />
+        <span>全部</span>
+      </div>
+    ),
+    onClick: () => setSearchParams({}),
+  };
+
+  const items: MenuItem[] = (data?.results || [])?.map((item) => {
+    const departmentItems = item?.departments?.slice(1).map(
+      (department) => getItem(department, department, <BranchesOutlined />, undefined), // 将部门的值作为参数传递给 getItem
+    );
+
+    return getItem(
+      <div
+        onClick={() => {
+          setSearchParams({ now_project: item.id });
+        }}
+      >
+        <ApartmentOutlined />
+        <span>{item.name}</span>
+      </div>,
+      item.id,
+      null,
+      departmentItems,
+    );
+  });
+
+  // @ts-ignore
+  items.unshift(oneAllItem); // 在数组开头添加新项
+
+  return (
+    <ProCard split="vertical" style={{ height: '600px' }}>
+      <ProCard colSpan="200px" ghost>
+        <Menu
+          style={{ width: 200, paddingTop: '20px' }}
+          defaultSelectedKeys={['1']}
+          defaultOpenKeys={['sub1']}
+          mode="inline"
+          items={items}
+        />
+      </ProCard>
+      <ProCard>
+        <MaterialAll searchParams={searchParams} setSearchParams={setSearchParams}></MaterialAll>
+      </ProCard>
+    </ProCard>
+  );
+};
+export default InfoCard;

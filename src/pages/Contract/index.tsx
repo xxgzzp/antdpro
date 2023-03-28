@@ -278,6 +278,7 @@ export default function Page() {
           }}
           // 右上角三个调整按钮
           options={{
+            fullScreen: true,
             search: true,
           }}
           // 表格上方栏

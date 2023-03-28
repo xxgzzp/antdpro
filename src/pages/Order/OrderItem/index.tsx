@@ -3,6 +3,7 @@ import '@/pages/Order/OrderItem/index.less';
 import OrderTop from '@/pages/Order/OrderItem/OrderTop';
 import useOrderLocalStorage, { OrderLocal } from '@/pages/Order/OrderItem/useOrderLocalStorage';
 import { apiMaterialOrderItemList, apiMaterialOrderUpdate } from '@/services/ant-design-pro/api';
+import { PlusOutlined } from '@ant-design/icons';
 import { ProTable } from '@ant-design/pro-table';
 import { request, useModel } from '@umijs/max';
 import { useRequest } from 'ahooks';
@@ -11,7 +12,6 @@ import { isEqual } from 'lodash';
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router';
 import { v4 as uuidv4 } from 'uuid';
-import {PlusOutlined} from "@ant-design/icons";
 
 const Index: React.FC = () => {
   // 请求订单项
@@ -326,9 +326,6 @@ const Index: React.FC = () => {
                 提交
               </Button>
             </span>
-            <Button onClick={handleAdd} type="primary" style={{ marginBottom: 16 }}>
-              增加一行
-            </Button>
           </div>,
         ]}
         expandable={{
@@ -336,11 +333,7 @@ const Index: React.FC = () => {
           rowExpandable: handleRowExpandable,
         }}
       />
-      <Button
-        type="dashed"
-        onClick={handleAdd}
-        style={{ width: '100%', marginBottom: 8 }}
-      >
+      <Button type="dashed" onClick={handleAdd} style={{ width: '100%', marginBottom: 8 }}>
         <PlusOutlined />
         添加一行
       </Button>

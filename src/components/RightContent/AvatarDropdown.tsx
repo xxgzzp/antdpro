@@ -14,6 +14,7 @@ export type GlobalHeaderRightProps = {
   menu?: boolean;
 };
 
+
 const Name = () => {
   const { user } = useModel('user');
 
@@ -35,7 +36,7 @@ const Name = () => {
 };
 
 const AvatarLogo = () => {
-  const { user } = useModel('user') as { user: API.User };
+  const { user } = useModel('user');
 
   const avatarClassName = useEmotionCss(({ token }) => {
     return {
@@ -66,8 +67,6 @@ const AvatarDropdown: React.FC<GlobalHeaderRightProps> = ({ menu }) => {
   const loginOut = async () => {
     // 以下是我的退出，先简单将Token移除，后续再加强
     localStorage.setItem(' Token ', '');
-
-    // 以下的代码是antd的尽量不要改
 
     const { search, pathname } = window.location;
     const urlParams = new URL(window.location.href).searchParams;
@@ -100,57 +99,33 @@ const AvatarDropdown: React.FC<GlobalHeaderRightProps> = ({ menu }) => {
       },
     };
   });
-  const { initialState, setInitialState } = useModel('@@initialState');
 
   const onMenuClick = useCallback(
     (event: MenuInfo) => {
       const { key } = event;
       if (key === 'logout') {
-        flushSync(() => {
-          setInitialState((s) => ({ ...s, currentUser: undefined }));
-        });
         loginOut();
         return;
       }
       history.push(`/account/${key}`);
     },
-    [setInitialState],
+    [],
   );
-
-  const loading = (
-    <span className={actionClassName}>
-      <Spin
-        size="small"
-        style={{
-          marginLeft: 8,
-          marginRight: 8,
-        }}
-      />
-    </span>
-  );
-
-  // if (!currentUser || !currentUser.name) {
-  //   return loading;
-  // }
 
   const menuItems = [
-    ...(menu
-      ? [
-          {
-            key: 'center',
-            icon: <UserOutlined />,
-            label: '个人中心',
-          },
-          {
-            key: 'settings',
-            icon: <SettingOutlined />,
-            label: '个人设置',
-          },
-          {
-            type: 'divider' as const,
-          },
-        ]
-      : []),
+    {
+      key: 'center',
+      icon: <UserOutlined />,
+      label: '个人中心',
+    },
+    {
+      key: 'settings',
+      icon: <SettingOutlined />,
+      label: '个人设置',
+    },
+    {
+      type: 'divider' as const,
+    },
     {
       key: 'logout',
       icon: <LogoutOutlined />,

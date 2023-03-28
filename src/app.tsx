@@ -117,17 +117,18 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
         <>
           <ToastContainer />
           {children}
-          <SettingDrawer
-            disableUrlParams
-            enableDarkTheme
-            settings={initialState?.settings}
-            onSettingChange={(settings) => {
-              setInitialState((preInitialState) => ({
-                ...preInitialState,
-                settings,
-              }));
-            }}
-          />
+          {/*主题配置*/}
+          {/*<SettingDrawer*/}
+          {/*  disableUrlParams*/}
+          {/*  enableDarkTheme*/}
+          {/*  settings={initialState?.settings}*/}
+          {/*  onSettingChange={(settings) => {*/}
+          {/*    setInitialState((preInitialState) => ({*/}
+          {/*      ...preInitialState,*/}
+          {/*      settings,*/}
+          {/*    }));*/}
+          {/*  }}*/}
+          {/*/>*/}
         </>
       );
     },
@@ -211,11 +212,15 @@ function responseInterceptor() {
 
 export const request: RequestConfig = {
   // errorConfig: errorConfig,
+  loadingDelay: 300,  // 300ms内返回就不会loading
   errorConfig: {
     // 错误抛出
     errorThrower: (res: ResponseStructure) => {
       const { success, data, errorCode, errorMessage, showType } = res;
       if (!success) {
+        if(!errorMessage){
+          return
+        }
         const error: any = new Error(errorMessage);
         error.name = 'BizError';
         error.info = { errorCode, errorMessage, showType, data };
@@ -268,6 +273,7 @@ export const request: RequestConfig = {
         // 发送请求时出了点问题
         toast.error('服务器问题,请联系管理员');
       }
+
     },
   },
   headers: { 'X-Requested-With': 'XMLHttpRequest' },
