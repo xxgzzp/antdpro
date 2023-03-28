@@ -89,8 +89,9 @@ const OrderTop: React.FC<{
   order_id: string | undefined;
   orderDetail: API.Order | undefined;
   orderDetailLoading: boolean | undefined;
+  applyEventRef: React.MutableRefObject<null>;
   getOrderDetail: any;
-}> = ({ orderForm, order_id, orderDetail, orderDetailLoading, getOrderDetail }) => {
+}> = ({ orderForm, order_id, orderDetail, orderDetailLoading, applyEventRef, getOrderDetail }) => {
   // 加载远程数据
 
   const { data: orderChecked } = useRequest<OrderCheckedResponse, any>(() =>
@@ -222,6 +223,7 @@ const OrderTop: React.FC<{
                 ></UserSelectAdd>
               </Form.Item>
               <Button
+                ref={applyEventRef}
                 onClick={handelApplyevent}
                 icon={<FormOutlined />}
                 loading={applyeventLoading}

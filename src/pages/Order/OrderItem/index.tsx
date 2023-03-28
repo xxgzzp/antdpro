@@ -14,9 +14,9 @@ import { PageContainer } from '@ant-design/pro-components';
 import { ProTable } from '@ant-design/pro-table';
 import { request, useModel } from '@umijs/max';
 import { useRequest } from 'ahooks';
-import { Button, Card, Form, Popconfirm, Steps, Table } from 'antd';
+import { Button, Card, Form, Popconfirm, Steps, Table, Tour, TourProps } from 'antd';
 import { isEqual } from 'lodash';
-import React, { Fragment, useEffect, useState } from 'react';
+import React, { Fragment, useEffect, useRef, useState } from 'react';
 import { useParams } from 'react-router';
 import { v4 as uuidv4 } from 'uuid';
 const { Step } = Steps;
@@ -324,6 +324,18 @@ const Index: React.FC = () => {
       </Button>
     </div>
   );
+  const desc3 = (
+    <div>
+      <Button
+        type="link"
+        onClick={() => {
+          setTourOpen(true);
+        }}
+      >
+        创建审核单
+      </Button>
+    </div>
+  );
 
   const [tabStatus, seTabStatus] = useState({
     operationKey: 'tab1',
@@ -333,6 +345,16 @@ const Index: React.FC = () => {
     seTabStatus({ ...tabStatus, tabActiveKey });
   };
 
+  // 漫游式引导
+  const applyEventRef = useRef(null);
+  const [tourOpen, setTourOpen] = useState<boolean>(false);
+  const tourSteps: TourProps['steps'] = [
+    {
+      title: '创建审核单',
+      description: '在这里添加审核人，并生成审核单即可',
+      target: () => applyEventRef.current,
+    },
+  ];
   return (
     <div>
       <PageContainer
@@ -345,6 +367,7 @@ const Index: React.FC = () => {
             orderDetail={orderDetail}
             orderDetailLoading={orderDetailLoading}
             getOrderDetail={getOrderDetail}
+            applyEventRef={applyEventRef}
           ></OrderTop>
         }
         tabActiveKey={tabStatus.tabActiveKey}
@@ -371,7 +394,7 @@ const Index: React.FC = () => {
               >
                 <Step title="创建" description={desc1} />
                 <Step title="提交材料单" description={desc2} />
-                <Step title="创建审核单" />
+                <Step title="创建审核单" description={desc3} />
                 <Step title="审核" />
                 <Step title="供货商评价" />
                 <Step title="完成" />
@@ -440,6 +463,8 @@ const Index: React.FC = () => {
           <SupplierRate order_id={order_id!} supplier_id={orderDetail?.supplier} />
         )}
       </PageContainer>
+      {/*漫游式引导*/}
+      <Tour open={tourOpen} onClose={() => setTourOpen(false)} steps={tourSteps} />
     </div>
   );
 };
