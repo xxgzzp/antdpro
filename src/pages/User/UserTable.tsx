@@ -129,6 +129,7 @@ const UserTable: React.FC<{
       width: 120,
       key: 'options',
       valueType: 'option',
+      fixed: 'right',
       render: (_, row) => [
         // eslint-disable-next-line react/jsx-key
         <Button size="small" key="update" type="link" onClick={() => handleUpdate(row)}>

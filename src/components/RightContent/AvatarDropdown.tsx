@@ -3,17 +3,15 @@ import { LogoutOutlined, SettingOutlined, UserOutlined } from '@ant-design/icons
 import { setAlpha } from '@ant-design/pro-components';
 import { useEmotionCss } from '@ant-design/use-emotion-css';
 import { history, useModel } from '@umijs/max';
-import { Avatar, Spin } from 'antd';
+import { Avatar } from 'antd';
 import { stringify } from 'querystring';
 import type { MenuInfo } from 'rc-menu/lib/interface';
 import React, { useCallback } from 'react';
-import { flushSync } from 'react-dom';
 import HeaderDropdown from '../HeaderDropdown';
 
 export type GlobalHeaderRightProps = {
   menu?: boolean;
 };
-
 
 const Name = () => {
   const { user } = useModel('user');
@@ -32,7 +30,11 @@ const Name = () => {
     };
   });
 
-  return <span className={`${nameClassName} anticon`} style={{fontWeight: 'bold'}}>{user?.name}</span>;
+  return (
+    <span className={`${nameClassName} anticon`} style={{ fontWeight: 'bold' }}>
+      {user?.name}
+    </span>
+  );
 };
 
 const AvatarLogo = () => {
@@ -100,17 +102,17 @@ const AvatarDropdown: React.FC<GlobalHeaderRightProps> = ({ menu }) => {
     };
   });
 
-  const onMenuClick = useCallback(
-    (event: MenuInfo) => {
-      const { key } = event;
-      if (key === 'logout') {
-        loginOut();
-        return;
-      }
-      history.push(`/account/${key}`);
-    },
-    [],
-  );
+  const onMenuClick = useCallback((event: MenuInfo) => {
+    const { key } = event;
+    if (key === 'logout') {
+      loginOut();
+      return;
+    }
+    if (key === 'wecomBing') {
+      return;
+    }
+    history.push(`/account/${key}`);
+  }, []);
 
   const menuItems = [
     {
@@ -124,6 +126,11 @@ const AvatarDropdown: React.FC<GlobalHeaderRightProps> = ({ menu }) => {
       label: '个人设置',
     },
     {
+      key: 'wecomBing',
+      icon: <UserOutlined />,
+      label: '绑定企业微信',
+    },
+    {
       type: 'divider' as const,
     },
     {
@@ -134,18 +141,20 @@ const AvatarDropdown: React.FC<GlobalHeaderRightProps> = ({ menu }) => {
   ];
 
   return (
-    <HeaderDropdown
-      menu={{
-        selectedKeys: [],
-        onClick: onMenuClick,
-        items: menuItems,
-      }}
-    >
-      <span className={actionClassName}>
-        <AvatarLogo />
-        <Name />
-      </span>
-    </HeaderDropdown>
+    <div>
+      <HeaderDropdown
+        menu={{
+          selectedKeys: [],
+          onClick: onMenuClick,
+          items: menuItems,
+        }}
+      >
+        <span className={actionClassName}>
+          <AvatarLogo />
+          <Name />
+        </span>
+      </HeaderDropdown>
+    </div>
   );
 };
 

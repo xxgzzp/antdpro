@@ -18,24 +18,29 @@ const Dashboard: React.FC = () => {
   const { data: dashboardData, loading } = useRequest(() =>
     apiDashboardList().then((res) => res.results),
   );
-  const { user, userModalOpen, setUserModalOpen } = useModel('user');
+  const { user, ready, toggleUser, userModalOpen, setUserModalOpen } = useModel('user');
 
-  const searchParams = new URLSearchParams(window.location.search);
-  const Token = searchParams.get('Token');
-
+  const token = localStorage.getItem(' Token ');
   useEffect(() => {
-    // 如果没有绑定企业微信就提醒绑定
-    if (user?.userid === 'undefined') {
-      setModelOpen(true);
+    if (token === null) {
+      console.log('是dashboard转的');
+      history.push('login');
     }
   }, []);
 
-  // 企业微信回调Token
   useEffect(() => {
-    if (Token) {
-      localStorage.setItem(' Token ', Token);
+    if (ready) {
+      // 如果没有绑定企业微信就提醒绑定
+      if (user && user?.userid === undefined) {
+        setModelOpen(true);
+      }
+    } else {
+      toggleUser();
     }
-  }, [Token]);
+    if (user) {
+      console.log(user);
+    }
+  }, [user, ready]);
 
   const dashboardMap: any = {
     // user_count: {

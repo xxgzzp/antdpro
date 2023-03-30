@@ -12,6 +12,7 @@ import { Card, Space, Tabs } from 'antd';
 import { useEffect, useRef, useState } from 'react';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { Link } from 'umi';
 import './index.less';
 type LoginType = 'phone' | 'account';
 
@@ -25,9 +26,13 @@ const Index: React.FC = () => {
 
   const msg = searchParams.get('message');
   const token = searchParams.get('Token');
-  if (token) {
-    localStorage.setItem('Token', token);
-  }
+
+  useEffect(() => {
+    if (token) {
+      localStorage.setItem(' Token ', token);
+      history.push('/');
+    }
+  }, [token]);
 
   // TODO:企业微信扫码登录失效 回显
   useEffect(() => {
@@ -86,11 +91,14 @@ const Index: React.FC = () => {
                   其他登录方式
                   <a
                     target="_blank"
-                    href="https://login.work.weixin.qq.com/wwlogin/sso/login?login_type=CorpApp&appid=ww43a1b769b5588d58&agentid=1000003&redirect_uri=http%3A%2F%2Fzengzeping.com%2Fapi%2Fwecom%2Flogin&state=WWLogin"
+                    href="https://login.work.weixin.qq.com/wwlogin/sso/login?login_type=CorpApp&appid=ww43a1b769b5588d58&agentid=1000003&redirect_uri=http%3A%2F%2Fzengzeping.com%2Fapi%2Fwecom%2Flogin"
                   >
                     企业微信
                   </a>
                   {/*<AlipayCircleOutlined style={iconStyles} />*/}
+                  <Link to="/register" style={{ marginLeft: '110px' }}>
+                    注册用户
+                  </Link>
                 </Space>
               }
             >

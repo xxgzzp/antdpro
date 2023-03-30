@@ -1,5 +1,6 @@
 import renderBadge from '@/components/Utils/renderBadge';
 import OrderForm from '@/pages/Order/OrderForm';
+import OrderItem from '@/pages/Order/OrderItem/OrderItem';
 import {
   apiMaterialOrdercategoryList,
   apiMaterialOrderDelete,
@@ -10,7 +11,7 @@ import type { ActionType, ProColumns } from '@ant-design/pro-components';
 import { ProTable } from '@ant-design/pro-components';
 import { ProFormDateRangePicker } from '@ant-design/pro-form';
 import { useToggle } from 'ahooks';
-import { Button, Popconfirm, Radio } from 'antd';
+import { Button, Popconfirm, Radio, Table } from 'antd';
 import { keyBy } from 'lodash';
 import { Key, useEffect, useRef, useState } from 'react';
 import { history } from 'umi';
@@ -176,6 +177,7 @@ export default function Page() {
         </a>,
       ],
     },
+    Table.EXPAND_COLUMN,
     {
       title: '类别',
       dataIndex: 'category',
@@ -256,17 +258,23 @@ export default function Page() {
           // "pageSize":10,
         }}
         rowKey="id"
-        onRow={(record) => {
-          return {
-            onDoubleClick: () => handleRowClick(record),
-          };
+        // onRow={(record) => {
+        //   return {
+        //     onDoubleClick: () => handleRowClick(record),
+        //   };
+        // }}
+        expandable={{
+          expandedRowRender: (record) => {
+            return <OrderItem order_id={record.id!} isToolBal={false}></OrderItem>;
+          },
         }}
         // 右上角三个调整按钮
-
         options={{
+          // fullScreen: true,
           search: true,
         }}
         // 表格上方栏
+        // toolbar={false}
         toolbar={{
           multipleLine: true,
           search: {

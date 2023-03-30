@@ -95,6 +95,7 @@ const OrderTop: React.FC<{
   // 加载远程数据
 
   const { data: orderChecked } = useRequest<OrderCheckedResponse, any>(() =>
+    // @ts-ignore
     apiMaterialOrderCheckedList({ order: order_id }),
   );
   // 判断是否是企业微信用户用的

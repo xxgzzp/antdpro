@@ -116,15 +116,33 @@ export default [
     component: '../components/Loading/TextLoading',
   },
   {
-    name: 'text',
+    name: '用户中心',
     path: '/center',
-    layout: false,
+    layout: true,
     component: './User/UserCenter',
   },
   {
-    name: 'text',
+    name: '供应商评分',
     path: '/rate',
-    layout: false,
+    layout: true,
     component: './Order/SupplierRate',
+  },
+  {
+    name: '注册页面',
+    path: '/register',
+    layout: true,
+    component: './User/Register',
+  },
+  {
+    name: '绑定企业微信',
+    path: '/wecomBinding',
+    layout: true,
+    component: './User/wecomBinding',
+  },
+  {
+    name: '用户订单',
+    path: '/user_order',
+    layout: true,
+    component: './User/UserOrder',
   },
 ];

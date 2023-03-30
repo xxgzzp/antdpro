@@ -1,0 +1,11 @@
+.tableContainer :global(.ant-table-expand-icon-th)::before{
+  width: 28px;
+  display: block;
+  content: "全部展开";
+  cursor: pointer;
+  color: ghostwhite;
+}
+
+.tableContainer .tableIsExpandingAll :global(.ant-table-expand-icon-th)::before{
+  content:"全部收起";
+}

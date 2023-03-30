@@ -1,82 +1,115 @@
-import { HomeOutlined, ContactsOutlined, ClusterOutlined } from '@ant-design/icons';
-import {Avatar, Card, Col, Divider, Row, Tag,} from 'antd';
-import React, {useEffect} from 'react';
+import UserCard from '@/pages/User/UserCenter/UserCard';
+import UserOrder from '@/pages/User/UserOrder';
 import { GridContent } from '@ant-design/pro-layout';
-import styles from './Center.less';
-import {useModel} from "@umijs/max";
+import { Col, Row } from 'antd';
+import React, { useState } from 'react';
 
+export type tabKeyType = 'articles' | 'applications' | 'projects';
 
-const Center: React.FC = () => {
-  const {user,loading,ready,toggleUser} = useModel('user')
-
-  useEffect(() => {
-    if (!ready){
-      toggleUser()
-    }
-  },[ready])
-
-  //  渲染用户信息
-  const renderUserInfo = (user:API.User) => {
-    return (
-      <div className={styles.detail}>
-        <p>
-          <ContactsOutlined
-            style={{
-              marginRight: 8,
-            }}
-          />
-          职位:&nbsp;&nbsp;&nbsp;
-          {user?.identity_name}
-        </p>
-        <p>
-          <ClusterOutlined
-            style={{
-              marginRight: 8,
-            }}
-          />
-          所在项目-部门:&nbsp;&nbsp;&nbsp;
-          {`${user?.project_name}-${user?.department_name}`}
-        </p>
-        <p>
-          <ClusterOutlined
-            style={{
-              marginRight: 8,
-            }}
-          />
-          参与项目:&nbsp;&nbsp;&nbsp;
-          {user?.membership?.map((item) => (
-            <Tag key={item?.identity_name}>{item?.project_name}</Tag>
-          ))}
-        </p>
-
-      </div>
-    );
-  };
+const InfoCard: React.FC<{
+  title: string;
+  index: number;
+  desc: string;
+  href: string;
+}> = ({ title, href, index, desc }) => {
+  const [tabKey, setTabKey] = useState<tabKeyType>('articles');
+  // const Projects: React.FC = () => {
+  //   // 获取tab列表数据
+  // //   const { data: listData } = useRequest(() => {
+  // //     return queryFakeList({
+  //       count: 30,
+  //     });
+  //   });
+  //
+  //   return (
+  //     <List
+  //       className={styles.coverCardList}
+  //       rowKey="id"
+  //       grid={{ gutter: 24, xxl: 3, xl: 2, lg: 2, md: 2, sm: 2, xs: 1 }}
+  //       dataSource={listData?.list || []}
+  //       renderItem={(item) => (
+  //         <List.Item>
+  //           <Card
+  //             className={styles.card}
+  //             hoverable
+  //             cover={<img alt={item.title} src={item.cover} />}
+  //           >
+  //             <Card.Meta title={<a>{item.title}</a>} description={item.subDescription} />
+  //             <div className={styles.cardItemContent}>
+  //               <span>{moment(item.updatedAt).fromNow()}</span>
+  //               <div className={styles.avatarList}>
+  //                 <AvatarList size="small">
+  //                   {item.members.map((member) => (
+  //                     <AvatarList.Item
+  //                       key={`${item.id}-avatar-${member.id}`}
+  //                       src={member.avatar}
+  //                       tips={member.name}
+  //                     />
+  //                   ))}
+  //                 </AvatarList>
+  //               </div>
+  //             </div>
+  //           </Card>
+  //         </List.Item>
+  //       )}
+  //     />
+  //   );
+  // };
+  //
+  // // 渲染tab切换
+  // const renderChildrenByTabKey = (tabValue: tabKeyType) => {
+  //   if (tabValue === 'projects') {
+  //     return <Projects />;
+  //   }
+  //   if (tabValue === 'applications') {
+  //     return <Projects />;
+  //   }
+  //   if (tabValue === 'articles') {
+  //     return <Projects />;
+  //   }
+  //   return null;
+  // };
+  //
+  // const operationTabList = [
+  //   {
+  //     key: 'articles',
+  //     tab: (
+  //       <span>
+  //         文章 <span style={{ fontSize: 14 }}>(8)</span>
+  //       </span>
+  //     ),
+  //   },
+  //   {
+  //     key: 'applications',
+  //     tab: (
+  //       <span>
+  //         应用 <span style={{ fontSize: 14 }}>(8)</span>
+  //       </span>
+  //     ),
+  //   },
+  //   {
+  //     key: 'projects',
+  //     tab: (
+  //       <span>
+  //         项目 <span style={{ fontSize: 14 }}>(8)</span>
+  //       </span>
+  //     ),
+  //   },
+  // ];
 
   return (
     <GridContent>
       <Row gutter={24}>
         <Col lg={7} md={24}>
-
-          <Card bordered={false} style={{ marginBottom: 24 }} loading={loading}>
-            {!loading && user && (
-              <div>
-                <div className={styles.avatarHolder}>
-                  <Avatar size={120} src={user?.avatar} />
-                  <div style={{paddingTop:'30px'}}></div>
-                  <div className={styles.name}>{user?.name}</div>
-                </div>
-                {renderUserInfo(user)}
-                <Divider style={{ marginTop: 16 }} dashed />
-              </div>
-            )}
-          </Card>
-
+          <UserCard></UserCard>
         </Col>
         <Col lg={17} md={24}>
+          <div style={{ paddingLeft: '10' }}>
+            <UserOrder></UserOrder>
+          </div>
         </Col>
       </Row>
     </GridContent>
   );
 };
-export default Center;
+export default InfoCard;

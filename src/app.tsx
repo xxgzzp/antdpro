@@ -1,8 +1,6 @@
-import Footer from '@/components/Footer';
 import RightContent from '@/components/RightContent';
 import { LinkOutlined } from '@ant-design/icons';
-import {PageLoading, Settings as LayoutSettings } from '@ant-design/pro-components';
-import { SettingDrawer } from '@ant-design/pro-components';
+import { Settings as LayoutSettings } from '@ant-design/pro-components';
 import type { RequestConfig, RunTimeLayoutConfig } from '@umijs/max';
 import { history, Link, useModel } from '@umijs/max';
 import Cookies from 'js-cookie';
@@ -10,9 +8,7 @@ import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 import { AxiosResponse } from '@umijs/utils/compiled/axios';
-import { notification } from 'antd';
 import defaultSettings from '../config/defaultSettings';
-import React from "react";
 const loginPath = '/login';
 
 // 更改loading
@@ -37,19 +33,18 @@ interface ResponseStructure {
   errorCode?: number;
   errorMessage?: string;
   showType?: ErrorShowType;
+  message: any;
 }
-
 
 export async function getInitialState(): Promise<{
   settings?: Partial<LayoutSettings>;
   loading?: boolean;
 }> {
-
-  const { location } = history;
   if (location.pathname !== loginPath) {
     // 没有token就返回登录地址
     const token = localStorage.getItem(' Token ');
     if (token === null) {
+      console.log('是init这里转的');
       history.push(loginPath);
     }
     return {
@@ -173,17 +168,6 @@ function responseDataFormat() {
 function responseInterceptor() {
   return (response: AxiosResponse<any>) => {
     const { data }: any = response;
-
-    // // 如果是表单错误的响应，对返回信息进行处理
-    // if (data?.code === 400) {
-    //   const { message, ...errors } = data;
-    //   Object.keys(errors).forEach((key) => {
-    //     const pattern = new RegExp(key, 'g');
-    //     const errorMsg = errors[key][0].replace(pattern, `${key}字段`);
-    //     toast.error(errorMsg);
-    //   });
-    // }
-
     // 认证失败
     if (data?.code === 401) {
       const { location } = history;
@@ -209,71 +193,32 @@ function responseInterceptor() {
   };
 }
 
-
 export const request: RequestConfig = {
   // errorConfig: errorConfig,
-  loadingDelay: 300,  // 300ms内返回就不会loading
+  loadingDelay: 300, // 300ms内返回就不会loading
   errorConfig: {
     // 错误抛出
     errorThrower: (res: ResponseStructure) => {
-      const { success, data, errorCode, errorMessage, showType } = res;
+      const { success, data, errorCode, errorMessage, message, showType } = res;
       if (!success) {
-        if(!errorMessage){
-          return
+        if (!message) {
+          return;
         }
         const error: any = new Error(errorMessage);
         error.name = 'BizError';
         error.info = { errorCode, errorMessage, showType, data };
-        error.response = res
-        error.status = errorCode
+        error.response = res;
+        error.status = errorCode;
         throw error; // 抛出自制的错误
       }
     },
     // 错误接收及处理
     errorHandler: (error: any, opts: any) => {
       if (opts?.skipErrorHandler) throw error;
-      // 我们的 errorThrower 抛出的错误。
-      if (error.name === 'BizError') {
-        const errorInfo: ResponseStructure | undefined = error.info;
-        if (errorInfo) {
-          const { errorMessage, errorCode } = errorInfo;
-          switch (errorInfo.showType) {
-            case ErrorShowType.SILENT:
-              // do nothing
-              break;
-            case ErrorShowType.WARN_MESSAGE:
-              toast.warn(errorMessage);
-              break;
-            case ErrorShowType.ERROR_MESSAGE:
-              toast.error(errorMessage);
-              break;
-            case ErrorShowType.NOTIFICATION:
-              notification.open({
-                description: errorMessage,
-                message: errorCode,
-              });
-              break;
-            case ErrorShowType.REDIRECT:
-              // TODO: redirect
-              break;
-            default:
-              toast.error(errorMessage);
-          }
-        }
-      } else if (error.response) {
-        // Axios 的错误
-        // 请求成功发出且服务器也响应了状态码，但状态代码超出了 2xx 的范围
-        toast.error(`服务器出错:Response status:${error.response.status}`);
-      } else if (error.request) {
-        // 请求已经成功发起，但没有收到响应
-        // \`error.request\` 在浏览器中是 XMLHttpRequest 的实例，
-        // 而在node.js中是 http.ClientRequest 的实例
-        toast.error('服务器问题,请联系管理员');
-      } else {
-        // 发送请求时出了点问题
-        toast.error('服务器问题,请联系管理员');
+      console.log(error);
+      if (error?.response?.message) {
+        toast.error(error?.response?.data?.message);
       }
-
     },
   },
   headers: { 'X-Requested-With': 'XMLHttpRequest' },
@@ -282,64 +227,6 @@ export const request: RequestConfig = {
   // @ts-ignore
   responseInterceptors: [responseDataFormat(), responseInterceptor()],
 };
-
-// errorConfig: {
-//   // 错误抛出
-//   errorThrower: (res: ResponseStructure) => {
-//     const { success, data, errorCode, errorMessage, showType } = res;
-//     if (!success) {
-//       const error: any = new Error(errorMessage);
-//       error.name = 'BizError';
-//       error.info = { errorCode, errorMessage, showType, data };
-//       throw error; // 抛出自制的错误
-//     }
-//   },
-//     // 错误接收及处理
-//     errorHandler: (error: any, opts: any) => {
-//     if (opts?.skipErrorHandler) throw error;
-//     // 我们的 errorThrower 抛出的错误。
-//     if (error.name === 'BizError') {
-//       const errorInfo: ResponseStructure | undefined = error.info;
-//       if (errorInfo) {
-//         const { errorMessage, errorCode } = errorInfo;
-//         switch (errorInfo.showType) {
-//           case ErrorShowType.SILENT:
-//             // do nothing
-//             break;
-//           case ErrorShowType.WARN_MESSAGE:
-//             toast.warn(errorMessage);
-//             break;
-//           case ErrorShowType.ERROR_MESSAGE:
-//             toast.error(errorMessage);
-//             break;
-//           case ErrorShowType.NOTIFICATION:
-//             notification.open({
-//               description: errorMessage,
-//               message: errorCode,
-//             });
-//             break;
-//           case ErrorShowType.REDIRECT:
-//             // TODO: redirect
-//             break;
-//           default:
-//             toast.error(errorMessage);
-//         }
-//       }
-//     } else if (error.response) {
-//       // Axios 的错误
-//       // 请求成功发出且服务器也响应了状态码，但状态代码超出了 2xx 的范围
-//       toast.error(`Response status:${error.response.status}`);
-//     } else if (error.request) {
-//       // 请求已经成功发起，但没有收到响应
-//       // \`error.request\` 在浏览器中是 XMLHttpRequest 的实例，
-//       // 而在node.js中是 http.ClientRequest 的实例
-//       toast.error('None response! Please retry.');
-//     } else {
-//       // 发送请求时出了点问题
-//       toast.error('Request error, please retry.');
-//     }
-//   },
-// }
 
 // function jwtInterceptor() {
 //   return async (response: { [x: string]: { [x: string]: any } }) => {
