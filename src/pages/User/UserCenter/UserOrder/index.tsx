@@ -1,31 +1,46 @@
-import { ProList } from '@ant-design/pro-components';
-
 import useOrderLocalStorage from '@/pages/Order/OrderItem/useOrderLocalStorage';
-import { history, request } from '@umijs/max';
-import { useRequest } from 'ahooks';
+import { apiMaterialOrderUpdateStep } from '@/services/ant-design-pro/api';
+import { ProList } from '@ant-design/pro-components';
+import { history } from '@umijs/max';
 import { Steps, Tag } from 'antd';
 import { Step } from 'rc-steps';
-import { useEffect, useState } from 'react';
-export default () => {
+import React, { useEffect, useState } from 'react';
+
+const UserOrder: React.FC<{
+  date: any;
+  loading: boolean;
+  // @ts-ignore
+}> = ({ data, loading }) => {
   const { getOrderLocal } = useOrderLocalStorage();
-  const [isOrderLocal, setIsOrderLocal] = useState(false);
   const [cardActionProps, setCardActionProps] = useState<'actions' | 'extra'>('actions');
-  const { data, loading } = useRequest(() =>
-    request('api/material/order/user_order')
-      .then((data) => {
-        return data.results;
-      })
-      .catch((error) => console.error(error)),
-  );
+  const [dataSource, setDataSource] = useState();
 
   useEffect(() => {
-    if (data?.results) {
-      const orderLocal = getOrderLocal(data.results?.id);
-      if (orderLocal?.length) {
-        setIsOrderLocal(true);
-      }
+    if (data) {
+      setDataSource(data);
     }
   }, [data]);
+
+  const isOrderLocal = (order_id: string) => {
+    const orderLocal = getOrderLocal(order_id);
+    if (orderLocal?.length) {
+      return true;
+    }
+    return false;
+  };
+
+  const [finishLoading, setFinishLoading] = useState(false);
+  const handleFinish = (record: any) => {
+    setFinishLoading(true);
+    apiMaterialOrderUpdateStep({ id: record.id })
+      .then(() => {
+        setDataSource((dataSource) => dataSource.filter((item) => item.id !== record.id));
+        setFinishLoading(false);
+      })
+      .catch(() => {
+        setFinishLoading(false);
+      });
+  };
 
   return (
     <div
@@ -58,13 +73,13 @@ export default () => {
           title: {
             dataIndex: 'name',
           },
-          // subTitle: {
-          //   dataIndex: 'created_time',
-          //   // @ts-ignore
-          //   render: (value) => <Tag color="#5BD8A6">{value ? formatDate(value) : null}</Tag>,
-          // },
           subTitle: {
-            render: (value) => (isOrderLocal ? <Tag color="#5BD8A6">存在本地数据</Tag> : null),
+            render: (_, record) =>
+              record.id ? (
+                isOrderLocal(record.id) ? (
+                  <Tag color="#5BD8A6">存在本地数据</Tag>
+                ) : null
+              ) : null,
           },
           type: {
             dataIndex: 'step_name',
@@ -98,12 +113,21 @@ export default () => {
           },
           actions: {
             cardActionProps,
-            render: (_, record) => [<a key="run">完单</a>, <a key="delete">删除</a>],
+            render: (_, record) => [
+              <a type="link" onClick={() => handleFinish(record)}>
+                完单
+              </a>,
+              <a href="/order/${record.id}/orderitems" key="delete">
+                打开
+              </a>,
+            ],
           },
         }}
-        headerTitle="我的材料单"
-        dataSource={data}
+        // headerTitle="我的材料单"
+        dataSource={dataSource}
       />
     </div>
   );
 };
+
+export default UserOrder;

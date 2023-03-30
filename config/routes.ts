@@ -16,10 +16,11 @@ export default [
     path: '/',
     icon: 'home',
     layout: true,
-    component: './Dashboard',
+    // component: './Dashboard',
+    component: './User/UserCenter',
   },
   {
-    name: 'oa系统',
+    name: 'OA系统',
     icon: 'crown',
     path: '/oa',
     routes: [
@@ -122,12 +123,6 @@ export default [
     component: './User/UserCenter',
   },
   {
-    name: '供应商评分',
-    path: '/rate',
-    layout: true,
-    component: './Order/SupplierRate',
-  },
-  {
     name: '注册页面',
     path: '/register',
     layout: true,
@@ -138,11 +133,5 @@ export default [
     path: '/wecomBinding',
     layout: true,
     component: './User/wecomBinding',
-  },
-  {
-    name: '用户订单',
-    path: '/user_order',
-    layout: true,
-    component: './User/UserOrder',
   },
 ];

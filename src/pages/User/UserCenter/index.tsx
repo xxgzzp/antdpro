@@ -1,10 +1,13 @@
-import UserCard from '@/pages/User/UserCenter/UserCard';
-import UserOrder from '@/pages/User/UserOrder';
+import UserCard from '@/pages/User/UserCenter/UserCard/UserCard';
+import UserOrder from '@/pages/User/UserCenter/UserOrder';
+import UserOrderChecked from '@/pages/User/UserCenter/UserOrderChecked';
+import { request } from '@@/exports';
 import { GridContent } from '@ant-design/pro-layout';
-import { Col, Row } from 'antd';
+import { useRequest } from 'ahooks';
+import { Card, Col, Row } from 'antd';
 import React, { useState } from 'react';
 
-export type tabKeyType = 'articles' | 'applications' | 'projects';
+export type tabKeyType = 'user_order' | 'order_checked' | 'projects';
 
 const InfoCard: React.FC<{
   title: string;
@@ -12,90 +15,36 @@ const InfoCard: React.FC<{
   desc: string;
   href: string;
 }> = ({ title, href, index, desc }) => {
-  const [tabKey, setTabKey] = useState<tabKeyType>('articles');
-  // const Projects: React.FC = () => {
-  //   // 获取tab列表数据
-  // //   const { data: listData } = useRequest(() => {
-  // //     return queryFakeList({
-  //       count: 30,
-  //     });
-  //   });
-  //
-  //   return (
-  //     <List
-  //       className={styles.coverCardList}
-  //       rowKey="id"
-  //       grid={{ gutter: 24, xxl: 3, xl: 2, lg: 2, md: 2, sm: 2, xs: 1 }}
-  //       dataSource={listData?.list || []}
-  //       renderItem={(item) => (
-  //         <List.Item>
-  //           <Card
-  //             className={styles.card}
-  //             hoverable
-  //             cover={<img alt={item.title} src={item.cover} />}
-  //           >
-  //             <Card.Meta title={<a>{item.title}</a>} description={item.subDescription} />
-  //             <div className={styles.cardItemContent}>
-  //               <span>{moment(item.updatedAt).fromNow()}</span>
-  //               <div className={styles.avatarList}>
-  //                 <AvatarList size="small">
-  //                   {item.members.map((member) => (
-  //                     <AvatarList.Item
-  //                       key={`${item.id}-avatar-${member.id}`}
-  //                       src={member.avatar}
-  //                       tips={member.name}
-  //                     />
-  //                   ))}
-  //                 </AvatarList>
-  //               </div>
-  //             </div>
-  //           </Card>
-  //         </List.Item>
-  //       )}
-  //     />
-  //   );
-  // };
-  //
-  // // 渲染tab切换
-  // const renderChildrenByTabKey = (tabValue: tabKeyType) => {
-  //   if (tabValue === 'projects') {
-  //     return <Projects />;
-  //   }
-  //   if (tabValue === 'applications') {
-  //     return <Projects />;
-  //   }
-  //   if (tabValue === 'articles') {
-  //     return <Projects />;
-  //   }
-  //   return null;
-  // };
-  //
-  // const operationTabList = [
-  //   {
-  //     key: 'articles',
-  //     tab: (
-  //       <span>
-  //         文章 <span style={{ fontSize: 14 }}>(8)</span>
-  //       </span>
-  //     ),
-  //   },
-  //   {
-  //     key: 'applications',
-  //     tab: (
-  //       <span>
-  //         应用 <span style={{ fontSize: 14 }}>(8)</span>
-  //       </span>
-  //     ),
-  //   },
-  //   {
-  //     key: 'projects',
-  //     tab: (
-  //       <span>
-  //         项目 <span style={{ fontSize: 14 }}>(8)</span>
-  //       </span>
-  //     ),
-  //   },
-  // ];
+  const [tabKey, setTabKey] = useState<tabKeyType>('user_order');
+
+  const { data: user_order, loading: user_order_loading } = useRequest(() =>
+    request('api/material/order/user_order').catch((error) => console.error(error)),
+  );
+
+  const { data: user_order_checked, loading: user_order_checked_loading } = useRequest(() =>
+    request('api/material/order_checked/user_order_checked/').catch((error) =>
+      console.error(error),
+    ),
+  );
+
+  const operationTabList = [
+    {
+      key: 'user_order',
+      tab: (
+        <span>
+          我的材料单(代办) <span style={{ fontSize: 14 }}>{user_order?.count}</span>
+        </span>
+      ),
+    },
+    {
+      key: 'order_checked',
+      tab: (
+        <span>
+          我的审核单(代办) <span style={{ fontSize: 14 }}>{user_order_checked?.count}</span>
+        </span>
+      ),
+    },
+  ];
 
   return (
     <GridContent>
@@ -105,7 +54,24 @@ const InfoCard: React.FC<{
         </Col>
         <Col lg={17} md={24}>
           <div style={{ paddingLeft: '10' }}>
-            <UserOrder></UserOrder>
+            <Card
+              bordered={false}
+              tabList={operationTabList}
+              activeTabKey={tabKey}
+              onTabChange={(_tabKey: string) => {
+                console.log(_tabKey);
+                setTabKey(_tabKey as tabKeyType);
+              }}
+            ></Card>
+            {tabKey === 'user_order' && (
+              <UserOrder data={user_order?.results} loading={user_order_loading}></UserOrder>
+            )}
+            {tabKey === 'order_checked' && (
+              <UserOrderChecked
+                data={user_order_checked?.results}
+                loading={user_order_checked_loading}
+              />
+            )}
           </div>
         </Col>
       </Row>
