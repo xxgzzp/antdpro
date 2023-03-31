@@ -1,5 +1,6 @@
 import { EditableCell, EditableRow } from '@/components/Utils/Editable';
 import '@/pages/Contract/ContractItem/ContractItemList.less';
+import ContractOrderItem from '@/pages/Contract/ContractItem/ContractOrderItem';
 import ContractTop from '@/pages/Contract/ContractItem/ContractTop';
 import useContractLocalStorage, {
   ContractLocal,
@@ -9,15 +10,16 @@ import {
   apiMaterialContractUpdate,
 } from '@/services/ant-design-pro/api';
 import { useModel } from '@@/exports';
+import { PlusOutlined } from '@ant-design/icons';
 import { ProTable } from '@ant-design/pro-table';
 import { request } from '@umijs/max';
 import { useRequest } from 'ahooks';
-import { Button, Form, Popconfirm, Table } from 'antd';
+import { Button, Drawer, Form, Popconfirm, Table } from 'antd';
 import { isEqual } from 'lodash';
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router';
+import { toast } from 'react-toastify';
 import { v4 as uuidv4 } from 'uuid';
-import {PlusOutlined} from "@ant-design/icons";
 
 const Index: React.FC = () => {
   // 请求订单项
@@ -37,6 +39,9 @@ const Index: React.FC = () => {
   const [dataSource, setDataSource] = useState<API.ContractItem[]>([]);
   // 重载
   const { reloadKey, setReloadKey } = useModel('tableReload');
+  // 抽屉中的
+  const [drawerMaterial, setDrawerMaterial] = useState<number | undefined>();
+  const [drawerOpen, setDrawerOpen] = useState(false);
 
   const { user } = useModel('user');
 
@@ -196,7 +201,7 @@ const Index: React.FC = () => {
     {
       title: '序号',
       dataIndex: 'sort',
-      width: '7%',
+      width: '10%',
       editable: true,
       sorter: {
         // @ts-ignore
@@ -273,15 +278,36 @@ const Index: React.FC = () => {
       },
     },
     {
+      title: '已购数量',
+      width: '10%',
+      dataIndex: 'total_buy_num',
+      sorter: {
+        // @ts-ignore
+        compare: (a, b) => a.end_num - b.end_num,
+        multiple: 3,
+      },
+    },
+    {
       title: '操作',
       dataIndex: 'operation',
-      width: '7%',
+      width: '15%',
       // @ts-ignore
       render: (_, record: API.ContractItem) =>
         dataSource.length >= 1 ? (
-          <Popconfirm title="确认删除吗?" onConfirm={() => handleDelete(record.id!)}>
-            <a>删除</a>
-          </Popconfirm>
+          <div>
+            <a
+              style={{ marginRight: 10 }}
+              onClick={() => {
+                setDrawerMaterial(record?.material);
+                setDrawerOpen(true);
+              }}
+            >
+              详情
+            </a>
+            <Popconfirm title="确认删除吗?" onConfirm={() => handleDelete(record.id!)}>
+              <a>删除</a>
+            </Popconfirm>
+          </div>
         ) : null,
     },
   ];
@@ -337,6 +363,19 @@ const Index: React.FC = () => {
             <Button onClick={handleAdd} type="primary" style={{ marginBottom: 16 }}>
               增加一行
             </Button>
+            {contractLocal?.length !== 0 && (
+              <Button
+                type="primary"
+                onClick={() => {
+                  deleteContractLocal(contract_id!);
+                  setReloadKey(reloadKey + 1);
+                  toast.success('删除成功');
+                }}
+                style={{ marginLeft: 20 }}
+              >
+                删除本地数据
+              </Button>
+            )}
           </div>,
         ]}
         expandable={{
@@ -344,14 +383,22 @@ const Index: React.FC = () => {
           rowExpandable: handleRowExpandable,
         }}
       />
-      <Button
-        type="dashed"
-        onClick={handleAdd}
-        style={{ width: '100%', marginBottom: 8 }}
-      >
+      <Button type="dashed" onClick={handleAdd} style={{ width: '100%', marginBottom: 8 }}>
         <PlusOutlined />
         添加一行
       </Button>
+      {drawerOpen && (
+        <Drawer
+          width={1000}
+          open={drawerOpen}
+          onClose={() => {
+            setDrawerOpen(false);
+          }}
+        >
+          <ContractOrderItem material={drawerMaterial} contract={contract_id!}></ContractOrderItem>
+        </Drawer>
+      )}
+      <div style={{ height: 600 }}></div>
     </div>
   );
 };

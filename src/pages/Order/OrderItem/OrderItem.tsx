@@ -1,12 +1,17 @@
 import { EditableCell, EditableRow } from '@/components/Utils/Editable';
+import ContractSelectAdd from '@/pages/Contract/ContractSelectAdd';
 import '@/pages/Order/OrderItem/OrderItem.less';
 import useOrderLocalStorage, { OrderLocal } from '@/pages/Order/OrderItem/useOrderLocalStorage';
-import { apiMaterialOrderItemList } from '@/services/ant-design-pro/api';
+import {
+  apiMaterialOrderItemList,
+  apiMaterialOrderItemModifyContractFields,
+} from '@/services/ant-design-pro/api';
+import { history } from '@@/core/history';
 import { PlusOutlined } from '@ant-design/icons';
 import { ProTable } from '@ant-design/pro-table';
 import { request, useModel } from '@umijs/max';
 import { useRequest } from 'ahooks';
-import { Button, Popconfirm, Space, Steps, Table } from 'antd';
+import { Button, Modal, Popconfirm, Space, Steps, Table } from 'antd';
 import { isEqual } from 'lodash';
 import React, { useEffect, useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
@@ -21,6 +26,7 @@ const OrderItem: React.FC<{
   // 操作的数据源 并且新建初始数据，如果是新建order就要用到
   const [dataSource, setDataSource] = useState<API.OrderItem[]>([]);
 
+  // 因为提交数据的逻辑被抽离到index，所以要set回去
   useEffect(() => {
     if (setDataSourceCommit) {
       setDataSourceCommit(dataSource);
@@ -42,6 +48,9 @@ const OrderItem: React.FC<{
 
   // TODO:加载数据
   useEffect(() => {
+    // TODO:如果有prop数据，就加载prop的 ，
+    //  没有就加载本地的(同时发起网络请求)，
+    //  网络请求完毕就比较本地和远程数据，如果相等就删除本地数据
     getOrderItemRemote({ order: order_id });
     // 如果有本地数据就读取
     if (typeof orderLocal !== undefined && orderLocal?.length) {
@@ -64,7 +73,7 @@ const OrderItem: React.FC<{
       }
     }
 
-    // TODO:有本地数据就加载本地的
+    // TODO:没有本地数据就加载远程的
     if (remoteDate && !orderLocal?.length) {
       setDataSource(remoteDate.results);
     }
@@ -131,7 +140,7 @@ const OrderItem: React.FC<{
     updateOrderLocal(updateOrder);
   };
 
-  // TODO:提交数据
+  // TODO:提交数据 这部分逻辑被抽离到index中
   const [commitLoading, setCommitLoading] = useState<boolean>(false);
   const handleCommit = async () => {
     setCommitLoading(true);
@@ -229,6 +238,22 @@ const OrderItem: React.FC<{
       },
     },
     {
+      title: '合同',
+      width: '10%',
+      dataIndex: 'contract_name',
+      render: (_, row) => [
+        <a
+          key="rowName"
+          onClick={() => {
+            // @ts-ignore
+            history.push(`/contract/${row?.contract}/contractitems`);
+          }}
+        >
+          {row?.contract_name}
+        </a>,
+      ],
+    },
+    {
       title: '操作',
       dataIndex: 'operation',
       width: '7%',
@@ -274,6 +299,18 @@ const OrderItem: React.FC<{
     return false;
   };
 
+  const [contractModel, setContractModel] = useState(false);
+  const [contractSelectValue, setContractSelectValue] = useState();
+  const [selectRow, setSelectRow] = useState<API.OrderItem[]>();
+
+  const handleContractCommit = () => {
+    apiMaterialOrderItemModifyContractFields({
+      contract_id: contractSelectValue,
+      order_items: selectRow,
+    });
+    console.log(contractSelectValue);
+    console.log(selectRow);
+  };
   // 展开渲染
   const handleExpendedRowRender = (record: API.OrderItem) => {
     if (remoteDate) {
@@ -309,17 +346,19 @@ const OrderItem: React.FC<{
             <Space size={16}>
               <a
                 onClick={() => {
-                  console.log(_);
+                  setContractModel(true);
+                  setSelectRow(_?.selectedRows);
                 }}
               >
-                批量删除
+                生成合同
               </a>
               <a
                 onClick={() => {
-                  console.log(_);
+                  setContractModel(true);
+                  setSelectRow(_?.selectedRows);
                 }}
               >
-                导出数据
+                导入合同
               </a>
             </Space>
           );
@@ -339,7 +378,7 @@ const OrderItem: React.FC<{
         // 吸顶
         sticky
         // scroll={{ x: 'max-content', y: 'calc(100vh - 300px)' }}
-        size="small" // 紧凑
+        // size="small" // 紧凑
         search={false}
         options={
           isToolBal
@@ -386,6 +425,21 @@ const OrderItem: React.FC<{
           添加一行
         </Button>
       )}
+      <Modal
+        title="请选择 或 创建 合同"
+        open={contractModel}
+        onOk={handleContractCommit}
+        onCancel={() => {
+          setContractModel(false);
+        }}
+      >
+        <ContractSelectAdd
+          onChange={(_) => {
+            setContractSelectValue(_);
+          }}
+          style={{ width: '200px' }}
+        ></ContractSelectAdd>
+      </Modal>
     </div>
   );
 };

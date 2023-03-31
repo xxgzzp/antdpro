@@ -9,10 +9,11 @@ import { useRequest } from 'ahooks';
 
 import useOrderLocalStorage from '@/pages/Order/OrderItem/useOrderLocalStorage';
 import { request, useModel } from '@@/exports';
-import { Button, Card, Form, Menu, Steps, Tour, TourProps } from 'antd';
+import { Button, Card, Form, Steps, Tour, TourProps } from 'antd';
 import { Step } from 'rc-steps';
 import React, { Fragment, useRef, useState } from 'react';
 import { useParams } from 'react-router';
+import { toast } from 'react-toastify';
 
 const OrderItems: React.FC = () => {
   // URL中的order_id
@@ -64,10 +65,12 @@ const OrderItems: React.FC = () => {
     seTabStatus({ ...tabStatus, tabActiveKey });
   };
 
-  const { deleteOrderLocal } = useOrderLocalStorage();
+  const { deleteOrderLocal, getOrderLocal } = useOrderLocalStorage();
   const { reloadKey, setReloadKey } = useModel('tableReload');
   // 操作的数据源 并且新建初始数据，如果是新建order就要用到
   const [dataSource, setDataSource] = useState<API.OrderItem[]>([]);
+  const orderLocal = getOrderLocal(order_id!); // 获取本地order
+
   // TODO:提交数据
   const [commitLoading, setCommitLoading] = useState<boolean>(false);
   const handleCommit = async () => {
@@ -92,13 +95,6 @@ const OrderItems: React.FC = () => {
     deleteOrderLocal(order_id!);
   };
 
-  const CommitMenu = (
-    <Menu>
-      <Menu.Item key="1">提交订单面板信息</Menu.Item>
-      <Menu.Item key="2">提交材料明细项</Menu.Item>
-    </Menu>
-  );
-
   // 漫游式引导
   const applyEventRef = useRef(null);
   const [tourOpen, setTourOpen] = useState<boolean>(false);
@@ -116,9 +112,23 @@ const OrderItems: React.FC = () => {
         title={orderDetail?.name}
         waterMarkProps={{ fontSize: 0 }}
         extra={
-          <Button loading={commitLoading} type="primary" onClick={handleCommit}>
-            提交材料单
-          </Button>
+          <div>
+            <Button loading={commitLoading} type="primary" onClick={handleCommit}>
+              提交材料单
+            </Button>
+            {orderLocal?.length !== 0 && (
+              <Button
+                type="primary"
+                onClick={() => {
+                  deleteOrderLocal(order_id!);
+                  toast.success('删除成功');
+                }}
+                style={{ marginLeft: 20 }}
+              >
+                删除本地数据
+              </Button>
+            )}
+          </div>
         }
         content={
           <OrderTop

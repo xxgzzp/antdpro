@@ -1,6 +1,5 @@
 import renderBadge from '@/components/Utils/renderBadge';
 import ContractForm from '@/pages/Contract/ContractForm';
-import ContractSelectAdd from '@/pages/Contract/ContractSelectAdd';
 import {
   apiMaterialContractcategoryList,
   apiMaterialContractDelete,
@@ -8,7 +7,7 @@ import {
 } from '@/services/ant-design-pro/api';
 import { history } from '@@/core/history';
 import type { ActionType, ProColumns } from '@ant-design/pro-components';
-import { ProTable, WaterMark } from '@ant-design/pro-components';
+import { ProTable } from '@ant-design/pro-components';
 import { ProFormDateRangePicker } from '@ant-design/pro-form';
 import { useModel } from '@umijs/max';
 import { useToggle } from 'ahooks';
@@ -260,57 +259,55 @@ export default function Page() {
   }
   return (
     <>
-      <WaterMark content="保密内容">
-        <ProTable<API.Contract>
-          columns={columns}
-          rowKey="id"
-          actionRef={proTableRef}
-          request={(params) => apiMaterialContractList(handleSearchParams(params))}
-          params={searchParams}
-          pagination={{
-            showQuickJumper: true,
-          }}
-          onRow={(record) => {
-            return {
-              onDoubleClick: () => {
-                history.push(`/contract/${record.id}/contractitems`);
-              },
-            };
-          }}
-          // 右上角三个调整按钮
-          options={{
-            fullScreen: true,
-            search: true,
-          }}
-          // 表格上方栏
-          toolbar={{
-            multipleLine: true,
-            search: {
-              onSearch: handleSearch,
-              placeholder: '搜索',
+      <ProTable<API.Contract>
+        columns={columns}
+        rowKey="id"
+        actionRef={proTableRef}
+        request={(params) => apiMaterialContractList(handleSearchParams(params))}
+        params={searchParams}
+        pagination={{
+          showQuickJumper: true,
+        }}
+        onRow={(record) => {
+          return {
+            onDoubleClick: () => {
+              history.push(`/contract/${record.id}/contractitems`);
             },
-            menu: {
-              type: 'tab',
-              activeKey: activeKey,
-              items: getItems(),
-              onChange: handleMenuChange,
-            },
-          }}
-          // 右上角按钮
-          toolBarRender={() => [
-            <Button type="primary" key="primary" onClick={handleAdd}>
-              新增合同
-            </Button>,
-          ]}
-          // 在这个例子中，`search` 属性控制了每个查询表单元素的大小，
-          // `searchConfig` 属性控制了它们的排列方式和样式。注意，这里使用了 `labelWidth: 'auto'` 来自适应不同长度的标签文字。
-          search={{
-            span: 6,
-            labelWidth: 'auto',
-            defaultCollapsed: false,
-          }}
-        />
-      </WaterMark>
+          };
+        }}
+        // 右上角三个调整按钮
+        options={{
+          fullScreen: true,
+          search: true,
+        }}
+        // 表格上方栏
+        toolbar={{
+          multipleLine: true,
+          search: {
+            onSearch: handleSearch,
+            placeholder: '搜索',
+          },
+          menu: {
+            type: 'tab',
+            activeKey: activeKey,
+            items: getItems(),
+            onChange: handleMenuChange,
+          },
+        }}
+        // 右上角按钮
+        toolBarRender={() => [
+          <Button type="primary" key="primary" onClick={handleAdd}>
+            新增合同
+          </Button>,
+        ]}
+        // 在这个例子中，`search` 属性控制了每个查询表单元素的大小，
+        // `searchConfig` 属性控制了它们的排列方式和样式。注意，这里使用了 `labelWidth: 'auto'` 来自适应不同长度的标签文字。
+        search={{
+          span: 6,
+          labelWidth: 'auto',
+          defaultCollapsed: false,
+        }}
+      />
 
       <ContractForm
         typeAddOrUpdate={typeAddOrUpdate}
@@ -319,7 +316,6 @@ export default function Page() {
         setModalOpen={setModalOpen}
         reload={proTableRef.current?.reload}
       />
-      <ContractSelectAdd style={{ width: '200px' }}></ContractSelectAdd>
     </>
   );
 }
