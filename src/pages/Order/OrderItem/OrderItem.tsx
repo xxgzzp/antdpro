@@ -304,7 +304,7 @@ const OrderItem: React.FC<{
           selections: [Table.SELECTION_ALL, Table.SELECTION_INVERT],
           defaultSelectedRowKeys: [1],
         }}
-        tableAlertOptionRender={(_, row) => {
+        tableAlertOptionRender={(_) => {
           return (
             <Space size={16}>
               <a
@@ -316,7 +316,7 @@ const OrderItem: React.FC<{
               </a>
               <a
                 onClick={() => {
-                  console.log(row);
+                  console.log(_);
                 }}
               >
                 导出数据

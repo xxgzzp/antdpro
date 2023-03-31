@@ -16,7 +16,10 @@ const ContractForm: React.FC<{
   reload: ((resetPageIndex?: boolean | undefined) => Promise<void>) | undefined;
   updateInit: API.Contract | undefined;
   typeAddOrUpdate: boolean; // true是增加,false是更新
-}> = ({ modalOpen, setModalOpen, reload, updateInit, typeAddOrUpdate = true }) => {
+  setContractList?: Dispatch<
+    SetStateAction<{ value: string | undefined; label: string | undefined }[] | undefined>
+  >;
+}> = ({ modalOpen, setModalOpen, reload, updateInit, typeAddOrUpdate = true, setContractList }) => {
   const restFormRef = useRef<ProFormInstance>();
   const [form] = Form.useForm();
 
@@ -32,7 +35,16 @@ const ContractForm: React.FC<{
   const handleFinish = async (formData: API.Contract) => {
     if (typeAddOrUpdate) {
       //  TODO:新增合同
-      await apiMaterialContractCreate(formData).then(() => {
+      await apiMaterialContractCreate(formData).then(({ id }) => {
+        if (setContractList) {
+          setContractList((prevList) => [
+            ...(prevList ?? []),
+            {
+              label: formData.name,
+              value: id,
+            },
+          ]);
+        }
         // 关闭模态框
         setModalOpen(false);
         // 重新加载页面

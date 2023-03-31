@@ -1,5 +1,6 @@
 import renderBadge from '@/components/Utils/renderBadge';
 import ContractForm from '@/pages/Contract/ContractForm';
+import ContractSelectAdd from '@/pages/Contract/ContractSelectAdd';
 import {
   apiMaterialContractcategoryList,
   apiMaterialContractDelete,
@@ -318,6 +319,7 @@ export default function Page() {
         setModalOpen={setModalOpen}
         reload={proTableRef.current?.reload}
       />
+      <ContractSelectAdd style={{ width: '200px' }}></ContractSelectAdd>
     </>
   );
 }
