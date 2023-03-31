@@ -2,11 +2,14 @@ import { formatDate } from '@/components/Utils/formatDate';
 import OrderItem from '@/pages/Order/OrderItem/OrderItem';
 import OrderTop from '@/pages/Order/OrderItem/OrderTop';
 import SupplierRate from '@/pages/Order/SupplierRate';
-import { apiMaterialOrderRead } from '@/services/ant-design-pro/api';
+import { apiMaterialOrderRead, apiMaterialOrderUpdate } from '@/services/ant-design-pro/api';
 import { DingdingOutlined } from '@ant-design/icons';
 import { PageContainer } from '@ant-design/pro-components';
 import { useRequest } from 'ahooks';
-import { Button, Card, Form, Steps, Tour, TourProps } from 'antd';
+
+import useOrderLocalStorage from '@/pages/Order/OrderItem/useOrderLocalStorage';
+import { request, useModel } from '@@/exports';
+import { Button, Card, Form, Menu, Steps, Tour, TourProps } from 'antd';
 import { Step } from 'rc-steps';
 import React, { Fragment, useRef, useState } from 'react';
 import { useParams } from 'react-router';
@@ -61,6 +64,41 @@ const OrderItems: React.FC = () => {
     seTabStatus({ ...tabStatus, tabActiveKey });
   };
 
+  const { deleteOrderLocal } = useOrderLocalStorage();
+  const { reloadKey, setReloadKey } = useModel('tableReload');
+  // 操作的数据源 并且新建初始数据，如果是新建order就要用到
+  const [dataSource, setDataSource] = useState<API.OrderItem[]>([]);
+  // TODO:提交数据
+  const [commitLoading, setCommitLoading] = useState<boolean>(false);
+  const handleCommit = async () => {
+    setCommitLoading(true);
+    await apiMaterialOrderUpdate({ id: order_id! }, { ...orderForm.getFieldsValue() });
+    await request('/api/material/order_commit/', {
+      method: 'POST',
+      data: {
+        order_items: dataSource,
+        order_id: order_id,
+      },
+    })
+      .then(() => {
+        setReloadKey(reloadKey + 1);
+        // getOrderDetail();
+      })
+      .catch(() => {
+        setCommitLoading(false);
+      });
+    setCommitLoading(false);
+    // 提交了就在本地删除
+    deleteOrderLocal(order_id!);
+  };
+
+  const CommitMenu = (
+    <Menu>
+      <Menu.Item key="1">提交订单面板信息</Menu.Item>
+      <Menu.Item key="2">提交材料明细项</Menu.Item>
+    </Menu>
+  );
+
   // 漫游式引导
   const applyEventRef = useRef(null);
   const [tourOpen, setTourOpen] = useState<boolean>(false);
@@ -77,6 +115,11 @@ const OrderItems: React.FC = () => {
       <PageContainer
         title={orderDetail?.name}
         waterMarkProps={{ fontSize: 0 }}
+        extra={
+          <Button loading={commitLoading} type="primary" onClick={handleCommit}>
+            提交材料单
+          </Button>
+        }
         content={
           <OrderTop
             orderForm={orderForm}
@@ -117,7 +160,11 @@ const OrderItems: React.FC = () => {
                 <Step title="完成" />
               </Steps>
             </Card>
-            <OrderItem order_id={order_id!}></OrderItem>
+            <OrderItem
+              order_id={order_id!}
+              dataSourceCommit={dataSource}
+              setDataSourceCommit={setDataSource}
+            ></OrderItem>
             <div style={{ height: '600px' }}></div>
           </div>
         )}

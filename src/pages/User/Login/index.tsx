@@ -7,9 +7,9 @@ import {
   ProFormText,
 } from '@ant-design/pro-components';
 import { CaptFieldRef } from '@ant-design/pro-form/lib';
-import { history, request, useIntl, useModel } from '@umijs/max';
+import { history, request, useModel } from '@umijs/max';
 import { Card, Space, Tabs } from 'antd';
-import { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { Link } from 'umi';
@@ -20,7 +20,6 @@ const Index: React.FC = () => {
   // const [userLoginState, setUserLoginState] = useState<>({});
   const [loginType, setLoginType] = useState<LoginType>('account');
   const captchaRef = useRef<CaptFieldRef | null | undefined>();
-  const intl = useIntl();
   const { toggleUser } = useModel('user');
   const searchParams = new URLSearchParams(window.location.search);
 

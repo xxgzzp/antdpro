@@ -1,4 +1,5 @@
 import {
+  apiMaterialOrderPartialUpdate,
   apiMaterialSupplierRateCreate,
   apiMaterialSupplierRateList,
   apiMaterialSupplierRateUpdate,
@@ -76,6 +77,7 @@ const SupplierRateForm: React.FC<Props> = ({ order_id, supplier_id }) => {
             },
           )
             .then(() => {
+              apiMaterialOrderPartialUpdate({ id: order_id }, { step: 5 });
               toast.success('提交成功');
             })
             .catch(() => {

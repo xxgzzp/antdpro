@@ -4,7 +4,6 @@ import SupplierSelectAdd from '@/pages/Supplier/SupplierSelectAdd';
 import UserSelectAdd from '@/pages/User/UserSelectAdd';
 import {
   apiMaterialOrderCheckedList,
-  apiMaterialOrderPartialUpdate,
   apiMaterialOrderUpdate,
   apiMaterialOrderUploadToWecomList,
 } from '@/services/ant-design-pro/api';
@@ -14,11 +13,10 @@ import { KeepAliveContext, useLocation } from '@@/exports';
 import { CloudDownloadOutlined, FormOutlined, UploadOutlined } from '@ant-design/icons';
 import { request, useModel } from '@umijs/max';
 import { useRequest } from 'ahooks';
-import { Badge, Button, Descriptions, Form, Input, Rate, Skeleton, Tag, Tooltip } from 'antd';
+import { Badge, Button, Descriptions, Form, Input, Skeleton, Tag, Tooltip } from 'antd';
 import { FormInstance } from 'antd/es/form';
 import { CustomTagProps } from 'rc-select/es/BaseSelect';
 import React, { useEffect, useState } from 'react';
-import { toast } from 'react-toastify';
 interface OrderCheckedResponse {
   results: API.OrderChecked[]; // 将结果数组中的每个对象都指定为 OrderCheckedResult 类型
 }
@@ -175,19 +173,19 @@ const OrderTop: React.FC<{
   };
 
   // TODO:对供应商评价
-  const handleSupplierRate = (value: number) => {
-    const intValue = Math.round(value * 2);
-    if (intValue !== rateValue && intValue >= 0 && intValue <= 10) {
-      setRateValue(intValue);
-      apiMaterialOrderPartialUpdate({ id: order_id! }, { supplier_rate: intValue })
-        .then(() => {
-          toast.success('打分成功');
-        })
-        .catch(() => {
-          toast.error('打分失败');
-        });
-    }
-  };
+  // const handleSupplierRate = (value: number) => {
+  //   const intValue = Math.round(value * 2);
+  //   if (intValue !== rateValue && intValue >= 0 && intValue <= 10) {
+  //     setRateValue(intValue);
+  //     apiMaterialOrderPartialUpdate({ id: order_id! }, { supplier_rate: intValue })
+  //       .then(() => {
+  //         toast.success('打分成功');
+  //       })
+  //       .catch(() => {
+  //         toast.error('打分失败');
+  //       });
+  //   }
+  // };
 
   return (
     <Skeleton loading={orderDetailLoading} active={true}>
@@ -228,7 +226,7 @@ const OrderTop: React.FC<{
                 onClick={handelApplyevent}
                 icon={<FormOutlined />}
                 loading={applyeventLoading}
-                type="dashed"
+                type="link"
               >
                 生成审批单
               </Button>
@@ -242,15 +240,15 @@ const OrderTop: React.FC<{
                   initialValue={orderDetail?.supplier}
                 ></SupplierSelectAdd>
               </Form.Item>
-              {orderDetail?.supplier && (
-                <Rate
-                  allowHalf
-                  style={{ padding: '0px' }}
-                  value={rateValue}
-                  defaultValue={orderDetail?.supplier_rate}
-                  onChange={handleSupplierRate}
-                />
-              )}
+              {/*{orderDetail?.supplier && (*/}
+              {/*  <Rate*/}
+              {/*    allowHalf*/}
+              {/*    style={{ padding: '0px' }}*/}
+              {/*    value={rateValue}*/}
+              {/*    defaultValue={orderDetail?.supplier_rate}*/}
+              {/*    onChange={handleSupplierRate}*/}
+              {/*  />*/}
+              {/*)}*/}
             </Descriptions.Item>
 
             <Descriptions.Item label="项目">

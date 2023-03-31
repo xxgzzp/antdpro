@@ -134,4 +134,10 @@ export default [
     layout: true,
     component: './User/wecomBinding',
   },
+  {
+    name: '绑定企业微信',
+    path: '/wecom_oauth_result',
+    layout: false,
+    component: './User/wecomBinding/WecomOauthResult',
+  },
 ];

@@ -1,6 +1,6 @@
 import styles from '@/pages/User/Register/style.less';
 import { request } from '@@/exports';
-import { history, useModel } from '@umijs/max';
+import { useModel } from '@umijs/max';
 import { useRequest } from 'ahooks';
 import { Alert, Button, Image, QRCode, Result, Skeleton, Steps } from 'antd';
 import { getUUID } from 'rc-select/es/hooks/useId';
@@ -25,9 +25,6 @@ const InfoCard: React.FC<{
     // 如果没有请求用户就先请求
     if (!ready) {
       toggleUser();
-    }
-    if (propCurrent) {
-      setCurrent(propCurrent);
     }
     setQrcodeLoading(true);
     request('/api/wecom/get_join_qrcode', { skipErrorHandler: true })
@@ -58,12 +55,21 @@ const InfoCard: React.FC<{
     }
   }, [wecomUser]);
 
+  const [bindingLoading, setBindingLoading] = useState(false);
   const handleBinding = () => {
-    request(`api/wecom/binding_state?user_id=${user?.id}`).then((res) => {
-      history.push(
-        `https://open.work.weixin.qq.com/wwopen/sso/qrConnect?appid=ww43a1b769b5588d58&agentid=1000003&redirect_uri=http://zengzeping.com/api/wecom/login&state=${user?.id}${res.state}`,
-      );
-    });
+    setBindingLoading(true);
+    request(`api/wecom/binding_state?user_id=${user?.id}`)
+      .then((res) => {
+        window.open(
+          `https://open.work.weixin.qq.com/wwopen/sso/qrConnect?appid=ww43a1b769b5588d58&agentid=1000003&redirect_uri=http://zengzeping.com/api/wecom/login&state=${user?.id}${res.state}`,
+        );
+      })
+      .then(() => {
+        setBindingLoading(false);
+      })
+      .catch(() => {
+        setBindingLoading(false);
+      });
   };
 
   return (
@@ -72,7 +78,7 @@ const InfoCard: React.FC<{
         direction={'horizontal'}
         percent={50}
         labelPlacement="horizontal"
-        current={current}
+        current={propCurrent ? propCurrent : current}
         items={[
           {
             title: '加入企业微信',
@@ -101,49 +107,44 @@ const InfoCard: React.FC<{
               <Image src={qrcode} style={{ paddingLeft: '100px' }}></Image>
             </div>
           </Skeleton>
-          <Button onClick={() => setCurrent(current + 1)}>{'下一步>'}</Button>
+          <Button onClick={() => setCurrent(current + 1)} block>
+            {'下一步>'}
+          </Button>
         </div>
       )}
       {current == 1 && (
         <div className={styles.result}>
-          {/*<Alert*/}
-          {/*  closable*/}
-          {/*  showIcon*/}
-          {/*  message="请用企业微信扫码，绑定企业微信"*/}
-          {/*  style={{ marginBottom: 24 }}*/}
-          {/*/>*/}
-          {/*<div style={{ paddingLeft: '100px' }}>*/}
-          {/*  <QRCode*/}
-          {/*    size={300}*/}
-          {/*    style={{ marginBottom: 16 }}*/}
-          {/*    value={`https://open.work.weixin.qq.com/wwopen/sso/qrConnect?appid=ww43a1b769b5588d58&agentid=1000003&redirect_uri=http://zengzeping.com/api/wecom/login&state=${user?.id}`}*/}
-          {/*  />*/}
-          {/*</div>*/}
-          <Button onClick={handleBinding}>点击前往企业微信绑定</Button>
-
-          <Button onClick={() => setCurrent(current - 1)}>{'<上一步'}</Button>
-          <Button onClick={() => setCurrent(current + 1)}>{'下一步>'}</Button>
+          <Button onClick={handleBinding} loading={bindingLoading} block>
+            点击前往企业微信绑定
+          </Button>
+          <div>
+            <Button onClick={() => setCurrent(current - 1)}>{'<上一步'}</Button>
+            <Button onClick={() => setCurrent(current + 1)}>{'下一步>'}</Button>
+          </div>
         </div>
       )}
       {current == 2 && (
         <div className={styles.result}>
-          <Alert
-            closable
-            showIcon
-            message="请用企业微信扫码，并授权完善信息"
-            style={{ marginBottom: 24 }}
-          />
-
-          <div style={{ paddingLeft: '100px' }}>
-            <QRCode
-              size={300}
-              style={{ marginBottom: 16 }}
-              value={`https://open.weixin.qq.com/connect/oauth2/authorize?appid=ww43a1b769b5588d58&redirect_uri=http%3A%2F%2Fzengzeping.com%2Fapi%2Fwecom%2Foauth&state=STATE&response_type=code&scope=snsapi_privateinfo&state=STATE&agentid=1000003#wechat_redirect`}
+          <div style={{ display: 'flex', justifyContent: 'center', flexDirection: 'column' }}>
+            <Alert
+              closable
+              showIcon
+              message="请用企业微信扫码，并授权完善信息"
+              style={{ marginBottom: 24 }}
             />
-          </div>
 
-          <Button onClick={() => setCurrent(current - 1)}>{'<上一步'}</Button>
-          <Button onClick={() => setCurrent(current + 1)}>{'下一步>'}</Button>
+            <div>
+              <QRCode
+                size={300}
+                style={{ marginBottom: 16 }}
+                value={`https://open.weixin.qq.com/connect/oauth2/authorize?appid=ww43a1b769b5588d58&redirect_uri=http%3A%2F%2Fzengzeping.com%2Fapi%2Fwecom%2Foauth&state=STATE&response_type=code&scope=snsapi_privateinfo&state=STATE&agentid=1000003#wechat_redirect`}
+              />
+            </div>
+            <div>
+              <Button onClick={() => setCurrent(current - 1)}>{'<上一步'}</Button>
+              <Button onClick={() => setCurrent(current + 1)}>{'下一步>'}</Button>
+            </div>
+          </div>
         </div>
       )}
       {current == 3 && (

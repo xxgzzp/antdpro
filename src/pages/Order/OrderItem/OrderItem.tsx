@@ -6,7 +6,7 @@ import { PlusOutlined } from '@ant-design/icons';
 import { ProTable } from '@ant-design/pro-table';
 import { request, useModel } from '@umijs/max';
 import { useRequest } from 'ahooks';
-import { Button, Popconfirm, Steps, Table } from 'antd';
+import { Button, Popconfirm, Space, Steps, Table } from 'antd';
 import { isEqual } from 'lodash';
 import React, { useEffect, useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
@@ -15,7 +15,18 @@ const { Step } = Steps;
 const OrderItem: React.FC<{
   order_id: string;
   isToolBal?: boolean;
-}> = ({ order_id, isToolBal = true }) => {
+  dataSourceCommit?: API.OrderItem[];
+  setDataSourceCommit?: React.Dispatch<React.SetStateAction<API.OrderItem[]>>;
+}> = ({ order_id, isToolBal = true, setDataSourceCommit }) => {
+  // 操作的数据源 并且新建初始数据，如果是新建order就要用到
+  const [dataSource, setDataSource] = useState<API.OrderItem[]>([]);
+
+  useEffect(() => {
+    if (setDataSourceCommit) {
+      setDataSourceCommit(dataSource);
+    }
+  }, [dataSource, setDataSourceCommit]);
+
   // 请求订单项
   const {
     data: remoteDate,
@@ -26,9 +37,6 @@ const OrderItem: React.FC<{
   // 操作LocalStorage
   const { getOrderLocal, updateOrderLocal, deleteOrderLocal } = useOrderLocalStorage();
   const orderLocal = getOrderLocal(order_id!); // 获取本地order
-
-  // 操作的数据源 并且新建初始数据，如果是新建order就要用到
-  const [dataSource, setDataSource] = useState<API.OrderItem[]>([]);
 
   const { reloadKey, setReloadKey } = useModel('tableReload');
 
@@ -290,6 +298,32 @@ const OrderItem: React.FC<{
   return (
     <div>
       <ProTable
+        rowSelection={{
+          // 自定义选择项参考: https://ant.design/components/table-cn/#components-table-demo-row-selection-custom
+          // 注释该行则默认不显示下拉选项
+          selections: [Table.SELECTION_ALL, Table.SELECTION_INVERT],
+          defaultSelectedRowKeys: [1],
+        }}
+        tableAlertOptionRender={(_, row) => {
+          return (
+            <Space size={16}>
+              <a
+                onClick={() => {
+                  console.log(_);
+                }}
+              >
+                批量删除
+              </a>
+              <a
+                onClick={() => {
+                  console.log(row);
+                }}
+              >
+                导出数据
+              </a>
+            </Space>
+          );
+        }}
         style={{ paddingTop: '20px' }}
         rowKey="id"
         locale={{ emptyText: 'empty' }}
@@ -321,14 +355,14 @@ const OrderItem: React.FC<{
             ? [
                 <div key="proTableOption">
                   <span style={{ paddingRight: '10px' }}>
-                    <Button
-                      onClick={handleCommit}
-                      type="primary"
-                      style={{ marginBottom: 16 }}
-                      loading={commitLoading}
-                    >
-                      提交
-                    </Button>
+                    {/*<Button*/}
+                    {/*  onClick={handleCommit}*/}
+                    {/*  type="primary"*/}
+                    {/*  style={{ marginBottom: 16 }}*/}
+                    {/*  loading={commitLoading}*/}
+                    {/*>*/}
+                    {/*  提交*/}
+                    {/*</Button>*/}
                     <Button
                       onClick={handleAdd}
                       type="primary"

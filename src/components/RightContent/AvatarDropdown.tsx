@@ -1,5 +1,5 @@
 // import { outLogin } from '@/services/ant-design-pro/api';
-import { LogoutOutlined, SettingOutlined, UserOutlined } from '@ant-design/icons';
+import { LogoutOutlined, UserOutlined } from '@ant-design/icons';
 import { setAlpha } from '@ant-design/pro-components';
 import { useEmotionCss } from '@ant-design/use-emotion-css';
 import { history, useModel } from '@umijs/max';
@@ -109,6 +109,15 @@ const AvatarDropdown: React.FC<GlobalHeaderRightProps> = ({ menu }) => {
       return;
     }
     if (key === 'wecomBing') {
+      history.push(`/wecomBinding`);
+      return;
+    }
+    if (key === 'center') {
+      history.push(`/`);
+      return;
+    }
+    if (key === 'center') {
+      history.push(`/`);
       return;
     }
     history.push(`/account/${key}`);
@@ -120,11 +129,11 @@ const AvatarDropdown: React.FC<GlobalHeaderRightProps> = ({ menu }) => {
       icon: <UserOutlined />,
       label: '个人中心',
     },
-    {
-      key: 'settings',
-      icon: <SettingOutlined />,
-      label: '个人设置',
-    },
+    // {
+    //   key: 'settings',
+    //   icon: <SettingOutlined />,
+    //   label: '个人设置',
+    // },
     {
       key: 'wecomBing',
       icon: <UserOutlined />,

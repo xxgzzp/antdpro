@@ -40,7 +40,7 @@ export async function getInitialState(): Promise<{
   settings?: Partial<LayoutSettings>;
   loading?: boolean;
 }> {
-  if (location.pathname !== loginPath) {
+  if (location.pathname !== loginPath && location.pathname !== '/wecom_oauth_result') {
     // 没有token就返回登录地址
     const token = localStorage.getItem(' Token ');
     if (token === null) {
