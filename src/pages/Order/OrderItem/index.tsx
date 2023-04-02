@@ -121,6 +121,7 @@ const OrderItems: React.FC = () => {
                 type="primary"
                 onClick={() => {
                   deleteOrderLocal(order_id!);
+                  setReloadKey(reloadKey + 1);
                   toast.success('删除成功');
                 }}
                 style={{ marginLeft: 20 }}

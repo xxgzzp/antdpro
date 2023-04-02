@@ -117,7 +117,7 @@ const UserOrder: React.FC<{
               <a type="link" onClick={() => handleFinish(record)}>
                 完单
               </a>,
-              <a href="/order/${record.id}/orderitems" key="delete">
+              <a href={`/order/${record.id}/orderitems`} key="delete">
                 打开
               </a>,
             ],

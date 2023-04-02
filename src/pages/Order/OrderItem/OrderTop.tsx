@@ -155,9 +155,9 @@ const OrderTop: React.FC<{
   };
 
   // TODO:生成腾讯文档
-  const handelUploadToWecom = () => {
+  const handelUploadToWecom = async () => {
     setExportWecomLoading(true);
-    apiMaterialOrderUploadToWecomList({ order_id: order_id! }).then((r) => {
+    await apiMaterialOrderUploadToWecomList({ order_id: order_id! }).then((r) => {
       window.open(r.share_url);
     });
     setExportWecomLoading(false);

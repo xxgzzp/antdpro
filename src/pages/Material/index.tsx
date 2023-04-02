@@ -49,7 +49,7 @@ const InfoCard: React.FC = () => {
     return getItem(
       <div
         onClick={() => {
-          setSearchParams({ now_project: item.id });
+          setSearchParams({ project: item.id });
         }}
       >
         <ApartmentOutlined />

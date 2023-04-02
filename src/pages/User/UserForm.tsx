@@ -33,37 +33,77 @@ const UserForm: React.FC<{
 
   const handleFinish = async (formData: API.User) => {
     if (typeAddOrUpdate) {
-      await apiOaUserCreate(formData).then(({ id }) => {
-        // 在Select中，如果添加用户，要把新增的用户set回去
-        if (setUserList) {
-          setUserList((prevList) => [
-            ...(prevList ?? []),
-            {
-              label: formData.name,
-              value: id,
-            },
-          ]);
-        }
-        // 关闭模态框
-        setModalOpen(false);
-        // 重新加载页面
-        reload?.();
-        // 表单重置
-        restFormRef.current?.resetFields();
-      });
+      await apiOaUserCreate(formData)
+        .then(({ id }) => {
+          // 在Select中，如果添加用户，要把新增的用户set回去
+          if (setUserList) {
+            setUserList((prevList) => [
+              ...(prevList ?? []),
+              {
+                label: formData.name,
+                value: id,
+              },
+            ]);
+          }
+          // 关闭模态框
+          setModalOpen(false);
+          // 重新加载页面
+          reload?.();
+          // 表单重置
+          restFormRef.current?.resetFields();
+        })
+        .catch((error) => {
+          console.log(error.response);
+          if (error.response?.code === 400) {
+            const errorData = error.response;
+            const errorFields = Object.keys(errorData).filter(
+              (key) => key !== 'code' && key !== 'message' && key !== 'success',
+            );
+            // 遍历错误字段，逐一进行提示
+            errorFields.forEach((field) => {
+              const errorMsgs = errorData[field];
+              restFormRef?.current?.setFields([
+                {
+                  name: field,
+                  errors: errorMsgs,
+                },
+              ]);
+            });
+          }
+        });
     } else {
       // 注意这里updateUserInit.id时formData获取不到的,formData是更改后的数据
       await apiOaUserPartialUpdate(
         { id: updateUserInit?.id } as API.apiOaUserUpdateParams,
         formData,
-      ).then(() => {
-        // 关闭模态框
-        setModalOpen(false);
-        // 重新加载页面
-        reload?.();
-        // 表单重置
-        restFormRef.current?.resetFields();
-      });
+      )
+        .then(() => {
+          // 关闭模态框
+          setModalOpen(false);
+          // 重新加载页面
+          reload?.();
+          // 表单重置
+          restFormRef.current?.resetFields();
+        })
+        .catch((error) => {
+          console.log(error.response);
+          if (error.response?.code === 400) {
+            const errorData = error.response;
+            const errorFields = Object.keys(errorData).filter(
+              (key) => key !== 'code' && key !== 'message' && key !== 'success',
+            );
+            // 遍历错误字段，逐一进行提示
+            errorFields.forEach((field) => {
+              const errorMsgs = errorData[field];
+              restFormRef?.current?.setFields([
+                {
+                  name: field,
+                  errors: errorMsgs,
+                },
+              ]);
+            });
+          }
+        });
     }
   };
   // 手机号和用户名保持一致，并且用户名可更改

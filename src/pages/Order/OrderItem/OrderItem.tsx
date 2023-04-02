@@ -302,14 +302,21 @@ const OrderItem: React.FC<{
   const [contractModel, setContractModel] = useState(false);
   const [contractSelectValue, setContractSelectValue] = useState();
   const [selectRow, setSelectRow] = useState<API.OrderItem[]>();
-
-  const handleContractCommit = () => {
-    apiMaterialOrderItemModifyContractFields({
+  const [contractCommitLoading, setContractCommitLoading] = useState(false);
+  const handleContractCommit = async () => {
+    setContractCommitLoading(true);
+    await apiMaterialOrderItemModifyContractFields({
+      // @ts-ignore
       contract_id: contractSelectValue,
       order_items: selectRow,
-    });
-    console.log(contractSelectValue);
-    console.log(selectRow);
+    })
+      .then(() => {
+        setContractModel(false);
+      })
+      .catch(() => {
+        setContractModel(false);
+      });
+    setContractCommitLoading(false);
   };
   // 展开渲染
   const handleExpendedRowRender = (record: API.OrderItem) => {
@@ -344,14 +351,6 @@ const OrderItem: React.FC<{
         tableAlertOptionRender={(_) => {
           return (
             <Space size={16}>
-              <a
-                onClick={() => {
-                  setContractModel(true);
-                  setSelectRow(_?.selectedRows);
-                }}
-              >
-                生成合同
-              </a>
               <a
                 onClick={() => {
                   setContractModel(true);
@@ -428,6 +427,7 @@ const OrderItem: React.FC<{
       <Modal
         title="请选择 或 创建 合同"
         open={contractModel}
+        confirmLoading={contractCommitLoading}
         onOk={handleContractCommit}
         onCancel={() => {
           setContractModel(false);
