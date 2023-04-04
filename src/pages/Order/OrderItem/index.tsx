@@ -2,16 +2,23 @@ import { formatDate } from '@/components/Utils/formatDate';
 import OrderItem from '@/pages/Order/OrderItem/OrderItem';
 import OrderTop from '@/pages/Order/OrderItem/OrderTop';
 import SupplierRate from '@/pages/Order/SupplierRate';
-import { apiMaterialOrderRead, apiMaterialOrderUpdate } from '@/services/ant-design-pro/api';
-import { DingdingOutlined } from '@ant-design/icons';
+import {
+  apiMaterialOrderRead,
+  apiMaterialOrderUpdate,
+  apiMaterialOrderUploadToWecomList,
+} from '@/services/ant-design-pro/api';
+import { DingdingOutlined, EllipsisOutlined, FormOutlined } from '@ant-design/icons';
 import { PageContainer } from '@ant-design/pro-components';
 import { useRequest } from 'ahooks';
 
+import UploadMy from '@/components/Utils/UploadMy';
 import useOrderLocalStorage from '@/pages/Order/OrderItem/useOrderLocalStorage';
+import OrderPermission from '@/pages/Order/OrderPermission';
 import { request, useModel } from '@@/exports';
-import { Button, Card, Form, Steps, Tour, TourProps } from 'antd';
+import { Button, Card, Dropdown, Form, MenuProps, Steps, Tour, TourProps } from 'antd';
 import { Step } from 'rc-steps';
 import React, { Fragment, useRef, useState } from 'react';
+import { ButtonGroup } from 'react-rainbow-components';
 import { useParams } from 'react-router';
 import { toast } from 'react-toastify';
 
@@ -28,34 +35,6 @@ const OrderItems: React.FC = () => {
   });
   // 上方订单信息表单
   const [orderForm] = Form.useForm();
-
-  const desc1 = (
-    <div>
-      <Fragment>
-        {orderDetail?.created_by_name}
-        <DingdingOutlined style={{ marginLeft: 8 }} />
-      </Fragment>
-      <div>{orderDetail?.created_time ? formatDate(orderDetail?.created_time) : null}</div>
-    </div>
-  );
-  // onClick={handleCommit}
-  const desc2 = (
-    <div>
-      <Button type="link">提交</Button>
-    </div>
-  );
-  const desc3 = (
-    <div>
-      <Button
-        type="link"
-        onClick={() => {
-          setTourOpen(true);
-        }}
-      >
-        创建审核单
-      </Button>
-    </div>
-  );
 
   const [tabStatus, seTabStatus] = useState({
     operationKey: 'tab1',
@@ -89,10 +68,65 @@ const OrderItems: React.FC = () => {
       })
       .catch(() => {
         setCommitLoading(false);
+        toast.error('提交失败');
       });
     setCommitLoading(false);
     // 提交了就在本地删除
     deleteOrderLocal(order_id!);
+  };
+
+  const desc1 = (
+    <div>
+      <Fragment>
+        {orderDetail?.created_by_name}
+        <DingdingOutlined style={{ marginLeft: 8 }} />
+      </Fragment>
+      <div>{orderDetail?.created_time ? formatDate(orderDetail?.created_time) : null}</div>
+    </div>
+  );
+  const desc2 = (
+    <div>
+      <Button type="link" onClick={handleCommit}>
+        提交
+      </Button>
+    </div>
+  );
+  const desc3 = (
+    <div>
+      <Button
+        type="link"
+        onClick={() => {
+          setTourOpen(true);
+        }}
+      >
+        创建审核单
+      </Button>
+    </div>
+  );
+
+  // TODO:导出excel
+  const handelExport = () => {
+    window.open(`/api/material/order/${order_id}/export_to_excel/`);
+  };
+
+  // TODO:生成腾讯文档
+  const [exportLoading, setExportLoading] = useState(false);
+  const handelUploadToWecom = async () => {
+    setExportLoading(true);
+    await apiMaterialOrderUploadToWecomList({ order_id: order_id! }).then((r) => {
+      window.open(r.share_url);
+    });
+    setExportLoading(false);
+  };
+
+  // TODO:创建审核单
+  const [applyeventLoading, setApplyeventLoading] = useState(false);
+  const handelApplyevent = async () => {
+    setApplyeventLoading(true);
+    // 先提交订单信息 再审核
+    await apiMaterialOrderUpdate({ id: order_id! }, { ...orderForm?.getFieldsValue() });
+    await request(`/api/material/order/${order_id}/applyevent/`);
+    setApplyeventLoading(false);
   };
 
   // 漫游式引导
@@ -106,6 +140,25 @@ const OrderItems: React.FC = () => {
     },
   ];
 
+  const items: MenuProps['items'] = [
+    {
+      label: '导出材料单',
+      key: '1',
+    },
+    {
+      label: '生成腾讯文档',
+      key: '2',
+    },
+  ];
+  const handleMenuClick: MenuProps['onClick'] = (e) => {
+    if (e.key === '1') {
+      handelExport();
+    }
+    if (e.key === '2') {
+      handelUploadToWecom();
+    }
+  };
+
   return (
     <div>
       <PageContainer
@@ -113,22 +166,47 @@ const OrderItems: React.FC = () => {
         waterMarkProps={{ fontSize: 0 }}
         extra={
           <div>
-            <Button loading={commitLoading} type="primary" onClick={handleCommit}>
-              提交材料单
-            </Button>
-            {orderLocal?.length !== 0 && (
-              <Button
-                type="primary"
-                onClick={() => {
-                  deleteOrderLocal(order_id!);
-                  setReloadKey(reloadKey + 1);
-                  toast.success('删除成功');
-                }}
-                style={{ marginLeft: 20 }}
-              >
-                删除本地数据
+            <ButtonGroup>
+              <Button loading={commitLoading} onClick={handleCommit}>
+                提交材料单
               </Button>
-            )}
+              {orderLocal?.length !== 0 && (
+                <Button
+                  onClick={() => {
+                    deleteOrderLocal(order_id!);
+                    setReloadKey(reloadKey + 1);
+                    toast.success('删除成功');
+                  }}
+                >
+                  删除本地数据
+                </Button>
+              )}
+              <UploadMy order_id={order_id!}></UploadMy>
+              {orderDetail?.share_url && (
+                <a
+                  type="text"
+                  onClick={() => {
+                    window.open(`${orderDetail?.share_url}`);
+                  }}
+                >
+                  腾讯文档
+                </a>
+              )}
+              <Button
+                ref={applyEventRef}
+                onClick={handelApplyevent}
+                icon={<FormOutlined />}
+                loading={applyeventLoading}
+              >
+                生成审批单
+              </Button>
+              <Dropdown menu={{ items, onClick: handleMenuClick }} placement="bottomRight">
+                <Button loading={exportLoading}>
+                  导出
+                  <EllipsisOutlined />
+                </Button>
+              </Dropdown>
+            </ButtonGroup>
           </div>
         }
         content={
@@ -138,7 +216,6 @@ const OrderItems: React.FC = () => {
             orderDetail={orderDetail}
             orderDetailLoading={orderDetailLoading}
             getOrderDetail={getOrderDetail}
-            applyEventRef={applyEventRef}
           ></OrderTop>
         }
         tabActiveKey={tabStatus.tabActiveKey}
@@ -151,6 +228,10 @@ const OrderItems: React.FC = () => {
           {
             key: 'supplier_rate',
             tab: '供应商评价',
+          },
+          {
+            key: 'permission',
+            tab: '权限管理',
           },
         ]}
       >
@@ -182,6 +263,9 @@ const OrderItems: React.FC = () => {
 
         {tabStatus.tabActiveKey === 'supplier_rate' && (
           <SupplierRate order_id={order_id!} supplier_id={orderDetail?.supplier} />
+        )}
+        {tabStatus.tabActiveKey === 'permission' && (
+          <OrderPermission order_id={order_id!}></OrderPermission>
         )}
       </PageContainer>
       {/*漫游式引导*/}

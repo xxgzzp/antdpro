@@ -3,7 +3,7 @@ import { useRequest } from 'ahooks';
 import { Table } from 'antd';
 import React from 'react';
 
-const InfoCard: React.FC<{
+const ContractOrderItem: React.FC<{
   material: number | undefined;
   contract: string;
 }> = ({ material, contract }) => {
@@ -71,4 +71,4 @@ const InfoCard: React.FC<{
   ];
   return <Table columns={columns} loading={loading} dataSource={data?.results} />;
 };
-export default InfoCard;
+export default ContractOrderItem;

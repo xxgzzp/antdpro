@@ -38,7 +38,7 @@ export default function Page() {
 
   useEffect(() => {
     // 用于标签切换;
-    apiMaterialContractcategoryList().then((r) => {
+    apiMaterialContractcategoryList().then((r: any) => {
       const res = r.results.map((r: any) => ({
         id: r.category,
         text: r.category,

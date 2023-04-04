@@ -2,18 +2,12 @@ import { formatDate } from '@/components/Utils/formatDate';
 import ProjectSelectAdd from '@/pages/Project/ProjectSelectAdd';
 import SupplierSelectAdd from '@/pages/Supplier/SupplierSelectAdd';
 import UserSelectAdd from '@/pages/User/UserSelectAdd';
-import {
-  apiMaterialOrderCheckedList,
-  apiMaterialOrderUpdate,
-  apiMaterialOrderUploadToWecomList,
-} from '@/services/ant-design-pro/api';
+import { apiMaterialOrderCheckedList } from '@/services/ant-design-pro/api';
 
-import UploadMy from '@/components/Utils/UploadMy';
 import { KeepAliveContext, useLocation } from '@@/exports';
-import { CloudDownloadOutlined, FormOutlined, UploadOutlined } from '@ant-design/icons';
-import { request, useModel } from '@umijs/max';
+import { useModel } from '@umijs/max';
 import { useRequest } from 'ahooks';
-import { Badge, Button, Descriptions, Form, Input, Skeleton, Tag, Tooltip } from 'antd';
+import { Badge, Descriptions, Form, Input, Skeleton, Tag, Tooltip } from 'antd';
 import { FormInstance } from 'antd/es/form';
 import { CustomTagProps } from 'rc-select/es/BaseSelect';
 import React, { useEffect, useState } from 'react';
@@ -87,9 +81,8 @@ const OrderTop: React.FC<{
   order_id: string | undefined;
   orderDetail: API.Order | undefined;
   orderDetailLoading: boolean | undefined;
-  applyEventRef: React.MutableRefObject<null>;
   getOrderDetail: any;
-}> = ({ orderForm, order_id, orderDetail, orderDetailLoading, applyEventRef, getOrderDetail }) => {
+}> = ({ orderForm, order_id, orderDetail, orderDetailLoading, getOrderDetail }) => {
   // 加载远程数据
 
   const { data: orderChecked } = useRequest<OrderCheckedResponse, any>(() =>
@@ -99,15 +92,10 @@ const OrderTop: React.FC<{
   // 判断是否是企业微信用户用的
   const { userEnum } = useModel('selector');
 
-  const [exportWecomLoading, setExportWecomLoading] = useState(false);
   // 更改标签页标题
   const location = useLocation();
   // @ts-ignore
   const { updateTab } = React.useContext(KeepAliveContext);
-  const [applyeventLoading, setApplyeventLoading] = useState(false);
-
-  // 评分
-  const [rateValue, setRateValue] = useState<number>();
 
   useEffect(() => {
     getOrderDetail({ id: order_id! });
@@ -149,44 +137,6 @@ const OrderTop: React.FC<{
     10: 'green',
   };
 
-  // TODO:导出excel
-  const handelExport = () => {
-    window.open(`/api/material/order/${order_id}/export_to_excel/`);
-  };
-
-  // TODO:生成腾讯文档
-  const handelUploadToWecom = async () => {
-    setExportWecomLoading(true);
-    await apiMaterialOrderUploadToWecomList({ order_id: order_id! }).then((r) => {
-      window.open(r.share_url);
-    });
-    setExportWecomLoading(false);
-  };
-
-  // TODO:创建审核单
-  const handelApplyevent = async () => {
-    setApplyeventLoading(true);
-    // 先提交订单信息 再审核
-    await apiMaterialOrderUpdate({ id: order_id! }, { ...orderForm?.getFieldsValue() });
-    await request(`/api/material/order/${order_id}/applyevent/`);
-    setApplyeventLoading(false);
-  };
-
-  // TODO:对供应商评价
-  // const handleSupplierRate = (value: number) => {
-  //   const intValue = Math.round(value * 2);
-  //   if (intValue !== rateValue && intValue >= 0 && intValue <= 10) {
-  //     setRateValue(intValue);
-  //     apiMaterialOrderPartialUpdate({ id: order_id! }, { supplier_rate: intValue })
-  //       .then(() => {
-  //         toast.success('打分成功');
-  //       })
-  //       .catch(() => {
-  //         toast.error('打分失败');
-  //       });
-  //   }
-  // };
-
   return (
     <Skeleton loading={orderDetailLoading} active={true}>
       <Form form={orderForm}>
@@ -221,15 +171,6 @@ const OrderTop: React.FC<{
                   initialValues={orderDetail?.checked_by?.map((r) => r.checked_by)}
                 ></UserSelectAdd>
               </Form.Item>
-              <Button
-                ref={applyEventRef}
-                onClick={handelApplyevent}
-                icon={<FormOutlined />}
-                loading={applyeventLoading}
-                type="link"
-              >
-                生成审批单
-              </Button>
             </Descriptions.Item>
 
             <Descriptions.Item label="供应商">
@@ -271,33 +212,6 @@ const OrderTop: React.FC<{
                 {orderDetail?.created_time ? formatDate(orderDetail?.created_time) : null}
               </Descriptions.Item>
             )}
-
-            <Descriptions.Item label="导入/导出" span={2}>
-              <div style={{ display: 'flex', alignItems: 'center' }}>
-                <UploadMy order_id={orderDetail?.id}></UploadMy>
-                <Button icon={<UploadOutlined rotate={180} />} type="text" onClick={handelExport}>
-                  导出材料单
-                </Button>
-                <Button
-                  loading={exportWecomLoading}
-                  icon={<CloudDownloadOutlined />}
-                  type="text"
-                  onClick={handelUploadToWecom}
-                >
-                  创建"腾讯文档"
-                </Button>
-                {orderDetail?.share_url && (
-                  <a
-                    type="text"
-                    onClick={() => {
-                      window.open(`${orderDetail?.share_url}`);
-                    }}
-                  >
-                    腾讯文档
-                  </a>
-                )}
-              </div>
-            </Descriptions.Item>
           </Descriptions>
         </Badge.Ribbon>
       </Form>

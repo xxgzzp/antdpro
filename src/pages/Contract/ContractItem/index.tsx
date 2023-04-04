@@ -1,12 +1,14 @@
 import { EditableCell, EditableRow } from '@/components/Utils/Editable';
 import '@/pages/Contract/ContractItem/ContractItemList.less';
 import ContractOrderItem from '@/pages/Contract/ContractItem/ContractOrderItem';
+import ContractPermission from '@/pages/Contract/ContractItem/ContractPermission';
 import ContractTop from '@/pages/Contract/ContractItem/ContractTop';
 import useContractLocalStorage, {
   ContractLocal,
 } from '@/pages/Contract/ContractItem/useContractLocalStorage';
 import {
-  apiMaterialContractItemList,
+  apiMaterialContractContractItems,
+  apiMaterialContractPermissionCreate,
   apiMaterialContractUpdate,
 } from '@/services/ant-design-pro/api';
 import { useModel } from '@@/exports';
@@ -14,7 +16,7 @@ import { PlusOutlined } from '@ant-design/icons';
 import { ProTable } from '@ant-design/pro-table';
 import { request } from '@umijs/max';
 import { useRequest } from 'ahooks';
-import { Button, Drawer, Form, Popconfirm, Table } from 'antd';
+import { Button, Drawer, Form, Popconfirm, Result, Table, Tabs, TabsProps } from 'antd';
 import { isEqual } from 'lodash';
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router';
@@ -27,7 +29,8 @@ const Index: React.FC = () => {
     data: remoteDate,
     loading: contractRemoteLoading,
     run: getContractItemRemote,
-  } = useRequest(apiMaterialContractItemList, { manual: true });
+    error,
+  } = useRequest(apiMaterialContractContractItems, { manual: true });
   // URL中的contract_id
   const { contract_id } = useParams<{ contract_id?: string }>();
   // 上方订单信息表单
@@ -47,7 +50,7 @@ const Index: React.FC = () => {
 
   // TODO:读取数据
   useEffect(() => {
-    getContractItemRemote({ contract: contract_id });
+    getContractItemRemote({ id: contract_id });
     // 如果有本地数据就读取
     if (typeof contractLocal !== undefined && contractLocal?.length) {
       setDataSource(contractLocal[0].items);
@@ -328,65 +331,121 @@ const Index: React.FC = () => {
     };
   });
 
-  return (
-    <div>
-      <ContractTop contractForm={contractForm} contract_id={contract_id}></ContractTop>
-      <ProTable
-        style={{ paddingTop: '20px' }}
-        rowKey="id"
-        locale={{ emptyText: 'empty' }}
-        // 有本地数据就不显示加载
-        loading={contractLocal?.length ? false : contractRemoteLoading}
-        components={components}
-        rowClassName={() => 'editable-row'}
-        bcontracted
-        dataSource={dataSource}
-        // @ts-ignore
-        columns={columns as ColumnTypes}
-        pagination={false}
-        sticky={true}
-        size="small" // 紧凑
-        search={false}
-        // 右上角按钮
-        toolBarRender={() => [
-          <div key="proTableOption">
-            <span style={{ paddingRight: '10px' }}>
-              <Button
-                onClick={handleCommit}
-                type="primary"
-                style={{ marginBottom: 16 }}
-                loading={commitLoading}
-              >
-                提交
-              </Button>
-            </span>
-            <Button onClick={handleAdd} type="primary" style={{ marginBottom: 16 }}>
-              增加一行
-            </Button>
-            {contractLocal?.length !== 0 && (
-              <Button
-                type="primary"
-                onClick={() => {
-                  deleteContractLocal(contract_id!);
-                  setReloadKey(reloadKey + 1);
-                  toast.success('删除成功');
-                }}
-                style={{ marginLeft: 20 }}
-              >
-                删除本地数据
-              </Button>
-            )}
-          </div>,
-        ]}
-        expandable={{
-          expandedRowRender: handleExpendedRowRender,
-          rowExpandable: handleRowExpandable,
-        }}
+  const [permLoading, setPermLoading] = useState(false);
+  const handlePermissions = async () => {
+    setPermLoading(true);
+    await apiMaterialContractPermissionCreate({ user: user?.id, contract: contract_id! })
+      .then(() => {
+        toast.success('申请成功');
+      })
+      .catch(() => {
+        toast.error('申请失败');
+      });
+    setPermLoading(false);
+  };
+
+  const [tabKey, setTabKey] = useState<string>('1');
+  const TabOnChange = (key: string) => {
+    setTabKey(key);
+  };
+
+  const TabItems: TabsProps['items'] = [
+    {
+      key: '1',
+      label: `合同明细`,
+    },
+    {
+      key: '2',
+      label: `权限管理`,
+    },
+  ];
+
+  if (error) {
+    return (
+      <Result
+        status="warning"
+        title="您没有权限访问"
+        extra={
+          <Button type="primary" key="console" loading={permLoading} onClick={handlePermissions}>
+            {`申请权限`}
+          </Button>
+        }
       />
-      <Button type="dashed" onClick={handleAdd} style={{ width: '100%', marginBottom: 8 }}>
-        <PlusOutlined />
-        添加一行
-      </Button>
+    );
+  }
+
+  return (
+    <div style={{ margin: 30 }}>
+      <ContractTop contractForm={contractForm} contract_id={contract_id}></ContractTop>
+      <Tabs
+        style={{ marginTop: 10 }}
+        defaultActiveKey="1"
+        items={TabItems}
+        onChange={TabOnChange}
+      />
+      {tabKey === '1' && (
+        <div>
+          <ProTable
+            style={{ paddingTop: '20px' }}
+            rowKey="id"
+            locale={{ emptyText: 'empty' }}
+            // 有本地数据就不显示加载
+            loading={contractLocal?.length ? false : contractRemoteLoading}
+            components={components}
+            rowClassName={() => 'editable-row'}
+            bcontracted
+            dataSource={dataSource}
+            // @ts-ignore
+            columns={columns as ColumnTypes}
+            pagination={false}
+            sticky={true}
+            size="small" // 紧凑
+            search={false}
+            // 右上角按钮
+            toolBarRender={() => [
+              <div key="proTableOption">
+                <span style={{ paddingRight: '10px' }}>
+                  <Button
+                    onClick={handleCommit}
+                    type="primary"
+                    style={{ marginBottom: 16 }}
+                    loading={commitLoading}
+                  >
+                    提交
+                  </Button>
+                </span>
+                <Button onClick={handleAdd} type="primary" style={{ marginBottom: 16 }}>
+                  增加一行
+                </Button>
+                {contractLocal?.length !== 0 && (
+                  <Button
+                    type="primary"
+                    onClick={() => {
+                      deleteContractLocal(contract_id!);
+                      setReloadKey(reloadKey + 1);
+                      toast.success('删除成功');
+                    }}
+                    style={{ marginLeft: 20 }}
+                  >
+                    删除本地数据
+                  </Button>
+                )}
+              </div>,
+            ]}
+            expandable={{
+              expandedRowRender: handleExpendedRowRender,
+              rowExpandable: handleRowExpandable,
+            }}
+          />
+          <Button type="dashed" onClick={handleAdd} style={{ width: '100%', marginBottom: 8 }}>
+            <PlusOutlined />
+            添加一行
+          </Button>
+        </div>
+      )}
+
+      {tabKey === '2' && <ContractPermission contract_id={contract_id!} />}
+
       {drawerOpen && (
         <Drawer
           width={1000}

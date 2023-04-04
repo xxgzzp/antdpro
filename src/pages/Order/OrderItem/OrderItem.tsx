@@ -3,17 +3,19 @@ import ContractSelectAdd from '@/pages/Contract/ContractSelectAdd';
 import '@/pages/Order/OrderItem/OrderItem.less';
 import useOrderLocalStorage, { OrderLocal } from '@/pages/Order/OrderItem/useOrderLocalStorage';
 import {
-  apiMaterialOrderItemList,
   apiMaterialOrderItemModifyContractFields,
+  apiMaterialOrderOrderItems,
+  apiMaterialOrderPermissionCreate,
 } from '@/services/ant-design-pro/api';
 import { history } from '@@/core/history';
 import { PlusOutlined } from '@ant-design/icons';
 import { ProTable } from '@ant-design/pro-table';
 import { request, useModel } from '@umijs/max';
 import { useRequest } from 'ahooks';
-import { Button, Modal, Popconfirm, Space, Steps, Table } from 'antd';
+import { Button, Modal, Popconfirm, Result, Space, Steps, Table } from 'antd';
 import { isEqual } from 'lodash';
 import React, { useEffect, useState } from 'react';
+import { toast } from 'react-toastify';
 import { v4 as uuidv4 } from 'uuid';
 const { Step } = Steps;
 
@@ -33,12 +35,12 @@ const OrderItem: React.FC<{
     }
   }, [dataSource, setDataSourceCommit]);
 
-  // 请求订单项
   const {
     data: remoteDate,
     loading: orderRemoteLoading,
     run: getOrderItemRemote,
-  } = useRequest(apiMaterialOrderItemList, { manual: true });
+    error,
+  } = useRequest(() => apiMaterialOrderOrderItems({ id: order_id }), { manual: true });
 
   // 操作LocalStorage
   const { getOrderLocal, updateOrderLocal, deleteOrderLocal } = useOrderLocalStorage();
@@ -51,7 +53,7 @@ const OrderItem: React.FC<{
     // TODO:如果有prop数据，就加载prop的 ，
     //  没有就加载本地的(同时发起网络请求)，
     //  网络请求完毕就比较本地和远程数据，如果相等就删除本地数据
-    getOrderItemRemote({ order: order_id });
+    getOrderItemRemote();
     // 如果有本地数据就读取
     if (typeof orderLocal !== undefined && orderLocal?.length) {
       setDataSource(orderLocal[0].items);
@@ -63,7 +65,7 @@ const OrderItem: React.FC<{
     if (remoteDate && orderLocal?.length) {
       // 去除时间戳后比较
       const _localDate = orderLocal[0].items.map((item) => ({ ...item, timestamp: undefined }));
-      const _remoteDate = remoteDate.results.map((item: any) => ({
+      const _remoteDate = remoteDate?.results.map((item: any) => ({
         ...item,
         timestamp: undefined,
       }));
@@ -144,7 +146,6 @@ const OrderItem: React.FC<{
   const [commitLoading, setCommitLoading] = useState<boolean>(false);
   const handleCommit = async () => {
     setCommitLoading(true);
-    // await apiMaterialOrderUpdate({ id: order_id! }, { ...orderForm.getFieldsValue() });
     await request('/api/material/order_commit/', {
       method: 'POST',
       data: {
@@ -178,7 +179,7 @@ const OrderItem: React.FC<{
     {
       title: '序号',
       dataIndex: 'sort',
-      width: '7%',
+      width: '10%',
       editable: true,
       sorter: {
         // @ts-ignore
@@ -212,6 +213,7 @@ const OrderItem: React.FC<{
     },
     {
       title: '使用部位',
+      width: '20%',
       dataIndex: 'used_site',
       editable: true,
     },
@@ -318,6 +320,7 @@ const OrderItem: React.FC<{
       });
     setContractCommitLoading(false);
   };
+
   // 展开渲染
   const handleExpendedRowRender = (record: API.OrderItem) => {
     if (remoteDate) {
@@ -338,6 +341,33 @@ const OrderItem: React.FC<{
     }
     return <p>远程获取数据失败</p>;
   };
+
+  const { user } = useModel('user');
+  const [permLoading, setPermLoading] = useState(false);
+  const handlePermissions = async () => {
+    setPermLoading(true);
+    await apiMaterialOrderPermissionCreate({ user: user?.id, order: order_id })
+      .then(() => {
+        toast.success('申请成功');
+      })
+      .catch(() => {
+        toast.error('申请失败');
+      });
+    setPermLoading(false);
+  };
+  if (error) {
+    return (
+      <Result
+        status="warning"
+        title="您没有权限访问"
+        extra={
+          <Button type="primary" key="console" loading={permLoading} onClick={handlePermissions}>
+            {`申请权限`}
+          </Button>
+        }
+      />
+    );
+  }
 
   return (
     <div>
