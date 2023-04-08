@@ -117,15 +117,9 @@ export default [
     component: '../components/Loading/TextLoading',
   },
   {
-    name: '用户中心',
-    path: '/center',
-    layout: true,
-    component: './User/UserCenter',
-  },
-  {
     name: '注册页面',
     path: '/register',
-    layout: true,
+    layout: false,
     component: './User/Register',
   },
   {

@@ -401,6 +401,7 @@ const Index: React.FC = () => {
             sticky={true}
             size="small" // 紧凑
             search={false}
+            options={{ fullScreen: true }}
             // 右上角按钮
             toolBarRender={() => [
               <div key="proTableOption">

@@ -1,3 +1,4 @@
+import DepartmentForm from '@/pages/Project/DepartmentForm';
 import ProjectForm from '@/pages/Project/ProjectForm';
 import UserSelectAdd from '@/pages/User/UserSelectAdd';
 import {
@@ -8,7 +9,7 @@ import {
 } from '@/services/ant-design-pro/api';
 import type { ActionType, ProColumns } from '@ant-design/pro-components';
 import { ProTable } from '@ant-design/pro-components';
-import { Button, Modal, Popconfirm, Table } from 'antd';
+import { Button, Modal, Popconfirm } from 'antd';
 import { useRef, useState } from 'react';
 import { toast } from 'react-toastify';
 export default function ProjectList() {
@@ -72,6 +73,10 @@ export default function ProjectList() {
       });
   };
 
+  const departmentRef = useRef();
+  const [departmentTypeAddOrUpdate, setDepartmentTypeAddOrUpdate] = useState(true);
+  const [dpUpdateInit, setDpUpdateInit] = useState<API.Department>();
+  const [dpModelOpen, setDpModelOpen] = useState(false);
   const expandedRowRender = (record: any) => {
     const handleDepartmentDelete = (id: number) => {
       apiOaDepartmentDelete({
@@ -116,21 +121,47 @@ export default function ProjectList() {
         key: 'options',
         valueType: 'option',
         render: (_: any, row: API.Department) => [
+          <Button
+            type={'link'}
+            key="add_department"
+            onClick={() => {
+              setDpModelOpen(true);
+              setDepartmentTypeAddOrUpdate(false);
+              setDpUpdateInit(row);
+            }}
+          >
+            修改
+          </Button>,
           <Popconfirm
             key="delete"
             title="确认删除吗?"
             onConfirm={() => handleDepartmentDelete(row.id!)}
           >
-            <a>删除</a>
+            <a style={{ color: 'red' }} key="delete_department">
+              删除
+            </a>
           </Popconfirm>,
         ],
       },
     ];
     return (
-      <Table
+      <ProTable
         columns={departmentColumns}
         rowKey="id"
         size="small"
+        search={false}
+        toolBarRender={() => [
+          <Button
+            type="primary"
+            key="primary"
+            onClick={() => {
+              setDpModelOpen(true);
+              setDepartmentTypeAddOrUpdate(true);
+            }}
+          >
+            新增部门
+          </Button>,
+        ]}
         dataSource={record?.departments}
       />
     );
@@ -224,6 +255,13 @@ export default function ProjectList() {
         setModalOpen={setModalOpen}
         reload={proTableRef.current?.reload}
       />
+      <DepartmentForm
+        typeAddOrUpdate={departmentTypeAddOrUpdate}
+        updateInit={dpUpdateInit}
+        modalOpen={dpModelOpen}
+        setModalOpen={setDpModelOpen}
+        proTableRef={departmentRef}
+      ></DepartmentForm>
     </>
   );
 }

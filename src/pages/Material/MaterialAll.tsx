@@ -87,6 +87,7 @@ const MaterialAll: React.FC<{
         title: '日期',
         dataIndex: 'created_time',
         key: 'expanded_created_time',
+        width: '20%',
         sorter: {
           compare: (a, b) => a?.created_time - b?.created_time,
           multiple: 2,

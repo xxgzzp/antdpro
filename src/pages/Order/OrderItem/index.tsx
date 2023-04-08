@@ -75,6 +75,19 @@ const OrderItems: React.FC = () => {
     deleteOrderLocal(order_id!);
   };
 
+  const [_commitLoading, set_commitLoading] = useState(false);
+  const handleOrderDetailCommit = async () => {
+    set_commitLoading(true);
+    await apiMaterialOrderUpdate({ id: order_id! }, { ...orderForm.getFieldsValue() })
+      .then(() => {
+        toast.success('修改成功');
+      })
+      .catch(() => {
+        toast.error('修改失败');
+      });
+    set_commitLoading(false);
+  };
+
   const desc1 = (
     <div>
       <Fragment>
@@ -169,6 +182,9 @@ const OrderItems: React.FC = () => {
             <ButtonGroup>
               <Button loading={commitLoading} onClick={handleCommit}>
                 提交材料单
+              </Button>
+              <Button loading={_commitLoading} onClick={handleOrderDetailCommit}>
+                提交面板信息
               </Button>
               {orderLocal?.length !== 0 && (
                 <Button
