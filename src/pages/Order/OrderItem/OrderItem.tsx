@@ -3,6 +3,8 @@ import ContractSelectAdd from '@/pages/Contract/ContractSelectAdd';
 import '@/pages/Order/OrderItem/OrderItem.less';
 import useOrderLocalStorage, { OrderLocal } from '@/pages/Order/OrderItem/useOrderLocalStorage';
 import {
+  apiMaterialOrderArrivalOneOrderItem,
+  apiMaterialOrderArrivalOrderItem,
   apiMaterialOrderItemModifyContractFields,
   apiMaterialOrderOrderItems,
   apiMaterialOrderPermissionCreate,
@@ -10,14 +12,13 @@ import {
 import { history } from '@@/core/history';
 import { PlusOutlined } from '@ant-design/icons';
 import { ProTable } from '@ant-design/pro-table';
-import { request, useModel } from '@umijs/max';
+import { useModel } from '@umijs/max';
 import { useRequest } from 'ahooks';
-import { Button, Modal, Popconfirm, Result, Space, Steps, Table } from 'antd';
+import { Button, Modal, Popconfirm, Result, Space, Switch, Table } from 'antd';
 import { isEqual } from 'lodash';
 import React, { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import { v4 as uuidv4 } from 'uuid';
-const { Step } = Steps;
 
 const OrderItem: React.FC<{
   order_id: string;
@@ -142,29 +143,6 @@ const OrderItem: React.FC<{
     updateOrderLocal(updateOrder);
   };
 
-  // TODO:提交数据 这部分逻辑被抽离到index中
-  const [commitLoading, setCommitLoading] = useState<boolean>(false);
-  const handleCommit = async () => {
-    setCommitLoading(true);
-    await request('/api/material/order_commit/', {
-      method: 'POST',
-      data: {
-        order_items: dataSource,
-        order_id: order_id,
-      },
-    })
-      .then(() => {
-        setReloadKey(reloadKey + 1);
-        // getOrderDetail();
-      })
-      .catch(() => {
-        setCommitLoading(false);
-      });
-    setCommitLoading(false);
-    // 提交了就在本地删除
-    deleteOrderLocal(order_id!);
-  };
-
   const components = {
     body: {
       row: EditableRow,
@@ -253,6 +231,34 @@ const OrderItem: React.FC<{
         >
           {row?.contract_name}
         </a>,
+      ],
+    },
+    {
+      title: '是否到货',
+      width: '10%',
+      dataIndex: 'is_arrival',
+      render: (_, row) => [
+        <Switch
+          key="arrival"
+          checkedChildren="到货"
+          unCheckedChildren="未到货"
+          checked={row?.is_arrival}
+          onChange={async (checked) => {
+            await apiMaterialOrderArrivalOneOrderItem(
+              { id: order_id },
+              { order_item_id: row?.id, is_arrival: checked },
+            ).then(() => {
+              // setReloadKey(reloadKey + 1);
+              // 更新 ProTable 数据
+              const newData = [...dataSource];
+              const index = newData.findIndex((item) => item.id === row?.id);
+              if (index > -1) {
+                newData[index].is_arrival = checked;
+                setDataSource(newData);
+              }
+            });
+          }}
+        />,
       ],
     },
     {
@@ -380,16 +386,34 @@ const OrderItem: React.FC<{
         }}
         tableAlertOptionRender={(_) => {
           return (
-            <Space size={16}>
-              <a
-                onClick={() => {
-                  setContractModel(true);
-                  setSelectRow(_?.selectedRows);
-                }}
-              >
-                导入合同
-              </a>
-            </Space>
+            <div>
+              <Space size={16} style={{ marginRight: 10 }}>
+                <a
+                  onClick={() => {
+                    console.log(_?.selectedRows.map((row) => row.id));
+                    apiMaterialOrderArrivalOrderItem(
+                      { id: order_id! },
+                      { order_item_ids: _?.selectedRows.map((row) => row.id) },
+                    ).then(() => {
+                      setReloadKey(reloadKey + 1);
+                    });
+                  }}
+                >
+                  签收
+                </a>
+              </Space>
+              ,
+              <Space size={16}>
+                <a
+                  onClick={() => {
+                    setContractModel(true);
+                    setSelectRow(_?.selectedRows);
+                  }}
+                >
+                  导入合同
+                </a>
+              </Space>
+            </div>
           );
         }}
         style={{ paddingTop: '20px' }}
