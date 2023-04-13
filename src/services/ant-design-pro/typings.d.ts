@@ -407,7 +407,6 @@ declare namespace API {
   type apiMaterialOrderUploadToWecomListParams = {
     /** 订单ID */
     order_id: string;
-    order_id: string;
   };
 
   type apiMaterialOrderUserOrderParams = {
