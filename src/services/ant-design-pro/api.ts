@@ -2,6 +2,123 @@
 /* eslint-disable */
 import { request } from '@umijs/max';
 
+/** 此处后端没有提供注释 GET /api/bigdata/product/ */
+export async function apiBigdataProductList(
+  // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
+  params: API.apiBigdataProductListParams,
+  options?: { [key: string]: any },
+) {
+  return request<{ count: number; next?: string; previous?: string; results: API.YZWProduct[] }>(
+    '/api/bigdata/product/',
+    {
+      method: 'GET',
+      params: {
+        ...params,
+      },
+      ...(options || {}),
+    },
+  );
+}
+
+/** 此处后端没有提供注释 POST /api/bigdata/product/ */
+export async function apiBigdataProductCreate(
+  body: API.YZWProduct,
+  options?: { [key: string]: any },
+) {
+  return request<API.YZWProduct>('/api/bigdata/product/', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    data: body,
+    ...(options || {}),
+  });
+}
+
+/** 此处后端没有提供注释 GET /api/bigdata/product/${param0}/ */
+export async function apiBigdataProductRead(
+  // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
+  params: API.apiBigdataProductReadParams,
+  options?: { [key: string]: any },
+) {
+  const { id: param0, ...queryParams } = params;
+  return request<API.YZWProduct>(`/api/bigdata/product/${param0}/`, {
+    method: 'GET',
+    params: { ...queryParams },
+    ...(options || {}),
+  });
+}
+
+/** 此处后端没有提供注释 PUT /api/bigdata/product/${param0}/ */
+export async function apiBigdataProductUpdate(
+  // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
+  params: API.apiBigdataProductUpdateParams,
+  body: API.YZWProduct,
+  options?: { [key: string]: any },
+) {
+  const { id: param0, ...queryParams } = params;
+  return request<API.YZWProduct>(`/api/bigdata/product/${param0}/`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    params: { ...queryParams },
+    data: body,
+    ...(options || {}),
+  });
+}
+
+/** 此处后端没有提供注释 DELETE /api/bigdata/product/${param0}/ */
+export async function apiBigdataProductDelete(
+  // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
+  params: API.apiBigdataProductDeleteParams,
+  options?: { [key: string]: any },
+) {
+  const { id: param0, ...queryParams } = params;
+  return request<any>(`/api/bigdata/product/${param0}/`, {
+    method: 'DELETE',
+    params: { ...queryParams },
+    ...(options || {}),
+  });
+}
+
+/** 此处后端没有提供注释 PATCH /api/bigdata/product/${param0}/ */
+export async function apiBigdataProductPartialUpdate(
+  // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
+  params: API.apiBigdataProductPartialUpdateParams,
+  body: API.YZWProduct,
+  options?: { [key: string]: any },
+) {
+  const { id: param0, ...queryParams } = params;
+  return request<API.YZWProduct>(`/api/bigdata/product/${param0}/`, {
+    method: 'PATCH',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    params: { ...queryParams },
+    data: body,
+    ...(options || {}),
+  });
+}
+
+/** 搜索商品 GET /api/bigdata/product/search/ */
+export async function apiBigdataProductSearch(
+  // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
+  params: API.apiBigdataProductSearchParams,
+  options?: { [key: string]: any },
+) {
+  return request<{ count: number; next?: string; previous?: string; results: API.YZWProduct[] }>(
+    '/api/bigdata/product/search/',
+    {
+      method: 'GET',
+      params: {
+        ...params,
+      },
+      ...(options || {}),
+    },
+  );
+}
+
 /** 此处后端没有提供注释 GET /api/dashboard/ */
 export async function apiDashboardList(options?: { [key: string]: any }) {
   return request<any>('/api/dashboard/', {
@@ -1171,7 +1288,7 @@ export async function apiMaterialOrderArrivalOneOrderItem(
   });
 }
 
-/** 此处后端没有提供注释 POST /api/material/order/${param0}/arrival_order_item/ */
+/** 签收指定订单的所有订单项 POST /api/material/order/${param0}/arrival_order_item/ */
 export async function apiMaterialOrderArrivalOrderItem(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: API.apiMaterialOrderArrivalOrderItemParams,
@@ -1218,14 +1335,14 @@ export async function apiMaterialOrderFileCreate(
   });
 }
 
-/** 此处后端没有提供注释 GET /api/material/order/${param0}/order_items/ */
+/** 获取指定订单的所有订单项 GET /api/material/order/${param0}/order_items/ */
 export async function apiMaterialOrderOrderItems(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: API.apiMaterialOrderOrderItemsParams,
   options?: { [key: string]: any },
 ) {
   const { id: param0, ...queryParams } = params;
-  return request<API.Order>(`/api/material/order/${param0}/order_items/`, {
+  return request<API.OrderItem[]>(`/api/material/order/${param0}/order_items/`, {
     method: 'GET',
     params: { ...queryParams },
     ...(options || {}),
@@ -1246,7 +1363,7 @@ export async function apiMaterialOrderOrderPermissions(
   });
 }
 
-/** 此处后端没有提供注释 PUT /api/material/order/${param0}/update_step/ */
+/** 修改步骤 PUT /api/material/order/${param0}/update_step/ */
 export async function apiMaterialOrderUpdateStep(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: API.apiMaterialOrderUpdateStepParams,

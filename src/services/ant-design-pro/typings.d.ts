@@ -1,4 +1,36 @@
 declare namespace API {
+  type apiBigdataProductDeleteParams = {
+    /** A unique integer value identifying this yzw product. */
+    id: number;
+  };
+
+  type apiBigdataProductListParams = {
+    /** A page number within the paginated result set. */
+    current?: number;
+    /** Number of results to return per page. */
+    pageSize?: number;
+  };
+
+  type apiBigdataProductPartialUpdateParams = {
+    /** A unique integer value identifying this yzw product. */
+    id: number;
+  };
+
+  type apiBigdataProductReadParams = {
+    /** A unique integer value identifying this yzw product. */
+    id: number;
+  };
+
+  type apiBigdataProductSearchParams = {
+    text:string
+    page:number | undefined
+  };
+
+  type apiBigdataProductUpdateParams = {
+    /** A unique integer value identifying this yzw product. */
+    id: number;
+  };
+
   type apiMaterialContractCheckMaterialInContractParams = {
     /** A UUID string identifying this 合同. */
     id: string;
@@ -406,6 +438,7 @@ declare namespace API {
 
   type apiMaterialOrderUploadToWecomListParams = {
     /** 订单ID */
+    order_id: string;
     order_id: string;
   };
 
@@ -818,13 +851,13 @@ declare namespace API {
     /** Timestamp */
     timestamp?: string;
     /** 进度 */
-    step?: 2 | 5 | 4 | 1 | 0 | 3;
+    step?: 1 | 4 | 5 | 2 | 0 | 3;
     /** 文件 */
     file?: string;
     /** 审核单编号 */
     sp_no?: string;
     /** 审核状态 */
-    sp_status?: 0 | 4 | 1 | 6 | 10 | 7 | 3 | 2;
+    sp_status?: 3 | 7 | 2 | 10 | 4 | 0 | 6 | 1;
     /** 企业文档字段 */
     fileid?: string;
     /** 腾讯文档 */
@@ -864,7 +897,7 @@ declare namespace API {
     /** Speech */
     speech?: string;
     /** Sp status */
-    sp_status?: 4 | 3 | 1 | 2;
+    sp_status?: 2 | 3 | 4 | 1;
     /** Sp time */
     sp_time?: string;
     /** 创建时间 */
@@ -1087,5 +1120,96 @@ declare namespace API {
     address?: string;
     /** User */
     user?: string;
+  };
+
+  type YZWProduct = {
+    /** ID */
+    id?: number;
+    /** Image */
+    image?: string;
+    /** Score */
+    score?: string;
+    /** IsSelf */
+    isSelf?: boolean;
+    /** Price */
+    price?: string;
+    /** MinPrice */
+    minPrice?: string;
+    /** MaxPrice */
+    maxPrice?: string;
+    /** OriginalMinPrice */
+    originalMinPrice?: string;
+    /** OriginalMaxPrice */
+    originalMaxPrice?: string;
+    /** OriginalPrice */
+    originalPrice?: string;
+    /** TaxRate */
+    taxRate?: string;
+    /** SpuId */
+    spuId?: string;
+    /** SpuName */
+    spuName?: string;
+    /** SkuId */
+    skuId?: string;
+    /** GroupName */
+    groupName?: string;
+    /** ItemName */
+    itemName?: string;
+    /** ImageUrl */
+    imageUrl?: string;
+    /** SupplierId */
+    supplierId?: string;
+    /** SupplierName */
+    supplierName?: string;
+    /** ModelCount */
+    modelCount?: number;
+    /** WinningBid */
+    winningBid?: boolean;
+    /** UnitName */
+    unitName?: string;
+    /** BrandId */
+    brandId?: string;
+    /** BrandName */
+    brandName?: string;
+    /** Type */
+    type?: number;
+    /** Model */
+    model?: string;
+    /** ThreeCategoryId */
+    threeCategoryId?: string;
+    /** ThreeCategoryName */
+    threeCategoryName?: string;
+    /** SalesNum */
+    salesNum?: string;
+    /** PutAwayTime */
+    putAwayTime?: string;
+    /** Group */
+    group?: string;
+    /** HighlightGroupName */
+    highlightGroupName?: string;
+    /** Qrs */
+    qrs?: string;
+    /** WarehouseId */
+    warehouseId?: string;
+    /** Tags */
+    tags?: string;
+    /** DiscountPrice */
+    discountPrice?: string;
+    /** ExcludeTaxPrice */
+    excludeTaxPrice?: string;
+    /** ExcludeTaxMinPrice */
+    excludeTaxMinPrice?: string;
+    /** ExcludeTaxMaxPrice */
+    excludeTaxMaxPrice?: string;
+    /** ExcludeTaxOriginalMinPrice */
+    excludeTaxOriginalMinPrice?: string;
+    /** ExcludeTaxOriginalMaxPrice */
+    excludeTaxOriginalMaxPrice?: string;
+    /** ExcludeTaxOriginalPrice */
+    excludeTaxOriginalPrice?: string;
+    /** DiscountMinPrice */
+    discountMinPrice?: string;
+    /** DiscountMaxPrice */
+    discountMaxPrice?: string;
   };
 }

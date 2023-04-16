@@ -134,4 +134,10 @@ export default [
     layout: false,
     component: './User/wecomBinding/WecomOauthResult',
   },
+  {
+    name: '搜索',
+    path: '/search',
+    layout: true,
+    component: './BigData/Search',
+  },
 ];

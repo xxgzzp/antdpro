@@ -1,9 +1,9 @@
 // https://umijs.org/config/
-import { defineConfig } from '@umijs/max';
-import defaultSettings from './defaultSettings';
-import routes from './routes';
+import { defineConfig } from "@umijs/max";
+import defaultSettings from "./defaultSettings";
+import routes from "./routes";
 
-const { REACT_APP_ENV = 'dev' } = process.env;
+const { REACT_APP_ENV = "dev" } = process.env;
 
 export default defineConfig({
   /**
@@ -17,7 +17,7 @@ export default defineConfig({
    * @description 设置 ie11 不一定完美兼容，需要检查自己使用的所有依赖
    * @doc https://umijs.org/docs/api/config#targets
    */
-  jsMinifier: 'terser',
+  jsMinifier: "terser",
   // targets: {
   //   ie: 11,
   // },
@@ -37,7 +37,7 @@ export default defineConfig({
   theme: {
     // 如果不想要 configProvide 动态设置主题需要把这个设置为 default
     // 只有设置为 variable， 才能使用 configProvide 动态设置主色调
-    'root-entry-name': 'default',
+    "root-entry-name": "default",
   },
   /**
    * @name moment 的国际化配置
@@ -54,8 +54,8 @@ export default defineConfig({
    */
   // proxy: proxy[REACT_APP_ENV as keyof typeof proxy],
   proxy: {
-    '/api': {
-      target: 'http://localhost:8001/',
+    "/api": {
+      target: "http://localhost:8001/",
       changeOrigin: true,
       // 'pathRewrite': { '^/api' : '' },
     },
@@ -81,7 +81,7 @@ export default defineConfig({
    * @name layout 插件
    * @doc https://umijs.org/docs/max/layout-menu
    */
-  title: '建筑材料管理平台',
+  title: "建筑材料管理平台",
   layout: {
     locale: false,
     ...defaultSettings,
@@ -92,8 +92,8 @@ export default defineConfig({
    * @doc https://umijs.org/docs/max/moment2dayjs
    */
   moment2dayjs: {
-    preset: 'antd',
-    plugins: ['duration'],
+    preset: "antd",
+    plugins: ["duration"],
   },
   /**
    * @name 国际化插件
@@ -101,7 +101,7 @@ export default defineConfig({
    */
   locale: {
     // default zh-CN
-    default: 'zh-CN',
+    default: "zh-CN",
     antd: false,
     // default true, when it is true, will use `navigator.language` overwrite default
     baseNavigator: false,
@@ -117,7 +117,7 @@ export default defineConfig({
    * @description 它基于 axios 和 ahooks 的 useRequest 提供了一套统一的网络请求和错误处理方案。
    * @doc https://umijs.org/docs/max/request
    */
-  request: { dataField: '' },
+  request: { dataField: "" },
   /**
    * @name 权限插件
    * @description 基于 initialState 的权限插件，必须先打开 initialState
@@ -130,10 +130,11 @@ export default defineConfig({
    */
   headScripts: [
     // 解决首次加载时白屏的问题
-    { src: '/scripts/loading.js', async: true },
+    { src: "/scripts/loading.js", async: true },
   ],
+
   //================ pro 插件配置 =================
-  presets: ['umi-presets-pro'],
+  presets: ["umi-presets-pro"],
   /**
    * @name openAPI 插件的配置
    * @description 基于 openapi 的规范生成serve 和mock，能减少很多样板代码
@@ -143,18 +144,20 @@ export default defineConfig({
     {
       requestLibPath: "import { request } from '@umijs/max'",
       // 或者使用在线的版本
-      schemaPath: 'http://127.0.0.1:8001/swagger/?format=openapi',
+      schemaPath: "http://127.0.0.1:8001/swagger/?format=openapi",
       // schemaPath: join(__dirname, 'oneapi.json'),
       mock: false,
     },
     {
       requestLibPath: "import { request } from '@umijs/max'",
-      schemaPath: 'https://gw.alipayobjects.com/os/antfincdn/CA1dOm%2631B/openapi.json',
-      projectName: 'swagger',
+      schemaPath:
+        "https://gw.alipayobjects.com/os/antfincdn/CA1dOm%2631B/openapi.json",
+      projectName: "swagger",
     },
   ],
+
   mfsu: {
-    strategy: 'normal',
+    strategy: "normal",
   },
   requestRecord: {},
   // 多标签
@@ -162,4 +165,5 @@ export default defineConfig({
   tabsLayout: {
     hasDropdown: true,
   },
+  tailwindcss: {},
 });
