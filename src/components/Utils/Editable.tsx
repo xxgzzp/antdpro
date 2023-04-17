@@ -141,6 +141,7 @@ export const EditableCell: React.FC<EditableCellProps> = ({
     childNode = editing ? (
       <Form.Item style={{ margin: 0 }} name={dataIndex}>
         <AutoComplete
+          dropdownMatchSelectWidth={300}
           options={getOptionsHighLight(dataIndex, inputRef.current?.input?.value)}
           onSearch={(text) => handleSearch(dataIndex, text)}
           onSelect={(text) => handleSelect(dataIndex, text)}

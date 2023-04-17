@@ -101,6 +101,21 @@ export async function apiBigdataProductPartialUpdate(
   });
 }
 
+/** 获取商品详情 GET /api/bigdata/product/get_sku/ */
+export async function apiBigdataProductGetSku(
+  // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
+  params: API.apiBigdataProductGetSkuParams,
+  options?: { [key: string]: any },
+) {
+  return request<{ results?: any[] }>('/api/bigdata/product/get_sku/', {
+    method: 'GET',
+    params: {
+      ...params,
+    },
+    ...(options || {}),
+  });
+}
+
 /** 搜索商品 GET /api/bigdata/product/search/ */
 export async function apiBigdataProductSearch(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)

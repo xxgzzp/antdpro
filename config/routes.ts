@@ -125,19 +125,37 @@ export default [
   {
     name: '绑定企业微信',
     path: '/wecomBinding',
-    layout: true,
+    layout: false,
     component: './User/wecomBinding',
   },
   {
     name: '绑定企业微信',
     path: '/wecom_oauth_result',
-    layout: false,
+    layout: true,
     component: './User/wecomBinding/WecomOauthResult',
   },
   {
-    name: '搜索',
+    name: '大数据材料搜索',
     path: '/search',
     layout: true,
     component: './BigData/Search',
+  },
+  {
+    name: '商品详情',
+    path: '/product/:product_id',
+    layout: false,
+    component: './BigData/ProductDetails',
+  },
+  {
+    name: '商品详情',
+    path: '/123123',
+    layout: true,
+    component: './codepen/ScollText',
+  },
+  {
+    name: '聊天',
+    path: '/chat',
+    layout: true,
+    component: './Chat',
   },
 ];

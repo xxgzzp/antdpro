@@ -14,11 +14,12 @@ import { PlusOutlined } from '@ant-design/icons';
 import { ProTable } from '@ant-design/pro-table';
 import { useModel } from '@umijs/max';
 import { useRequest } from 'ahooks';
-import { Button, Modal, Popconfirm, Result, Space, Switch, Table } from 'antd';
+import { Button, Drawer, Modal, Popconfirm, Result, Space, Switch, Table } from 'antd';
 import { isEqual } from 'lodash';
 import React, { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import { v4 as uuidv4 } from 'uuid';
+import Search from '@/pages/BigData/Search';
 
 const OrderItem: React.FC<{
   order_id: string;
@@ -49,6 +50,9 @@ const OrderItem: React.FC<{
 
   const { reloadKey, setReloadKey } = useModel('tableReload');
 
+  const [searchText, setSearchText] = useState<string>();
+  const [searchOpen, setSearchOpen] = useState<boolean>(false);
+  const { isSelect, setIsSelect, selectSku, rowSelect, setRowSelect } = useModel('productSelect');
   // TODO:加载数据
   useEffect(() => {
     // TODO:如果有prop数据，就加载prop的 ，
@@ -170,7 +174,7 @@ const OrderItem: React.FC<{
     {
       title: '材料与设备名称',
       dataIndex: 'material_name',
-      width: '20%',
+      width: '30%',
       editable: true,
       sorter: {
         // @ts-ignore
@@ -220,6 +224,7 @@ const OrderItem: React.FC<{
     {
       title: '合同',
       width: '10%',
+      hideInTable: true,
       dataIndex: 'contract_name',
       render: (_, row) => [
         <a
@@ -264,13 +269,25 @@ const OrderItem: React.FC<{
     {
       title: '操作',
       dataIndex: 'operation',
-      width: '7%',
+      width: '15%',
       // @ts-ignore
-      render: (_, record: { id: React.Key }) =>
+      render: (_, record: { id: React.Key; material_name: string }) =>
         dataSource.length >= 1 ? (
-          <Popconfirm title="确认删除吗?" onConfirm={() => handleDelete(record.id)}>
-            <a>删除</a>
-          </Popconfirm>
+          <div>
+            <a
+              style={{ paddingRight: 10 }}
+              onClick={() => {
+                setRowSelect(record);
+                setSearchText(record?.material_name);
+                setSearchOpen(true);
+              }}
+            >
+              详情
+            </a>
+            <Popconfirm title="确认删除吗?" onConfirm={() => handleDelete(record.id)}>
+              <a>删除</a>
+            </Popconfirm>
+          </div>
         ) : null,
     },
   ];
@@ -378,6 +395,7 @@ const OrderItem: React.FC<{
   return (
     <div>
       <ProTable
+        columnSetting={{ visible: true }} // 启用列设置菜单
         rowSelection={{
           // 自定义选择项参考: https://ant.design/components/table-cn/#components-table-demo-row-selection-custom
           // 注释该行则默认不显示下拉选项
@@ -494,6 +512,69 @@ const OrderItem: React.FC<{
           style={{ width: '200px' }}
         ></ContractSelectAdd>
       </Modal>
+      <Drawer
+        placement="top"
+        height={500}
+        open={searchOpen}
+        onClose={() => {
+          setSearchOpen(false);
+        }}
+      >
+        <Search search_text={searchText}></Search>
+      </Drawer>
+      <Drawer
+        placement="bottom"
+        open={isSelect}
+        height="200"
+        onClose={() => {
+          setIsSelect(false);
+        }}
+      >
+        <Space size={10}>
+          <Button
+            onClick={() => {
+              const item = dataSource.find((item) => item?.id === rowSelect?.id);
+              if (item) {
+                item.material_name = selectSku?.itemName;
+              }
+            }}
+          >
+            &ldquo;材料与设备名称&ldquo;:{selectSku?.itemName}
+          </Button>
+          <Button
+            onClick={() => {
+              const item = dataSource.find((item) => item?.id === rowSelect?.id);
+              if (item) {
+                item.material_sku = selectSku?.itemName;
+              }
+            }}
+          >
+            &ldquo;规格&ldquo;:{selectSku?.model}
+          </Button>
+          <Button
+            onClick={() => {
+              const item = dataSource.find((item) => item?.id === rowSelect?.id);
+              if (item) {
+                item.material_unit = selectSku?.unitName;
+              }
+            }}
+          >
+            &ldquo;单位&ldquo;:{selectSku?.unitName}
+          </Button>
+          <Button
+            onClick={() => {
+              const item = dataSource.find((item) => item?.id === rowSelect?.id);
+              if (item) {
+                item.material_name = selectSku?.itemName;
+                item.material_sku = selectSku?.itemName;
+                item.material_unit = selectSku?.unitName;
+              }
+            }}
+          >
+            全部载入
+          </Button>
+        </Space>
+      </Drawer>
     </div>
   );
 };

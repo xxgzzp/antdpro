@@ -10,20 +10,24 @@ export default () => {
 
   const { readyState, sendMessage, latestMessage, connect, disconnect } = useWebSocket(
     'wss://zengzeping.com/ws/material/',
-    // {
-    //   manual: true,
-    // },
+    {
+      manual: true,
+    },
   );
 
   // webSocket发送消息
   const handleSearch = (dataIndex: string, text: string) => {
-    if (sendMessage) {
-      sendMessage(
-        JSON.stringify({
-          data_index: dataIndex,
-          text: text,
-        }),
-      );
+    if(readyState === 1){
+      if (sendMessage) {
+        sendMessage(
+          JSON.stringify({
+            data_index: dataIndex,
+            text: text,
+          }),
+        );
+      }
+    }else if (connect) {
+      connect()
     }
   };
 

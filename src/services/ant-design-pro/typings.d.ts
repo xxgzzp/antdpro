@@ -4,6 +4,15 @@ declare namespace API {
     id: number;
   };
 
+  type apiBigdataProductGetSkuParams = {
+    /** A page number within the paginated result set. */
+    current?: number;
+    /** Number of results to return per page. */
+    pageSize?: number;
+    /** 商品ID */
+    sku_id: number;
+  };
+
   type apiBigdataProductListParams = {
     /** A page number within the paginated result set. */
     current?: number;
@@ -22,8 +31,10 @@ declare namespace API {
   };
 
   type apiBigdataProductSearchParams = {
-    text:string
-    page:number | undefined
+    /** A page number within the paginated result set. */
+    current?: number;
+    /** Number of results to return per page. */
+    pageSize?: number;
   };
 
   type apiBigdataProductUpdateParams = {
@@ -851,13 +862,13 @@ declare namespace API {
     /** Timestamp */
     timestamp?: string;
     /** 进度 */
-    step?: 1 | 4 | 5 | 2 | 0 | 3;
+    step?: 1 | 5 | 2 | 3 | 0 | 4;
     /** 文件 */
     file?: string;
     /** 审核单编号 */
     sp_no?: string;
     /** 审核状态 */
-    sp_status?: 3 | 7 | 2 | 10 | 4 | 0 | 6 | 1;
+    sp_status?: 10 | 0 | 3 | 1 | 4 | 6 | 7 | 2;
     /** 企业文档字段 */
     fileid?: string;
     /** 腾讯文档 */
@@ -897,7 +908,7 @@ declare namespace API {
     /** Speech */
     speech?: string;
     /** Sp status */
-    sp_status?: 2 | 3 | 4 | 1;
+    sp_status?: 3 | 4 | 2 | 1;
     /** Sp time */
     sp_time?: string;
     /** 创建时间 */
@@ -1129,14 +1140,14 @@ declare namespace API {
     image?: string;
     /** Score */
     score?: string;
+    /** Minprice */
+    minPrice?: string;
+    /** Maxprice */
+    maxPrice?: string;
     /** IsSelf */
     isSelf?: boolean;
     /** Price */
     price?: string;
-    /** MinPrice */
-    minPrice?: string;
-    /** MaxPrice */
-    maxPrice?: string;
     /** OriginalMinPrice */
     originalMinPrice?: string;
     /** OriginalMaxPrice */
