@@ -1,37 +1,118 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Divider, Input, List } from 'antd';
+import { Divider, Input, List, Tag } from 'antd';
 import { SendOutlined } from '@ant-design/icons';
 import WriteLikeChatGPT from 'write-like-chat-gpt';
-
+import { useWebSocket } from 'ahooks';
+import DynamicTable from '@/pages/Chat/DynamicTable';
+import './index.less'
+interface botResponse{
+  "id":string
+  "type":string
+  "results":any
+}
 const ChatWindow = () => {
   const [inputValue, setInputValue] = useState('');
-  const [chatList, setChatList] = useState([]);
+  const [chatList, setChatList] = useState<botResponse[]>([]);
   const chatWindowRef = useRef(null);
+  const { readyState, sendMessage, latestMessage, connect } = useWebSocket(
+    'wss://zengzeping.com/ws/chat/',
+  );
+  // webSocket发送消息
+  const handleSearch = async (text: string) => {
+    if (readyState === 1) {
+      if (sendMessage) {
+        sendMessage(
+          JSON.stringify({
+            text: text,
+          }),
+        );
+      }
+    } else if (connect) {
+      connect();
+    }
+  };
+  // useEffect(()=>{
+  //   if (readyState === 1 && inputValue) {
+  //     if (sendMessage) {
+  //       sendMessage(
+  //         JSON.stringify({
+  //           text: inputValue,
+  //         }),
+  //       );
+  //     }
+  //   } else if (connect) {
+  //     connect();
+  //   }
+  // },[readyState])
+  // webSocket接收消息
+  useEffect(() => {
+    if (latestMessage !== null && latestMessage !== undefined) {
+      const data = JSON.parse(latestMessage.data);
+      const existingChat = chatList.find((chat) => chat?.id === data.id);
+      if (data) {
+        if(data?.id && existingChat){
+          setChatList((prevChatList) =>
+            prevChatList.map((chat) =>
+              chat.id === data.id ? { ...chat, ...data } : chat
+            )
+          );
+        }else {
+          const newChat = { ...data};
+          setChatList((prevChatList) => [...prevChatList, newChat]);
+        }
+      }
+    }
+    console.log(chatList);
+  }, [latestMessage]);
 
   useEffect(() => {
+    // @ts-ignore
     chatWindowRef.current.scrollTop = chatWindowRef.current.scrollHeight;
   }, [chatList]);
+
   const handleInputEnter = () => {
-    const newChat = { message: inputValue, type: 'user' };
+    const newChat = { results: inputValue, type: 'user' };
+    handleSearch(inputValue);
+    // @ts-ignore
     setChatList([...chatList, newChat]);
     setInputValue('');
   };
+
   return (
     <div>
       <div
         ref={chatWindowRef}
         className="chat-window"
-        style={{ height: 450, overflow: 'auto', scrollBehavior: 'smooth' }}
+        style={{ height: 600, overflow: 'auto', scrollBehavior: 'smooth' }}
       >
         <List
           dataSource={chatList}
           renderItem={(item) => (
             <div>
               <Divider />
-              {item.type === 'user' ? (
-                <div >{item.message}</div>
+              {item?.type === 'user' ? (
+                <div style={{ fontSize: '16px' }}>你: {item?.results}</div>
+              ) : item?.type === 'table' ? (
+                <div>
+                  <p style={{ fontSize: '16px' }}>Bot: 根据您的提问，我找到了如下数据:</p>
+                  <DynamicTable
+                    size="small"
+                    style={{ width: 1000 }}
+                    data={item?.results}
+                  />
+                </div>
+              ) : item?.type === 'text2entities' ? (
+                <div key="text-span-2">
+                  <p style={{ fontSize: '16px' }}>Bot: 根据您的提问，我找到了如下实体:</p>
+                  {item?.results?.map((r:any) => {
+                    return (
+                      <Tag key='entity-tag' color="cyan">{`${r?.span}(${r?.type})`}</Tag>
+                    );
+                  })}
+                </div>
               ) : (
-                <WriteLikeChatGPT text={`${item.type}:   ${item.message}`} delay={100} />
+                <p style={{ fontSize: '16px' }}>{`Bot: ${item?.results}`}</p>
+                // <WriteLikeChatGPT text={} delay={1000} />
               )}
             </div>
           )}
