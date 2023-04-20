@@ -1,22 +1,30 @@
 import React, { useEffect, useState } from 'react';
 import { useWebSocket } from 'ahooks';
-import { Upload, Select, Button } from 'antd';
-import {InboxOutlined, UploadOutlined } from '@ant-design/icons';
-import {request, useModel } from '@umijs/max';
-import Cookies from 'js-cookie';
+import { Upload, Select, Button, Card, Row, Col, Tag, Space } from 'antd';
+import {ArrowRightOutlined, InboxOutlined } from '@ant-design/icons';
+import { request, useModel } from '@umijs/max';
 import { toast } from 'react-toastify';
+interface categoryResponse{
+  "name":string,
+  'category':string,
+  'score':number,
+}
 
 const OrderAllModify = () => {
-
-   const { readyState, sendMessage, latestMessage, connect } = useWebSocket(
+  const { readyState, sendMessage, latestMessage, connect } = useWebSocket(
     'wss://zengzeping.com/ws/order_all_modify/',
     // 'wss://127.0.0.1/ws/order_all_modify/',
   );
+  const [categoryList, setCategoryList] = useState<categoryResponse[]>([]);
+  const [categoryLoading, setCategoryLoading] = useState(false);
+
+  const [dateList, setDateList] = useState<{ value: string | undefined; label: string }[]>([]);
+  const [dateLoading, setDateLoading] = useState(false);
+
   const [project, setProject] = useState();
   const [projectList, setProjectList] = useState<{ value: string | undefined; label: string }[]>(
     [],
   );
-
   const { projectEnum } = useModel('selector');
   useEffect(() => {
     setProjectList(projectEnum);
@@ -31,8 +39,20 @@ const OrderAllModify = () => {
   useEffect(() => {
     if (latestMessage !== null && latestMessage?.data) {
       const data = JSON.parse(latestMessage.data);
-      if (data.progress) {
-        // setProgress(data.progress);
+      if (data?.type) {
+        if (data.type === 'category') {
+          setCategoryList([...categoryList,data?.results])
+        }
+        if(data?.type === 'signal'){
+          if(data?.signal === 'done_category'){
+            setCategoryLoading(false)
+            toast.success('全部分类成功')
+          }
+          if (data?.signal === 'done_date') {
+            setDateLoading(false)
+            toast.success('全部材料单日期修改成功')
+          }
+        }
       }
     }
   }, [latestMessage]);
@@ -40,7 +60,8 @@ const OrderAllModify = () => {
   const uploadProps = {
     name: 'file',
     // 添加 beforeUpload 方法阻止默认自动上传行为
-    beforeUpload: (file) => {
+    beforeUpload: (file: any) => {
+      // @ts-ignore
       setFileList([file]);
       return false;
     },
@@ -55,15 +76,14 @@ const OrderAllModify = () => {
         '100%': '#87d068',
       },
       strokeWidth: 3,
-      format: (percent) => percent && `${parseFloat(percent.toFixed(2))}%`,
+      format: (percent: number) => percent && `${parseFloat(percent.toFixed(2))}%`,
     },
     fileList,
   };
 
-
   // 点击上传按钮触发上传操作
   const handleUpload = async () => {
-    if(!project){
+    if (!project) {
       toast.error('请选择项目');
       return;
     }
@@ -88,6 +108,34 @@ const OrderAllModify = () => {
       console.error('Error uploading the file:', error);
     }
   };
+
+  const handleModifyOrderCategory =  () => {
+    if (readyState === 1) {
+      if (sendMessage) {
+        setCategoryLoading(true)
+        sendMessage(
+          JSON.stringify({
+            modify: 'category',
+            project_id: project,
+          }),
+        );
+      }
+    }
+  }
+
+  const handleModifyOrderDate =  () => {
+    if (readyState === 1) {
+      if (sendMessage) {
+        setDateLoading(true)
+        sendMessage(
+          JSON.stringify({
+            modify: 'date',
+            project_id: project,
+          }),
+        );
+      }
+    }
+  }
 
   return (
     <div>
@@ -115,10 +163,54 @@ const OrderAllModify = () => {
         type="primary"
         onClick={handleUpload}
         disabled={fileList.length === 0}
-        style={{ marginTop: 16 ,width:'100%'}}
+        style={{ marginTop: 16, width: '100%' }}
       >
-        开始导入
+        上传并导入
       </Button>
+      <Button
+        type="primary"
+        disabled={project === undefined}
+        style={{ marginTop: 16, width: '100%' }}
+      >
+        批量修改材料单名称
+      </Button>
+      <Button
+        type="primary"
+        loading={categoryLoading}
+        // disabled={project === undefined || readyState === 1}
+        disabled={project === undefined}
+        onClick={handleModifyOrderCategory}
+        style={{ marginTop: 16, width: '100%' }}
+      >
+        批量修改材料单分类
+      </Button>
+      <Button
+        type="primary"
+        loading={dateLoading}
+        disabled={project === undefined}
+        onClick={handleModifyOrderDate}
+        style={{ marginTop: 16, width: '100%' }}
+      >
+        提取修改材料单日期
+      </Button>
+      {
+        categoryList?.length !==0 && (
+          <Card title="分类结果">
+            <Row gutter={[16, 16]}>
+              {categoryList.map((item) => (
+                <Col xs={24} sm={12} md={8} lg={24} key={item.name}>
+                    <Space>
+                    <Tag color="blue" style={{ fontSize: 16 }}>{item.name}</Tag>
+                      <ArrowRightOutlined />
+                    <Tag color="blue" style={{ fontSize: 16 }}>{item.category}</Tag>
+                    <div>分数：<Tag color="blue" style={{ fontSize: 16 }}>{item.score}</Tag></div>
+                      </Space>
+                </Col>
+              ))}
+            </Row>
+          </Card>
+        )
+      }
     </div>
   );
 };

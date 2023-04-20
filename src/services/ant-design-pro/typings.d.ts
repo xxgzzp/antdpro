@@ -826,6 +826,8 @@ declare namespace API {
     created_time?: string;
     /** 创建者 */
     created_by?: string;
+    /** 材料分类 */
+    category?: number;
   };
 
   type Membership = {
@@ -862,13 +864,13 @@ declare namespace API {
     /** Timestamp */
     timestamp?: string;
     /** 进度 */
-    step?: 1 | 5 | 2 | 3 | 0 | 4;
+    step?: 0 | 2 | 4 | 1 | 3 | 5;
     /** 文件 */
     file?: string;
     /** 审核单编号 */
     sp_no?: string;
     /** 审核状态 */
-    sp_status?: 10 | 0 | 3 | 1 | 4 | 6 | 7 | 2;
+    sp_status?: 4 | 0 | 6 | 3 | 10 | 2 | 7 | 1;
     /** 企业文档字段 */
     fileid?: string;
     /** 腾讯文档 */
@@ -908,7 +910,7 @@ declare namespace API {
     /** Speech */
     speech?: string;
     /** Sp status */
-    sp_status?: 3 | 4 | 2 | 1;
+    sp_status?: 3 | 1 | 2 | 4;
     /** Sp time */
     sp_time?: string;
     /** 创建时间 */

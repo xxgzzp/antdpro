@@ -21,14 +21,14 @@ const ChatWindow = () => {
   const {user} = useModel('user')
   // webSocket发送消息
   const handleSearch = async (text: string) => {
-    if (readyState === 1) {
+    // if (readyState === 1) {
       if (sendMessage) {
         sendMessage(
           JSON.stringify({
             text: text,
           }),
         );
-      }
+      // }
     } else if (connect) {
       connect();
     }

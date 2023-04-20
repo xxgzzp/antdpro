@@ -50,18 +50,18 @@ export default [
     ],
   },
   {
-    name: '订单',
+    name: '材料单',
     icon: 'profile',
     layout: true,
     path: '/order',
     routes: [  // 添加子路由配置
       {
-        name: '全部订单',
+        name: '全部材料单',
         path: '/order/all',
         component: './Order',
       },
       {
-        name: '订单批量处理',
+        name: '材料单批量处理',
         path: '/order/order_all_modify',
         icon: 'RobotOutlined',
         layout: true,

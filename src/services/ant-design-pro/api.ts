@@ -1073,6 +1073,14 @@ export async function apiMaterialOrderItemModifyContractFields(
   });
 }
 
+/** 此处后端没有提供注释 POST /api/material/order_modify_category/ */
+export async function apiMaterialOrderModifyCategoryCreate(options?: { [key: string]: any }) {
+  return request<any>('/api/material/order_modify_category/', {
+    method: 'POST',
+    ...(options || {}),
+  });
+}
+
 /** 此处后端没有提供注释 GET /api/material/order_permission/ */
 export async function apiMaterialOrderPermissionList(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
@@ -1170,6 +1178,14 @@ export async function apiMaterialOrderPermissionPartialUpdate(
     },
     params: { ...queryParams },
     data: body,
+    ...(options || {}),
+  });
+}
+
+/** 此处后端没有提供注释 POST /api/material/order_upload/ */
+export async function apiMaterialOrderUploadCreate(options?: { [key: string]: any }) {
+  return request<any>('/api/material/order_upload/', {
+    method: 'POST',
     ...(options || {}),
   });
 }
