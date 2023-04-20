@@ -60,6 +60,13 @@ export default [
         path: '/order/all',
         component: './Order',
       },
+      {
+        name: '订单批量处理',
+        path: '/order/order_all_modify',
+        icon: 'RobotOutlined',
+        layout: true,
+        component: './Order/OrderAllModify',
+      },
     ],
   },
   {
@@ -160,12 +167,5 @@ export default [
     icon: 'RobotOutlined',
     layout: true,
     component: './Chat',
-  },
-  {
-    name: 'AI聊天',
-    path: '/order_all_modify',
-    icon: 'RobotOutlined',
-    layout: true,
-    component: './Order/OrderAllModify',
   },
 ];

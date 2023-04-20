@@ -524,7 +524,7 @@ const OrderItem: React.FC<{
       </Drawer>
       <Drawer
         placement="bottom"
-        open={isSelect}
+        open={isSelect && rowSelect}
         height="200"
         onClose={() => {
           setIsSelect(false);
