@@ -27,7 +27,7 @@ const UploadMy: React.FC<{
     name: 'file',
     headers: {
       'X-CSRFToken': Cookies.get('csrftoken') as string,
-      Authorization: `Token ${localStorage.getItem('Token')}`,
+      'Authorization': `Token ${localStorage.getItem('Token')}`,
     },
     progress: {
       strokeColor: {
@@ -42,7 +42,7 @@ const UploadMy: React.FC<{
     onChange: handlerChange,
   };
   return (
-    <Upload {...props}>
+    <Upload {...props} >
       <Button icon={<UploadOutlined />}>导入材料单</Button>
     </Upload>
   );

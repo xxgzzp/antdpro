@@ -170,7 +170,7 @@ export default function Page() {
         <a
           key="rowName"
           onClick={() => {
-            history.push(`order/${row.id}/orderitems`);
+            history.push(`/order/${row.id}/orderitems`);
           }}
         >
           {row.name}

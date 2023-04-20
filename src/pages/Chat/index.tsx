@@ -1,10 +1,11 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Divider, Input, List, Tag } from 'antd';
+import {Alert, Avatar, Divider, Input, List, Tag } from 'antd';
 import { SendOutlined } from '@ant-design/icons';
 import WriteLikeChatGPT from 'write-like-chat-gpt';
 import { useWebSocket } from 'ahooks';
 import DynamicTable from '@/pages/Chat/DynamicTable';
 import './index.less'
+import {useModel} from "@@/exports";
 interface botResponse{
   "id":string
   "type":string
@@ -17,6 +18,7 @@ const ChatWindow = () => {
   const { readyState, sendMessage, latestMessage, connect } = useWebSocket(
     'wss://zengzeping.com/ws/chat/',
   );
+  const {user} = useModel('user')
   // webSocket发送消息
   const handleSearch = async (text: string) => {
     if (readyState === 1) {
@@ -83,7 +85,6 @@ const ChatWindow = () => {
       <div
         ref={chatWindowRef}
         className="chat-window"
-        style={{ height: 600, overflow: 'auto', scrollBehavior: 'smooth' }}
       >
         <List
           dataSource={chatList}
@@ -91,7 +92,7 @@ const ChatWindow = () => {
             <div>
               <Divider />
               {item?.type === 'user' ? (
-                <div style={{ fontSize: '16px' }}>你: {item?.results}</div>
+                <div style={{ fontSize: '16px' }}><Avatar src={user?.avatar} />你: {item?.results}</div>
               ) : item?.type === 'table' ? (
                 <div>
                   <p style={{ fontSize: '16px' }}>Bot: 根据您的提问，我找到了如下数据:</p>
@@ -111,7 +112,11 @@ const ChatWindow = () => {
                   })}
                 </div>
               ) : (
-                <p style={{ fontSize: '16px' }}>{`Bot: ${item?.results}`}</p>
+                <Alert
+                  description={`Bot: ${item?.results}`}
+                  type="success"
+                />
+                // <p style={{ fontSize: '16px' }}>{`Bot: ${item?.results}`}</p>
                 // <WriteLikeChatGPT text={} delay={1000} />
               )}
             </div>

@@ -1,3 +1,5 @@
+import { GlobalOutlined } from "@ant-design/icons";
+
 /**
  * @name umi 的路由配置
  * @description 只支持 path,component,routes,redirect,wrappers,name,icon 的配置
@@ -49,11 +51,16 @@ export default [
   },
   {
     name: '订单',
-    path: '/order',
     icon: 'profile',
     layout: true,
-    // defaultOpen: true, // 默认展开子菜单
-    component: './Order',
+    path: '/order',
+    routes: [  // 添加子路由配置
+      {
+        name: '全部订单',
+        path: '/order/all',
+        component: './Order',
+      },
+    ],
   },
   {
     name: '材料合同',
@@ -124,20 +131,15 @@ export default [
   },
   {
     name: '绑定企业微信',
-    path: '/wecomBinding',
-    layout: false,
-    component: './User/wecomBinding',
-  },
-  {
-    name: '绑定企业微信',
     path: '/wecom_oauth_result',
-    layout: true,
+    layout: false,
     component: './User/wecomBinding/WecomOauthResult',
   },
   {
     name: '大数据材料搜索',
     path: '/search',
     layout: true,
+    icon: 'GlobalOutlined',
     component: './BigData/Search',
   },
   {
@@ -146,16 +148,24 @@ export default [
     layout: false,
     component: './BigData/ProductDetails',
   },
+  // {
+  //   name: '商品详情',
+  //   path: '/123123',
+  //   layout: true,
+  //   component: './codepen/ScollText',
+  // },
   {
-    name: '商品详情',
-    path: '/123123',
-    layout: true,
-    component: './codepen/ScollText',
-  },
-  {
-    name: '聊天',
+    name: 'AI聊天',
     path: '/chat',
+    icon: 'RobotOutlined',
     layout: true,
     component: './Chat',
+  },
+  {
+    name: 'AI聊天',
+    path: '/order_all_modify',
+    icon: 'RobotOutlined',
+    layout: true,
+    component: './Order/OrderAllModify',
   },
 ];

@@ -42,6 +42,10 @@ const Search: React.FC<{
   };
 
   useEffect(()=>{
+    handleSearch()
+  },[])
+
+  useEffect(()=>{
     if (search_text){
       console.log(search_text)
       setSearchValue(search_text)
