@@ -3,7 +3,6 @@ import { request } from '@@/exports';
 import { useModel } from '@umijs/max';
 import { useRequest } from 'ahooks';
 import { Alert, Button, Image, QRCode, Result, Skeleton, Steps } from 'antd';
-import { getUUID } from 'rc-select/es/hooks/useId';
 import React, { useEffect, useState } from 'react';
 
 const InfoCard: React.FC<{
@@ -19,9 +18,7 @@ const InfoCard: React.FC<{
     { manual: true },
   );
   const [qrcodeLoading, setQrcodeLoading] = useState(false);
-  const uuid = getUUID();
   useEffect(() => {
-    console.log(uuid);
     // 如果没有请求用户就先请求
     if (!ready) {
       toggleUser();
@@ -94,7 +91,7 @@ const InfoCard: React.FC<{
           },
         ]}
       />
-      {current == 0 && (
+      {current === 0 && (
         <div className={styles.result}>
           <Alert
             closable
@@ -112,7 +109,7 @@ const InfoCard: React.FC<{
           </Button>
         </div>
       )}
-      {current == 1 && (
+      {current === 1 && (
         <div className={styles.result}>
           <Button onClick={handleBinding} loading={bindingLoading} block>
             点击前往企业微信绑定
@@ -123,7 +120,7 @@ const InfoCard: React.FC<{
           </div>
         </div>
       )}
-      {current == 2 && (
+      {current === 2 && (
         <div className={styles.result}>
           <div style={{ display: 'flex', justifyContent: 'center', flexDirection: 'column' }}>
             <Alert
@@ -147,7 +144,7 @@ const InfoCard: React.FC<{
           </div>
         </div>
       )}
-      {current == 3 && (
+      {current === 3 && (
         <div className={styles.result}>
           <Result
             status="success"

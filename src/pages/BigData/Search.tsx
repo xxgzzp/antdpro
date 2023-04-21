@@ -26,7 +26,7 @@ const Search: React.FC<{
   const { Meta } = Card;
   const { Title, Text } = Typography;
   const [modelOpen, setModelOpen] = useState(false);
-  const [searchValue, setSearchValue] = useState('安全');
+  const [searchValue, setSearchValue] = useState();
   const [searchResult, setSearchResult] = useState<API.YZWProduct[]>([]);
   const [searchLoading, setSearchLoading] = useState(false);
   const [modelProductId, setModelProductId] = useState<API.YZWProduct>();
@@ -41,13 +41,9 @@ const Search: React.FC<{
     setSearchLoading(false);
   };
 
-  useEffect(()=>{
-    handleSearch()
-  },[])
 
   useEffect(()=>{
     if (search_text){
-      console.log(search_text)
       setSearchValue(search_text)
       handleSearch()
     }

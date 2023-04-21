@@ -137,10 +137,16 @@ export default [
     component: './User/Register',
   },
   {
-    name: '绑定企业微信',
+    name: '绑定企业微信结果页面',
     path: '/wecom_oauth_result',
     layout: false,
     component: './User/wecomBinding/WecomOauthResult',
+  },
+  {
+    name: '绑定企业微信',
+    path: '/wecomBinding',
+    layout: false,
+    component: './User/wecomBinding',
   },
   {
     name: '大数据材料搜索',
