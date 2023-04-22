@@ -168,7 +168,7 @@ export default [
   //   component: './codepen/ScollText',
   // },
   {
-    name: 'AI聊天',
+    name: 'AI问询',
     path: '/chat',
     icon: 'RobotOutlined',
     layout: true,

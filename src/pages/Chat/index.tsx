@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Alert, Avatar, Divider, Input, List, Space, Spin, Tag } from 'antd';
+import { Alert, Avatar, Collapse, Divider, Input, List, Space, Spin, Switch, Tag } from 'antd';
 import { LoadingOutlined, SendOutlined } from '@ant-design/icons';
 import WriteLikeChatGPT from 'write-like-chat-gpt';
 import { useWebSocket } from 'ahooks';
@@ -7,7 +7,8 @@ import DynamicTable from '@/pages/Chat/DynamicTable';
 import './index.less';
 import { useModel } from '@@/exports';
 import ReactMarkdown from 'react-markdown';
-
+import {QuerySpaceTable} from "@/pages/Chat/QuerySpaceTable";
+const { Panel } = Collapse;
 interface botResponse {
   id: string;
   type: string;
@@ -21,6 +22,9 @@ const ChatWindow = () => {
   const [selectedSession, setSelectedSession] = useState<string>();
   const [chatList, setChatList] = useState<botResponse[]>([]);
   const chatWindowRef = useRef(null);
+
+  const [isSpaceTable, setIsSpaceTable] = useState(false);
+  const [isChatGPT, setIsChatGPT] = useState(true);
   const { readyState, sendMessage, latestMessage, connect } = useWebSocket(
     'wss://zengzeping.com/ws/chat/',
   );
@@ -32,12 +36,15 @@ const ChatWindow = () => {
       sendMessage(
         JSON.stringify({
           text: text,
-          t: 1,
           user_id: user?.id,
+          isSpaceTable: isSpaceTable,
+          isChatGPT: isChatGPT,
           session_id: selectedSession,
         }),
       );
-      setChatLoading(true);
+      if (isChatGPT) {
+        setChatLoading(true);
+      }
       // }
     } else if (connect) {
       connect();
@@ -77,6 +84,12 @@ const ChatWindow = () => {
     setInputValue('');
   };
 
+  const handleSpaceT = (checked: boolean) => {
+    setIsSpaceTable(checked);
+  };
+  const handleChatGPT = (checked: boolean) => {
+    setIsChatGPT(checked);
+  };
   return (
     <div>
       <div ref={chatWindowRef} className="chat-window">
@@ -92,18 +105,25 @@ const ChatWindow = () => {
                 </div>
               ) : item?.type === 'table' ? (
                 <div>
-                  <p style={{ fontSize: '16px' }}>Bot: 根据您的提问，我找到了如下数据:</p>
+                  {/*<p style={{ fontSize: '16px' }}>Bot: 根据您的提问，我找到了如下数据:</p>*/}
                   <DynamicTable size="small" style={{ width: 1000 }} data={item?.results} />
                 </div>
               ) : item?.type === 'text2entities' ? (
                 <div key="text-span-2">
                   <Space>
-                    <p style={{ fontSize: '16px' }}>Bot: 根据您的提问，我找到了如下实体:</p>
+                    {/*<p style={{ fontSize: '16px' }}>Bot: 根据您的提问，我找到了如下实体:</p>*/}
                     {item?.results?.map((r: any) => {
                       return <Tag key="entity-tag" color="cyan">{`${r?.span}(${r?.type})`}</Tag>;
                     })}
                   </Space>
                 </div>
+              ) : item?.type === 'spaceTable' ? (
+                  <Collapse defaultActiveKey={['1']} ghost>
+                    <Panel header={`SQL:${item?.results?.sql_string}`} key="1">
+                      <QuerySpaceTable queryResult={item?.results?.query_result}></QuerySpaceTable>
+                    </Panel>
+                  </Collapse>
+
               ) : (
                 <div>
                   <Alert
@@ -136,9 +156,21 @@ const ChatWindow = () => {
         </div>
         <div style={{ height: 200 }} />
       </div>
-      <div>
-        {selectedSession ? `您选择了会话${selectedSession}` : null}
-      </div>
+      <div>{selectedSession ? `您选择了会话${selectedSession}` : null}</div>
+      <Switch
+        onChange={handleChatGPT}
+        checkedChildren="ChatGPT"
+        unCheckedChildren="ChatGPT"
+        defaultChecked={true}
+        style={{ paddingLeft: '10px' }}
+      />
+      <Switch
+        onChange={handleSpaceT}
+        checkedChildren="SPACE-T"
+        unCheckedChildren="SPACE-T"
+        defaultChecked={false}
+        style={{ paddingLeft: '10px' }}
+      />
       <Input
         disabled={readyState !== 1}
         placeholder={readyState !== 1 ? 'websocket正在连接......' : '请输入内容'}
@@ -147,12 +179,14 @@ const ChatWindow = () => {
         onPressEnter={handleInputEnter}
         style={{ marginTop: 10, borderRadius: 20, paddingRight: 40 }}
         suffix={
-          <SendOutlined
-            style={{ fontSize: 20, color: '#1890ff', cursor: 'pointer' }}
-            onClick={handleInputEnter}
-          />
+          <div>
+            <SendOutlined
+              style={{ fontSize: 20, color: '#1890ff', cursor: 'pointer' }}
+              onClick={handleInputEnter}
+            />
+          </div>
         }
-      />
+      ></Input>
     </div>
   );
 };
