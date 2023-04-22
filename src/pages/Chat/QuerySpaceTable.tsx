@@ -1,10 +1,10 @@
-import {Collapse, Table } from 'antd';
+import {  Table } from 'antd';
 import { ColumnsType } from 'antd/es/table';
-import { Typography } from 'antd';
-const { Title } = Typography;
-const { Panel } = Collapse;
+
+
 interface QueryResult {
   header_name: string[];
+  header_id: string[];
   rows: Array<Array<any>>;
 }
 
@@ -27,10 +27,13 @@ export const QuerySpaceTable = ({ queryResult }: Props) => {
     return rowData;
   });
 
-  return (
-    <>
-      <Table columns={columns} dataSource={dataSource} />
+  let tableContent = <Table pagination={false} columns={columns} dataSource={dataSource} />;
 
-    </>
-  );
+  // if (queryResult?.header_id?.length === 1 && queryResult.header_id[0] === 'time') {
+  //   tableContent = (
+  //   <div></div>
+  //   );
+  // }
+
+  return tableContent;
 };

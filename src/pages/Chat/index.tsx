@@ -7,7 +7,8 @@ import DynamicTable from '@/pages/Chat/DynamicTable';
 import './index.less';
 import { useModel } from '@@/exports';
 import ReactMarkdown from 'react-markdown';
-import {QuerySpaceTable} from "@/pages/Chat/QuerySpaceTable";
+import { QuerySpaceTable } from '@/pages/Chat/QuerySpaceTable';
+import { DataTable } from './DataTable';
 const { Panel } = Collapse;
 interface botResponse {
   id: string;
@@ -22,9 +23,9 @@ const ChatWindow = () => {
   const [selectedSession, setSelectedSession] = useState<string>();
   const [chatList, setChatList] = useState<botResponse[]>([]);
   const chatWindowRef = useRef(null);
-
   const [isSpaceTable, setIsSpaceTable] = useState(false);
   const [isChatGPT, setIsChatGPT] = useState(true);
+  const [isSearchTable, setIsSearchTable] = useState(true);
   const { readyState, sendMessage, latestMessage, connect } = useWebSocket(
     'wss://zengzeping.com/ws/chat/',
   );
@@ -39,6 +40,7 @@ const ChatWindow = () => {
           user_id: user?.id,
           isSpaceTable: isSpaceTable,
           isChatGPT: isChatGPT,
+          isSearchTable: isSearchTable,
           session_id: selectedSession,
         }),
       );
@@ -50,6 +52,7 @@ const ChatWindow = () => {
       connect();
     }
   };
+
   useEffect(() => {
     if (latestMessage !== null && latestMessage !== undefined) {
       const data = JSON.parse(latestMessage.data);
@@ -76,6 +79,7 @@ const ChatWindow = () => {
     chatWindowRef.current.scrollTop = chatWindowRef.current.scrollHeight;
   }, [chatList]);
 
+
   const handleInputEnter = () => {
     const newChat = { results: inputValue, type: 'user' };
     handleSearch(inputValue);
@@ -86,9 +90,13 @@ const ChatWindow = () => {
 
   const handleSpaceT = (checked: boolean) => {
     setIsSpaceTable(checked);
+    console.log(isSpaceTable);
   };
   const handleChatGPT = (checked: boolean) => {
     setIsChatGPT(checked);
+  };
+  const handleIsSearchTable = (checked: boolean) => {
+    setIsSearchTable(checked);
   };
   return (
     <div>
@@ -100,13 +108,16 @@ const ChatWindow = () => {
               <Divider style={{ paddingTop: '5px' }} />
               {item?.type === 'user' ? (
                 <div style={{ fontSize: '16px' }}>
-                  <Avatar src={user?.avatar} />
-                  {item?.results}
+                  <Space>
+                    <Avatar src={user?.avatar} />
+                    <div style={{ paddingLeft: '10px' }}>{item?.results}</div>
+                  </Space>
                 </div>
               ) : item?.type === 'table' ? (
                 <div>
                   {/*<p style={{ fontSize: '16px' }}>Bot: 根据您的提问，我找到了如下数据:</p>*/}
-                  <DynamicTable size="small" style={{ width: 1000 }} data={item?.results} />
+                  <DataTable key={'dataTable'} dataSource={item?.results}></DataTable>
+                  {/*<DynamicTable size="small" style={{ width: 1000 }} data={item?.results} />*/}
                 </div>
               ) : item?.type === 'text2entities' ? (
                 <div key="text-span-2">
@@ -118,12 +129,11 @@ const ChatWindow = () => {
                   </Space>
                 </div>
               ) : item?.type === 'spaceTable' ? (
-                  <Collapse defaultActiveKey={['1']} ghost>
-                    <Panel header={`SQL:${item?.results?.sql_string}`} key="1">
-                      <QuerySpaceTable queryResult={item?.results?.query_result}></QuerySpaceTable>
-                    </Panel>
-                  </Collapse>
-
+                <Collapse defaultActiveKey={['1']} ghost>
+                  <Panel header={`${item?.results?.sql_string}`} key="1">
+                    <QuerySpaceTable queryResult={item?.results?.query_result}></QuerySpaceTable>
+                  </Panel>
+                </Collapse>
               ) : (
                 <div>
                   <Alert
@@ -157,20 +167,29 @@ const ChatWindow = () => {
         <div style={{ height: 200 }} />
       </div>
       <div>{selectedSession ? `您选择了会话${selectedSession}` : null}</div>
-      <Switch
-        onChange={handleChatGPT}
-        checkedChildren="ChatGPT"
-        unCheckedChildren="ChatGPT"
-        defaultChecked={true}
-        style={{ paddingLeft: '10px' }}
-      />
-      <Switch
-        onChange={handleSpaceT}
-        checkedChildren="SPACE-T"
-        unCheckedChildren="SPACE-T"
-        defaultChecked={false}
-        style={{ paddingLeft: '10px' }}
-      />
+      <Space>
+        <Switch
+          onChange={handleChatGPT}
+          checkedChildren="ChatGPT"
+          unCheckedChildren="ChatGPT"
+          defaultChecked={true}
+          style={{ paddingLeft: '10px' }}
+        />
+        <Switch
+          onChange={handleSpaceT}
+          checkedChildren="SPACE-T"
+          unCheckedChildren="SPACE-T"
+          defaultChecked={false}
+          style={{ paddingLeft: '10px' }}
+        />
+        <Switch
+          onChange={handleIsSearchTable}
+          checkedChildren="查询数据"
+          unCheckedChildren="查询数据"
+          defaultChecked={true}
+          style={{ paddingLeft: '10px' }}
+        />
+      </Space>
       <Input
         disabled={readyState !== 1}
         placeholder={readyState !== 1 ? 'websocket正在连接......' : '请输入内容'}
