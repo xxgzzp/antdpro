@@ -14,8 +14,11 @@ const DynamicTable = <T extends Record<string, unknown>>({
     dataIndex: key,
     key,
   })) : [];
+  const processedData = data.map((item) => ({ ...item }));
 
-  return <Table columns={columns} dataSource={data} {...rest} />;
+  // const processedData = data.map((item) => [item.spec, item.total_buy_num]);
+
+  return <Table columns={columns} dataSource={processedData} {...rest} />;
 };
 
 export default DynamicTable;

@@ -4,7 +4,8 @@
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
   padding: 16px;
   margin-bottom: 16px;
-  height: 90%;
+  //height: 90%;
+  //height: 600px;
   overflow: auto;
   scroll-behavior: smooth;
 }
@@ -22,6 +23,12 @@
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
   outline: none;
   font-size: 16px;
+}
+.chat-input {
+  position: fixed;
+  bottom: 30px; /* 或者您希望的高度 */
+  left: 50%; /* 将输入框定位在页面中央 */
+  transform: translateX(-50%);
 }
 
 .chat-window input:focus {

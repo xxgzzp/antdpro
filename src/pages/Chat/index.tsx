@@ -1,12 +1,10 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Alert, Avatar, Collapse, Divider, Input, List, Space, Spin, Switch, Tag } from 'antd';
 import { LoadingOutlined, SendOutlined } from '@ant-design/icons';
-import WriteLikeChatGPT from 'write-like-chat-gpt';
 import { useWebSocket } from 'ahooks';
 import DynamicTable from '@/pages/Chat/DynamicTable';
 import './index.less';
 import { useModel } from '@@/exports';
-import ReactMarkdown from 'react-markdown';
 import { QuerySpaceTable } from '@/pages/Chat/QuerySpaceTable';
 import { DataTable } from './DataTable';
 const { Panel } = Collapse;
@@ -26,13 +24,13 @@ const ChatWindow = () => {
   const [isSpaceTable, setIsSpaceTable] = useState(false);
   const [isChatGPT, setIsChatGPT] = useState(true);
   const [isSearchTable, setIsSearchTable] = useState(true);
+  const [isChatGPTSQL, setIsChatGPTSQL] = useState(false);
   const { readyState, sendMessage, latestMessage, connect } = useWebSocket(
     'wss://zengzeping.com/ws/chat/',
   );
   const { user } = useModel('user');
   // webSocket发送消息
   const handleSearch = async (text: string) => {
-    // if (readyState === 1) {
     if (sendMessage) {
       sendMessage(
         JSON.stringify({
@@ -41,10 +39,14 @@ const ChatWindow = () => {
           isSpaceTable: isSpaceTable,
           isChatGPT: isChatGPT,
           isSearchTable: isSearchTable,
+          isChatGPTSQL: isChatGPTSQL,
           session_id: selectedSession,
         }),
       );
       if (isChatGPT) {
+        setChatLoading(true);
+      }
+      if (isChatGPTSQL) {
         setChatLoading(true);
       }
       // }
@@ -57,6 +59,9 @@ const ChatWindow = () => {
     if (latestMessage !== null && latestMessage !== undefined) {
       const data = JSON.parse(latestMessage.data);
       if (data?.type === 'bot') {
+        setChatLoading(false);
+      }
+      if (data?.type === 'sql_results') {
         setChatLoading(false);
       }
       const existingChat = chatList.find((chat) => chat?.id === data.id);
@@ -74,12 +79,14 @@ const ChatWindow = () => {
     console.log(chatList);
   }, [latestMessage]);
 
+  // useEffect(() => {
+  //   // @ts-ignore
+  //   chatWindowRef.current.scrollTop = chatWindowRef.current.scrollHeight;
+  // }, [chatList]);
+
   useEffect(() => {
-    // @ts-ignore
-    chatWindowRef.current.scrollTop = chatWindowRef.current.scrollHeight;
+    window.scrollTo(0, document.body.scrollHeight-300);
   }, [chatList]);
-
-
   const handleInputEnter = () => {
     const newChat = { results: inputValue, type: 'user' };
     handleSearch(inputValue);
@@ -90,7 +97,6 @@ const ChatWindow = () => {
 
   const handleSpaceT = (checked: boolean) => {
     setIsSpaceTable(checked);
-    console.log(isSpaceTable);
   };
   const handleChatGPT = (checked: boolean) => {
     setIsChatGPT(checked);
@@ -98,114 +104,141 @@ const ChatWindow = () => {
   const handleIsSearchTable = (checked: boolean) => {
     setIsSearchTable(checked);
   };
+  const handleIsChatGPTSQL = (checked: boolean) => {
+    setIsChatGPTSQL(checked);
+  };
   return (
     <div>
-      <div ref={chatWindowRef} className="chat-window">
-        <List
-          dataSource={chatList}
-          renderItem={(item) => (
-            <div>
-              <Divider style={{ paddingTop: '5px' }} />
-              {item?.type === 'user' ? (
-                <div style={{ fontSize: '16px' }}>
-                  <Space>
-                    <Avatar src={user?.avatar} />
-                    <div style={{ paddingLeft: '10px' }}>{item?.results}</div>
-                  </Space>
-                </div>
-              ) : item?.type === 'table' ? (
-                <div>
-                  {/*<p style={{ fontSize: '16px' }}>Bot: 根据您的提问，我找到了如下数据:</p>*/}
-                  <DataTable key={'dataTable'} dataSource={item?.results}></DataTable>
-                  {/*<DynamicTable size="small" style={{ width: 1000 }} data={item?.results} />*/}
-                </div>
-              ) : item?.type === 'text2entities' ? (
-                <div key="text-span-2">
-                  <Space>
-                    {/*<p style={{ fontSize: '16px' }}>Bot: 根据您的提问，我找到了如下实体:</p>*/}
-                    {item?.results?.map((r: any) => {
-                      return <Tag key="entity-tag" color="cyan">{`${r?.span}(${r?.type})`}</Tag>;
-                    })}
-                  </Space>
-                </div>
-              ) : item?.type === 'spaceTable' ? (
-                <Collapse defaultActiveKey={['1']} ghost>
-                  <Panel header={`${item?.results?.sql_string}`} key="1">
-                    <QuerySpaceTable queryResult={item?.results?.query_result}></QuerySpaceTable>
-                  </Panel>
-                </Collapse>
-              ) : (
-                <div>
-                  <Alert
-                    key={item?.session_id}
-                    onClick={() => {
-                      if (selectedSession === item?.session_id) {
-                        setSelectedSession(null);
-                      } else {
-                        setSelectedSession(item?.session_id);
+      <div className="chat-container">
+        <div className="chat-window" ref={chatWindowRef}>
+          <List
+            dataSource={chatList}
+            renderItem={(item) => (
+              <div>
+                <Divider style={{ paddingTop: '5px' }} />
+                {item?.type === 'user' ? (
+                  <div style={{ fontSize: '16px' }}>
+                    <Space>
+                      <Avatar src={user?.avatar} />
+                      <div style={{ paddingLeft: '10px' }}>{item?.results}</div>
+                    </Space>
+                  </div>
+                ) : item?.type === 'table' ? (
+                  <div>
+                    {/*<p style={{ fontSize: '16px' }}>Bot: 根据您的提问，我找到了如下数据:</p>*/}
+                    <DataTable key={'dataTable'} dataSource={item?.results}></DataTable>
+                    {/*<DynamicTable size="small" style={{ width: 1000 }} data={item?.results} />*/}
+                  </div>
+                ) : item?.type === 'text2entities' ? (
+                  <div key="text-span-2">
+                    <Space>
+                      {/*<p style={{ fontSize: '16px' }}>Bot: 根据您的提问，我找到了如下实体:</p>*/}
+                      {item?.results?.map((r: any) => {
+                        return <Tag key="entity-tag" color="cyan">{`${r?.span}(${r?.type})`}</Tag>;
+                      })}
+                    </Space>
+                  </div>
+                ) : item?.type === 'spaceTable' ? (
+                  <Collapse defaultActiveKey={['1']} ghost>
+                    <Panel header={`${item?.results?.sql_string}`} key="1">
+                      <QuerySpaceTable queryResult={item?.results?.query_result}></QuerySpaceTable>
+                    </Panel>
+                  </Collapse>
+                ) : item?.type === 'sql' ? (
+                  <pre>{item?.results}</pre>
+                ) : item?.type === 'sql_results' ? (
+                  <div>
+                    <DynamicTable size="small" data={item?.results}></DynamicTable>
+                  </div>
+                ) : (
+                  <div>
+                    <Alert
+                      key={item?.session_id}
+                      onClick={() => {
+                        if (selectedSession === item?.session_id) {
+                          setSelectedSession(null);
+                        } else {
+                          setSelectedSession(item?.session_id);
+                        }
+                      }}
+                      description={
+                        <div>
+                          {'ChatGPT:'}
+                          <pre>{item?.results}</pre>
+                          {/*<pre>{item?.results}</pre>*/}
+                        </div>
                       }
-                    }}
-                    description={
-                      <div>
-                        {'ChatGPT:'}
-                        <ReactMarkdown>{item?.results}</ReactMarkdown>
-                        {/*<pre>{item?.results}</pre>*/}
-                      </div>
-                    }
-                    type={selectedSession === item?.session_id ? 'success' : 'warning'}
-                  />
-                </div>
+                      type={selectedSession === item?.session_id ? 'success' : 'warning'}
+                    />
+                  </div>
+                )}
+              </div>
+            )}
+          />
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'center',
+              paddingTop: '20px',
+              alignItems: 'center',
+            }}
+          ></div>
+          <div style={{ height: '300px' }}></div>
+        </div>
+      </div>
+      <div className="chat-input">
+        <div>{selectedSession ? `您选择了会话${selectedSession}` : null}</div>
+        <Space>
+          <Switch
+            onChange={handleIsSearchTable}
+            checkedChildren="查询数据"
+            unCheckedChildren="查询数据"
+            defaultChecked={true}
+            style={{ paddingLeft: '10px' }}
+          />
+          <Switch
+            onChange={handleChatGPT}
+            checkedChildren="ChatGPT"
+            unCheckedChildren="ChatGPT"
+            defaultChecked={true}
+            style={{ paddingLeft: '10px' }}
+          />
+          <Switch
+            onChange={handleSpaceT}
+            checkedChildren="SPACE-T"
+            unCheckedChildren="SPACE-T"
+            defaultChecked={false}
+            style={{ paddingLeft: '10px' }}
+          />
+          <Switch
+            onChange={handleIsChatGPTSQL}
+            checkedChildren="ChatGPT-SQL"
+            unCheckedChildren="ChatGPT-SQL"
+            defaultChecked={false}
+            style={{ paddingLeft: '10px' }}
+          />
+        </Space>
+        <Input
+          disabled={readyState !== 1}
+          placeholder={readyState !== 1 ? 'websocket正在连接......' : '请输入内容'}
+          value={inputValue}
+          onChange={(e) => setInputValue(e.target.value)}
+          onPressEnter={handleInputEnter}
+          style={{ marginTop: 10, borderRadius: 20, paddingRight: 40 }}
+          suffix={
+            <div>
+              {chatLoading ? (
+                <Spin indicator={<LoadingOutlined style={{ fontSize: 20 }} spin />} />
+              ) : (
+                <SendOutlined
+                  style={{ fontSize: 20, color: '#1890ff', cursor: 'pointer' }}
+                  onClick={handleInputEnter}
+                />
               )}
             </div>
-          )}
-        />
-        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-          {chatLoading ? (
-            <Spin indicator={<LoadingOutlined style={{ fontSize: 24 }} spin />} />
-          ) : null}
-        </div>
-        <div style={{ height: 200 }} />
+          }
+        ></Input>
       </div>
-      <div>{selectedSession ? `您选择了会话${selectedSession}` : null}</div>
-      <Space>
-        <Switch
-          onChange={handleChatGPT}
-          checkedChildren="ChatGPT"
-          unCheckedChildren="ChatGPT"
-          defaultChecked={true}
-          style={{ paddingLeft: '10px' }}
-        />
-        <Switch
-          onChange={handleSpaceT}
-          checkedChildren="SPACE-T"
-          unCheckedChildren="SPACE-T"
-          defaultChecked={false}
-          style={{ paddingLeft: '10px' }}
-        />
-        <Switch
-          onChange={handleIsSearchTable}
-          checkedChildren="查询数据"
-          unCheckedChildren="查询数据"
-          defaultChecked={true}
-          style={{ paddingLeft: '10px' }}
-        />
-      </Space>
-      <Input
-        disabled={readyState !== 1}
-        placeholder={readyState !== 1 ? 'websocket正在连接......' : '请输入内容'}
-        value={inputValue}
-        onChange={(e) => setInputValue(e.target.value)}
-        onPressEnter={handleInputEnter}
-        style={{ marginTop: 10, borderRadius: 20, paddingRight: 40 }}
-        suffix={
-          <div>
-            <SendOutlined
-              style={{ fontSize: 20, color: '#1890ff', cursor: 'pointer' }}
-              onClick={handleInputEnter}
-            />
-          </div>
-        }
-      ></Input>
     </div>
   );
 };
