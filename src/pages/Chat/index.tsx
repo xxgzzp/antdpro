@@ -1,5 +1,17 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Alert, Avatar, Collapse, Divider, Input, List, Space, Spin, Switch, Tag } from 'antd';
+import {
+  Alert,
+  Avatar,
+  Collapse,
+  Divider,
+  Input,
+  List,
+  Result,
+  Space,
+  Spin,
+  Switch,
+  Tag,
+} from 'antd';
 import { LoadingOutlined, SendOutlined } from '@ant-design/icons';
 import { useWebSocket } from 'ahooks';
 import DynamicTable from '@/pages/Chat/DynamicTable';
@@ -7,6 +19,7 @@ import './index.less';
 import { useModel } from '@@/exports';
 import { QuerySpaceTable } from '@/pages/Chat/QuerySpaceTable';
 import { DataTable } from './DataTable';
+import MarkdownPreview from '@uiw/react-markdown-preview';
 const { Panel } = Collapse;
 interface botResponse {
   id: string;
@@ -25,13 +38,26 @@ const ChatWindow = () => {
   const [isChatGPT, setIsChatGPT] = useState(true);
   const [isSearchTable, setIsSearchTable] = useState(true);
   const [isChatGPTSQL, setIsChatGPTSQL] = useState(false);
+  const [isViewChatGPTSQL, setIsViewChatGPTSQL] = useState(false);
   const { readyState, sendMessage, latestMessage, connect } = useWebSocket(
     'wss://zengzeping.com/ws/chat/',
   );
   const { user } = useModel('user');
+
+  // 权限先简单在前端过滤糊弄下
+  const [hasPermission, setHasPermission] = useState<boolean>(false);
+  useEffect(() => {
+    if (user) {
+      if (user?.user_permissions?.includes(161)) {
+        setHasPermission(true);
+      }
+    }
+  }, [user]);
+
   // webSocket发送消息
   const handleSearch = async (text: string) => {
     if (sendMessage) {
+      console.log(isSpaceTable, isChatGPT, isSearchTable, isChatGPTSQL, isViewChatGPTSQL);
       sendMessage(
         JSON.stringify({
           text: text,
@@ -40,6 +66,7 @@ const ChatWindow = () => {
           isChatGPT: isChatGPT,
           isSearchTable: isSearchTable,
           isChatGPTSQL: isChatGPTSQL,
+          isViewChatGPTSQL: isViewChatGPTSQL,
           session_id: selectedSession,
         }),
       );
@@ -47,6 +74,9 @@ const ChatWindow = () => {
         setChatLoading(true);
       }
       if (isChatGPTSQL) {
+        setChatLoading(true);
+      }
+      if (isViewChatGPTSQL) {
         setChatLoading(true);
       }
       // }
@@ -64,6 +94,7 @@ const ChatWindow = () => {
       if (data?.type === 'sql_results') {
         setChatLoading(false);
       }
+
       const existingChat = chatList.find((chat) => chat?.id === data.id);
       if (data) {
         if (data?.id && existingChat) {
@@ -85,7 +116,7 @@ const ChatWindow = () => {
   // }, [chatList]);
 
   useEffect(() => {
-    window.scrollTo(0, document.body.scrollHeight-300);
+    window.scrollTo(0, document.body.scrollHeight - 300);
   }, [chatList]);
   const handleInputEnter = () => {
     const newChat = { results: inputValue, type: 'user' };
@@ -107,6 +138,13 @@ const ChatWindow = () => {
   const handleIsChatGPTSQL = (checked: boolean) => {
     setIsChatGPTSQL(checked);
   };
+  const handleIsViewChatGPTSQL = (checked: boolean) => {
+    setIsViewChatGPTSQL(checked);
+  };
+
+  if (!hasPermission) {
+    return <Result status="warning" title="无权访问" />;
+  }
   return (
     <div>
       <div className="chat-container">
@@ -145,7 +183,7 @@ const ChatWindow = () => {
                     </Panel>
                   </Collapse>
                 ) : item?.type === 'sql' ? (
-                  <pre>{item?.results}</pre>
+                  <pre style={{ whiteSpace: 'pre-wrap' }}>{item?.results}</pre>
                 ) : item?.type === 'sql_results' ? (
                   <div>
                     <DynamicTable size="small" data={item?.results}></DynamicTable>
@@ -164,7 +202,11 @@ const ChatWindow = () => {
                       description={
                         <div>
                           {'ChatGPT:'}
-                          <pre>{item?.results}</pre>
+                          <MarkdownPreview
+                            style={{ background: '#FFFBE6' }}
+                            source={item?.results}
+                          />
+                          {/*<pre style={{ whiteSpace: 'pre-wrap' }}>{item?.results}</pre>*/}
                           {/*<pre>{item?.results}</pre>*/}
                         </div>
                       }
@@ -182,7 +224,11 @@ const ChatWindow = () => {
               paddingTop: '20px',
               alignItems: 'center',
             }}
-          ></div>
+          >
+            {chatLoading ? (
+              <Spin indicator={<LoadingOutlined style={{ fontSize: 20 }} spin />} />
+            ) : null}
+          </div>
           <div style={{ height: '300px' }}></div>
         </div>
       </div>
@@ -214,6 +260,13 @@ const ChatWindow = () => {
             onChange={handleIsChatGPTSQL}
             checkedChildren="ChatGPT-SQL"
             unCheckedChildren="ChatGPT-SQL"
+            defaultChecked={false}
+            style={{ paddingLeft: '10px' }}
+          />
+          <Switch
+            onChange={handleIsViewChatGPTSQL}
+            checkedChildren="视图-ChatGPT-SQL"
+            unCheckedChildren="视图-ChatGPT-SQL"
             defaultChecked={false}
             style={{ paddingLeft: '10px' }}
           />
