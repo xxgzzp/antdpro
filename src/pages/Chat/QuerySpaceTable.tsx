@@ -1,6 +1,5 @@
-import {  Table } from 'antd';
+import { Table } from 'antd';
 import { ColumnsType } from 'antd/es/table';
-
 
 interface QueryResult {
   header_name: string[];
@@ -27,7 +26,7 @@ export const QuerySpaceTable = ({ queryResult }: Props) => {
     return rowData;
   });
 
-  let tableContent = <Table pagination={false} columns={columns} dataSource={dataSource} />;
+  let tableContent = <Table size="small" columns={columns} dataSource={dataSource} />;
 
   // if (queryResult?.header_id?.length === 1 && queryResult.header_id[0] === 'time') {
   //   tableContent = (

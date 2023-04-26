@@ -112,12 +112,15 @@ const ChatWindow = () => {
 
   // useEffect(() => {
   //   // @ts-ignore
-  //   chatWindowRef.current.scrollTop = chatWindowRef.current.scrollHeight;
+  //   if(chatList){
+  //     chatWindowRef.current.scrollTop = chatWindowRef.current.scrollHeight;
+  //   }
   // }, [chatList]);
 
-  useEffect(() => {
-    window.scrollTo(0, document.body.scrollHeight - 300);
-  }, [chatList]);
+  // useEffect(() => {
+  //   window.scrollTo(0, document.body.scrollHeight - 300);
+  // }, [chatList]);
+
   const handleInputEnter = () => {
     const newChat = { results: inputValue, type: 'user' };
     handleSearch(inputValue);
