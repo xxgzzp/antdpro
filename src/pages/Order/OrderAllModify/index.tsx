@@ -6,6 +6,7 @@ import { request, useModel } from '@umijs/max';
 import { toast } from 'react-toastify';
 import { v4 as uuidv4 } from 'uuid';
 import { history } from '@umijs/max';
+import { settings } from '@/settings';
 interface categoryResponse {
   name: string;
   category: string;
@@ -35,7 +36,7 @@ interface modifyNameResponse {
 
 const OrderAllModify = () => {
   const { readyState, sendMessage, latestMessage, connect } = useWebSocket(
-    'wss://zengzeping.com/ws/order_all_modify/',
+    `wss://${settings.host}/ws/order_all_modify/`,
     // 'wss://127.0.0.1/ws/order_all_modify/',
   );
   const [categoryList, setCategoryList] = useState<categoryResponse[]>([]);

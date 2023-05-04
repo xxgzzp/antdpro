@@ -8,7 +8,7 @@ import useContractLocalStorage, {
 } from '@/pages/Contract/ContractItem/useContractLocalStorage';
 import {
   apiMaterialContractContractItems,
-  apiMaterialContractPermissionCreate,
+  apiMaterialContractPermissionCreate, apiMaterialContractRead,
   apiMaterialContractUpdate,
 } from '@/services/ant-design-pro/api';
 import { useModel } from '@@/exports';
@@ -47,7 +47,7 @@ const Index: React.FC = () => {
   const [drawerOpen, setDrawerOpen] = useState(false);
 
   const { user } = useModel('user');
-
+  const {data:contract} = useRequest(()=>apiMaterialContractRead({id:contract_id!}))
   // TODO:读取数据
   useEffect(() => {
     getContractItemRemote({ id: contract_id });
@@ -251,7 +251,8 @@ const Index: React.FC = () => {
       title: '预算',
       width: '10%',
       dataIndex: 'estimator_num',
-      editable: true,
+      // editable: true,
+      editable: user?.id === contract?.estimator,
       sorter: {
         // @ts-ignore
         compare: (a, b) => a.estimator_num - b.estimator_num,
@@ -262,7 +263,8 @@ const Index: React.FC = () => {
       title: '施工员',
       width: '10%',
       dataIndex: 'principal_num',
-      editable: true,
+      // editable: true,
+      editable: user?.id === contract?.principal,
       sorter: {
         // @ts-ignore
         compare: (a, b) => a.principal_num - b.principal_num,
@@ -273,7 +275,8 @@ const Index: React.FC = () => {
       title: '最终',
       width: '10%',
       dataIndex: 'end_num',
-      editable: true,
+      // editable: true,
+      editable: user?.id === contract?.end_by,
       sorter: {
         // @ts-ignore
         compare: (a, b) => a.end_num - b.end_num,

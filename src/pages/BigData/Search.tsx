@@ -18,6 +18,7 @@ import './Search.less';
 import { apiBigdataProductSearch } from '@/services/ant-design-pro/api';
 import ProductDetail from '@/pages/BigData/ProductDetails';
 import { useModel } from '@umijs/max';
+import {settings} from "@/settings";
 
 
 const Search: React.FC<{
@@ -138,7 +139,7 @@ const Search: React.FC<{
                     <Image
                       style={{ height: 200 }}
                       alt={item?.itemName}
-                      src={`http://zengzeping.com/media/YZWimage/${item?.image}`}
+                      src={`http://${settings.host}/media/YZWimage/${item?.image}`}
                       className="h-48 object-cover"
                     />
                   }

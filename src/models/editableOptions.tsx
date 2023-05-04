@@ -1,3 +1,4 @@
+import { settings } from '@/settings';
 import { useMap, useWebSocket } from 'ahooks';
 import { useEffect } from 'react';
 interface Option {
@@ -9,7 +10,7 @@ export default () => {
   const [map, { set: setOptions, get: getOptions }] = useMap<string, Option[]>([]);
 
   const { readyState, sendMessage, latestMessage, connect, disconnect } = useWebSocket(
-    'wss://zengzeping.com/ws/material/',
+    `wss://${settings.host}/ws/material/`,
     {
       manual: true,
     },

@@ -20,6 +20,7 @@ import { useModel } from '@@/exports';
 import { QuerySpaceTable } from '@/pages/Chat/QuerySpaceTable';
 import { DataTable } from './DataTable';
 import MarkdownPreview from '@uiw/react-markdown-preview';
+import { settings } from '@/settings';
 const { Panel } = Collapse;
 interface botResponse {
   id: string;
@@ -39,8 +40,9 @@ const ChatWindow = () => {
   const [isSearchTable, setIsSearchTable] = useState(true);
   const [isChatGPTSQL, setIsChatGPTSQL] = useState(false);
   const [isViewChatGPTSQL, setIsViewChatGPTSQL] = useState(false);
+  const [isMarkdown, setIsMarkdown] = useState(false);
   const { readyState, sendMessage, latestMessage, connect } = useWebSocket(
-    'wss://zengzeping.com/ws/chat/',
+    `wss://${settings.host}/ws/chat/`,
   );
   const { user } = useModel('user');
 
@@ -144,10 +146,13 @@ const ChatWindow = () => {
   const handleIsViewChatGPTSQL = (checked: boolean) => {
     setIsViewChatGPTSQL(checked);
   };
+  const handleIsMarkDown = (checked: boolean) => {
+    setIsMarkdown(checked);
+  };
 
-  if (!hasPermission) {
-    return <Result status="warning" title="无权访问" />;
-  }
+  // if (!hasPermission) {
+  //   return <Result status="warning" title="无权访问" />;
+  // }
   return (
     <div>
       <div className="chat-container">
@@ -203,12 +208,23 @@ const ChatWindow = () => {
                         }
                       }}
                       description={
-                        <div>
+                        <div style={{position: 'relative'}}>
                           {'ChatGPT:'}
-                          <MarkdownPreview
-                            style={{ background: '#FFFBE6' }}
-                            source={item?.results}
+                          <Switch
+                            onChange={handleIsMarkDown}
+                            checkedChildren="Markdown"
+                            unCheckedChildren="Markdown"
+                            defaultChecked={false}
+                            style={{ position: 'absolute', top: 0, right: 0 }}
                           />
+                          {isMarkdown ? (
+                            <MarkdownPreview
+                              style={{ background: '#FFFBE6' }}
+                              source={item?.results}
+                            />
+                          ) : (
+                            <pre style={{ whiteSpace: 'pre-wrap' }}>{item?.results}</pre>
+                          )}
                           {/*<pre style={{ whiteSpace: 'pre-wrap' }}>{item?.results}</pre>*/}
                           {/*<pre>{item?.results}</pre>*/}
                         </div>

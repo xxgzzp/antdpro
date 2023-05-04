@@ -1,5 +1,6 @@
 import {Badge, Card, Col,Image, Typography } from "antd";
 import {useModel} from "@@/exports";
+import {settings} from "@/settings";
 
 export const Product:React.FC<{
   item: API.YZWProduct;
@@ -41,7 +42,7 @@ export const Product:React.FC<{
           <Image
             style={{ height: 200 }}
             alt={item?.itemName}
-            src={`http://zengzeping.com/media/YZWimage/${item?.image}`}
+            src={`http://${settings.host}/media/YZWimage/${item?.image}`}
             className="h-48 object-cover"
           />
         }
