@@ -1,4 +1,4 @@
-<mxfile host="app.diagrams.net" modified="2023-07-14T12:10:10.407Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36" etag="DyhILve5foSZ7E1K_Zps" version="21.5.0" type="github">
+<mxfile host="app.diagrams.net" modified="2023-07-14T12:11:07.209Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36" etag="APpTo_Eu7MiYI2Q8YCPv" version="21.5.0" type="github">
   <diagram name="第 1 页" id="msrC1hAe30Xg3wMURsVK">
     <mxGraphModel dx="2120" dy="538" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
       <root>
@@ -103,7 +103,7 @@
         <mxCell id="P365xrxu5ykFGGpO0YsA-39" value="查询刚刚创建的BatchTarget&lt;br&gt;得到batch_target_ids" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
           <mxGeometry x="90" y="300" width="165" height="50" as="geometry" />
         </mxCell>
-        <mxCell id="P365xrxu5ykFGGpO0YsA-41" value="创建多个TargetDevice指向特定的BatchTarget" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+        <mxCell id="P365xrxu5ykFGGpO0YsA-41" value="创建多个TargetDevice指向特定的BatchTarget&lt;br&gt;（sr拼数据）" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
           <mxGeometry x="102.5" y="390" width="140" height="80" as="geometry" />
         </mxCell>
         <mxCell id="P365xrxu5ykFGGpO0YsA-54" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" edge="1" parent="1" source="P365xrxu5ykFGGpO0YsA-48" target="P365xrxu5ykFGGpO0YsA-53">
