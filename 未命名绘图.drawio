@@ -1,137 +1,279 @@
-<mxfile host="app.diagrams.net" modified="2023-07-14T12:11:07.209Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36" etag="APpTo_Eu7MiYI2Q8YCPv" version="21.5.0" type="github">
+<mxfile host="app.diagrams.net" modified="2023-07-16T08:13:30.364Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36" etag="ACLdb1qOHGiXNXuYSVfX" version="21.6.2" type="github">
   <diagram name="第 1 页" id="msrC1hAe30Xg3wMURsVK">
-    <mxGraphModel dx="2120" dy="538" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+    <mxGraphModel dx="3407" dy="1150" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
-        <mxCell id="P365xrxu5ykFGGpO0YsA-1" value="移动、添加" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+        <mxCell id="P365xrxu5ykFGGpO0YsA-1" value="移动、添加" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
           <mxGeometry x="280" y="30" width="90" height="30" as="geometry" />
         </mxCell>
-        <mxCell id="P365xrxu5ykFGGpO0YsA-19" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="P365xrxu5ykFGGpO0YsA-6" target="P365xrxu5ykFGGpO0YsA-18">
+        <mxCell id="P365xrxu5ykFGGpO0YsA-22" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;" parent="1" source="P365xrxu5ykFGGpO0YsA-6" target="P365xrxu5ykFGGpO0YsA-21" edge="1">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="P365xrxu5ykFGGpO0YsA-22" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;" edge="1" parent="1" source="P365xrxu5ykFGGpO0YsA-6" target="P365xrxu5ykFGGpO0YsA-21">
+        <mxCell id="kgve2yl_xJI6iGoT1gtc-13" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="P365xrxu5ykFGGpO0YsA-6" target="kgve2yl_xJI6iGoT1gtc-8">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="P365xrxu5ykFGGpO0YsA-6" value="是否在多设备包" style="rhombus;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+        <mxCell id="P365xrxu5ykFGGpO0YsA-6" value="是否在多设备包" style="rhombus;whiteSpace=wrap;html=1;" parent="1" vertex="1">
           <mxGeometry x="262.5" y="210" width="125" height="90" as="geometry" />
         </mxCell>
-        <mxCell id="P365xrxu5ykFGGpO0YsA-10" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" edge="1" parent="1" source="P365xrxu5ykFGGpO0YsA-1" target="P365xrxu5ykFGGpO0YsA-8">
+        <mxCell id="P365xrxu5ykFGGpO0YsA-10" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" parent="1" source="P365xrxu5ykFGGpO0YsA-1" target="P365xrxu5ykFGGpO0YsA-8" edge="1">
           <mxGeometry relative="1" as="geometry">
             <mxPoint x="325" y="60" as="sourcePoint" />
             <mxPoint x="191" y="240" as="targetPoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="P365xrxu5ykFGGpO0YsA-15" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="P365xrxu5ykFGGpO0YsA-8" target="P365xrxu5ykFGGpO0YsA-6">
+        <mxCell id="P365xrxu5ykFGGpO0YsA-15" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" source="P365xrxu5ykFGGpO0YsA-8" target="P365xrxu5ykFGGpO0YsA-6" edge="1">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="P365xrxu5ykFGGpO0YsA-24" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;" edge="1" parent="1" source="P365xrxu5ykFGGpO0YsA-8" target="P365xrxu5ykFGGpO0YsA-25">
+        <mxCell id="P365xrxu5ykFGGpO0YsA-24" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" source="P365xrxu5ykFGGpO0YsA-8" target="kgve2yl_xJI6iGoT1gtc-1" edge="1">
           <mxGeometry relative="1" as="geometry">
-            <mxPoint x="600" y="170" as="targetPoint" />
+            <mxPoint x="750.0588235294122" y="175" as="targetPoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="P365xrxu5ykFGGpO0YsA-28" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;" edge="1" parent="1" source="P365xrxu5ykFGGpO0YsA-8">
+        <mxCell id="P365xrxu5ykFGGpO0YsA-28" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;" parent="1" source="P365xrxu5ykFGGpO0YsA-8" edge="1">
           <mxGeometry relative="1" as="geometry">
             <mxPoint x="100" y="180" as="targetPoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="P365xrxu5ykFGGpO0YsA-8" value="判断UUIDS分别在哪些状态" style="rhombus;whiteSpace=wrap;html=1;rounded=0;" vertex="1" parent="1">
+        <mxCell id="P365xrxu5ykFGGpO0YsA-8" value="判断UUIDS分别在哪些状态" style="rhombus;whiteSpace=wrap;html=1;rounded=0;" parent="1" vertex="1">
           <mxGeometry x="228.98000000000002" y="100" width="192.03" height="70" as="geometry" />
         </mxCell>
-        <mxCell id="P365xrxu5ykFGGpO0YsA-16" value="已经存在的UUIDS，类型不同" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+        <mxCell id="P365xrxu5ykFGGpO0YsA-16" value="已经存在的UUIDS，类型不同" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
           <mxGeometry x="329" y="170" width="170" height="50" as="geometry" />
         </mxCell>
-        <mxCell id="P365xrxu5ykFGGpO0YsA-49" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" edge="1" parent="1" source="P365xrxu5ykFGGpO0YsA-18" target="P365xrxu5ykFGGpO0YsA-48">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        <mxCell id="P365xrxu5ykFGGpO0YsA-18" value="直接修改target_device的batch_target_id" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
-          <mxGeometry x="310" y="380" width="130" height="50" as="geometry" />
-        </mxCell>
-        <mxCell id="P365xrxu5ykFGGpO0YsA-20" value="是" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
-          <mxGeometry x="310" y="320" width="60" height="30" as="geometry" />
-        </mxCell>
-        <mxCell id="P365xrxu5ykFGGpO0YsA-21" value="直接修改BatchTarget的类型" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
-          <mxGeometry x="470" y="315" width="160" height="35" as="geometry" />
-        </mxCell>
-        <mxCell id="P365xrxu5ykFGGpO0YsA-23" value="否" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
-          <mxGeometry x="499" y="255" width="60" height="30" as="geometry" />
-        </mxCell>
-        <mxCell id="P365xrxu5ykFGGpO0YsA-25" value="不处理" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
-          <mxGeometry x="560" y="175" width="120" height="60" as="geometry" />
-        </mxCell>
-        <mxCell id="P365xrxu5ykFGGpO0YsA-26" value="&lt;span style=&quot;color: rgb(0, 0, 0); font-family: Helvetica; font-size: 12px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; text-align: center; text-indent: 0px; text-transform: none; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; background-color: rgb(251, 251, 251); text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial; float: none; display: inline !important;&quot;&gt;已经存在的UUIDS，类型相同&lt;/span&gt;" style="text;whiteSpace=wrap;html=1;" vertex="1" parent="1">
-          <mxGeometry x="520" y="100" width="190" height="40" as="geometry" />
-        </mxCell>
-        <mxCell id="P365xrxu5ykFGGpO0YsA-29" value="不存在的UUID" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
-          <mxGeometry x="20" y="100" width="170" height="50" as="geometry" />
-        </mxCell>
-        <mxCell id="P365xrxu5ykFGGpO0YsA-32" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;" edge="1" parent="1" source="P365xrxu5ykFGGpO0YsA-30" target="P365xrxu5ykFGGpO0YsA-31">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        <mxCell id="P365xrxu5ykFGGpO0YsA-35" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="P365xrxu5ykFGGpO0YsA-30" target="P365xrxu5ykFGGpO0YsA-34">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        <mxCell id="P365xrxu5ykFGGpO0YsA-30" value="是否聚合" style="rhombus;whiteSpace=wrap;html=1;" vertex="1" parent="1">
-          <mxGeometry x="60" y="170" width="80" height="55" as="geometry" />
-        </mxCell>
-        <mxCell id="P365xrxu5ykFGGpO0YsA-38" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" edge="1" parent="1" source="P365xrxu5ykFGGpO0YsA-31">
+        <mxCell id="kgve2yl_xJI6iGoT1gtc-9" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" edge="1" parent="1" target="kgve2yl_xJI6iGoT1gtc-8">
           <mxGeometry relative="1" as="geometry">
-            <mxPoint x="-20.000000000000227" y="370" as="targetPoint" />
+            <mxPoint x="375" y="430" as="sourcePoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="P365xrxu5ykFGGpO0YsA-31" value="创建一个BatchTarget" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
-          <mxGeometry x="-60" y="250" width="80" height="40" as="geometry" />
+        <mxCell id="P365xrxu5ykFGGpO0YsA-20" value="是" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
+          <mxGeometry x="310" y="320" width="60" height="30" as="geometry" />
         </mxCell>
-        <mxCell id="P365xrxu5ykFGGpO0YsA-33" value="是" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
-          <mxGeometry x="25" y="220" width="60" height="30" as="geometry" />
+        <mxCell id="P365xrxu5ykFGGpO0YsA-21" value="直接修改BatchTarget的类型" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="470" y="315" width="160" height="35" as="geometry" />
         </mxCell>
-        <mxCell id="P365xrxu5ykFGGpO0YsA-40" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="P365xrxu5ykFGGpO0YsA-34" target="P365xrxu5ykFGGpO0YsA-39">
+        <mxCell id="P365xrxu5ykFGGpO0YsA-23" value="否" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
+          <mxGeometry x="499" y="255" width="60" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="P365xrxu5ykFGGpO0YsA-26" value="&lt;span style=&quot;color: rgb(0, 0, 0); font-family: Helvetica; font-size: 12px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; text-align: center; text-indent: 0px; text-transform: none; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; background-color: rgb(251, 251, 251); text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial; float: none; display: inline !important;&quot;&gt;已经存在的UUIDS，类型相同&lt;/span&gt;" style="text;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="520" y="100" width="190" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="P365xrxu5ykFGGpO0YsA-29" value="不存在的UUID" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
+          <mxGeometry x="20" y="100" width="170" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="P365xrxu5ykFGGpO0YsA-32" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;" parent="1" source="P365xrxu5ykFGGpO0YsA-30" target="P365xrxu5ykFGGpO0YsA-31" edge="1">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="P365xrxu5ykFGGpO0YsA-34" value="创建多个BatchTarget" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
-          <mxGeometry x="120" y="235" width="120" height="40" as="geometry" />
-        </mxCell>
-        <mxCell id="P365xrxu5ykFGGpO0YsA-36" value="否" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
-          <mxGeometry x="168.98" y="205" width="60" height="30" as="geometry" />
-        </mxCell>
-        <mxCell id="P365xrxu5ykFGGpO0YsA-37" value="创建多个TargetDevice指向刚刚的BatchTarget" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
-          <mxGeometry x="-97.5" y="360" width="155" height="60" as="geometry" />
-        </mxCell>
-        <mxCell id="P365xrxu5ykFGGpO0YsA-42" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" edge="1" parent="1" source="P365xrxu5ykFGGpO0YsA-39" target="P365xrxu5ykFGGpO0YsA-41">
+        <mxCell id="P365xrxu5ykFGGpO0YsA-35" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" source="P365xrxu5ykFGGpO0YsA-30" target="P365xrxu5ykFGGpO0YsA-34" edge="1">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="P365xrxu5ykFGGpO0YsA-39" value="查询刚刚创建的BatchTarget&lt;br&gt;得到batch_target_ids" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
-          <mxGeometry x="90" y="300" width="165" height="50" as="geometry" />
+        <mxCell id="P365xrxu5ykFGGpO0YsA-30" value="是否聚合" style="rhombus;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="-212.5" y="237.5" width="80" height="55" as="geometry" />
         </mxCell>
-        <mxCell id="P365xrxu5ykFGGpO0YsA-41" value="创建多个TargetDevice指向特定的BatchTarget&lt;br&gt;（sr拼数据）" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
-          <mxGeometry x="102.5" y="390" width="140" height="80" as="geometry" />
+        <mxCell id="P365xrxu5ykFGGpO0YsA-38" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" parent="1" source="P365xrxu5ykFGGpO0YsA-31" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="-292.5000000000002" y="437.5" as="targetPoint" />
+          </mxGeometry>
         </mxCell>
-        <mxCell id="P365xrxu5ykFGGpO0YsA-54" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" edge="1" parent="1" source="P365xrxu5ykFGGpO0YsA-48" target="P365xrxu5ykFGGpO0YsA-53">
+        <mxCell id="P365xrxu5ykFGGpO0YsA-31" value="创建一个BatchTarget" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="-332.5" y="317.5" width="80" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="P365xrxu5ykFGGpO0YsA-33" value="是" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
+          <mxGeometry x="-312.5" y="277.5" width="60" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="P365xrxu5ykFGGpO0YsA-40" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" source="P365xrxu5ykFGGpO0YsA-34" target="P365xrxu5ykFGGpO0YsA-39" edge="1">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="P365xrxu5ykFGGpO0YsA-69" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;" edge="1" parent="1" source="P365xrxu5ykFGGpO0YsA-48" target="P365xrxu5ykFGGpO0YsA-62">
+        <mxCell id="P365xrxu5ykFGGpO0YsA-34" value="创建多个BatchTarget" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="-152.5" y="302.5" width="120" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="P365xrxu5ykFGGpO0YsA-36" value="否" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
+          <mxGeometry x="-103.52000000000001" y="272.5" width="60" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="P365xrxu5ykFGGpO0YsA-37" value="创建多个TargetDevice指向刚刚的BatchTarget" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="-370" y="427.5" width="155" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="P365xrxu5ykFGGpO0YsA-42" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" parent="1" source="P365xrxu5ykFGGpO0YsA-39" target="P365xrxu5ykFGGpO0YsA-41" edge="1">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="P365xrxu5ykFGGpO0YsA-48" value="是否聚合" style="rhombus;whiteSpace=wrap;html=1;" vertex="1" parent="1">
-          <mxGeometry x="334" y="460" width="80" height="55" as="geometry" />
+        <mxCell id="P365xrxu5ykFGGpO0YsA-39" value="查询刚刚创建的BatchTarget&lt;br&gt;得到batch_target_ids" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="-182.5" y="367.5" width="165" height="50" as="geometry" />
         </mxCell>
-        <mxCell id="P365xrxu5ykFGGpO0YsA-53" value="指向特定的BatchTarget" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
-          <mxGeometry x="331.5" y="550" width="87" height="45" as="geometry" />
+        <mxCell id="P365xrxu5ykFGGpO0YsA-41" value="创建多个TargetDevice指向特定的BatchTarget&lt;br&gt;（sr拼数据）" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="-170" y="457.5" width="140" height="80" as="geometry" />
         </mxCell>
-        <mxCell id="P365xrxu5ykFGGpO0YsA-55" value="是" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
-          <mxGeometry x="361.01" y="515" width="60" height="30" as="geometry" />
-        </mxCell>
-        <mxCell id="P365xrxu5ykFGGpO0YsA-71" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="P365xrxu5ykFGGpO0YsA-62" target="P365xrxu5ykFGGpO0YsA-64">
+        <mxCell id="P365xrxu5ykFGGpO0YsA-54" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" parent="1" source="P365xrxu5ykFGGpO0YsA-48" target="P365xrxu5ykFGGpO0YsA-53" edge="1">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="P365xrxu5ykFGGpO0YsA-62" value="创建多个BatchTarget" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
-          <mxGeometry x="450" y="515" width="120" height="40" as="geometry" />
+        <mxCell id="P365xrxu5ykFGGpO0YsA-69" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;" parent="1" source="P365xrxu5ykFGGpO0YsA-48" target="P365xrxu5ykFGGpO0YsA-62" edge="1">
+          <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="P365xrxu5ykFGGpO0YsA-64" value="修改多个TargetDevice指向自己的BatchTarget" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
-          <mxGeometry x="380" y="630" width="260" height="55" as="geometry" />
+        <mxCell id="P365xrxu5ykFGGpO0YsA-48" value="是否聚合" style="rhombus;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="534" y="482.5" width="80" height="55" as="geometry" />
         </mxCell>
-        <mxCell id="P365xrxu5ykFGGpO0YsA-70" value="否" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
-          <mxGeometry x="421.01" y="480" width="60" height="30" as="geometry" />
+        <mxCell id="kgve2yl_xJI6iGoT1gtc-21" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0;exitY=0.75;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="P365xrxu5ykFGGpO0YsA-53" target="kgve2yl_xJI6iGoT1gtc-18">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="P365xrxu5ykFGGpO0YsA-53" value="指向特定的BatchTarget" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="531.5" y="572.5" width="87" height="45" as="geometry" />
+        </mxCell>
+        <mxCell id="P365xrxu5ykFGGpO0YsA-55" value="是" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
+          <mxGeometry x="561.01" y="522.5" width="60" height="45" as="geometry" />
+        </mxCell>
+        <mxCell id="P365xrxu5ykFGGpO0YsA-71" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" source="P365xrxu5ykFGGpO0YsA-62" target="P365xrxu5ykFGGpO0YsA-64" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="P365xrxu5ykFGGpO0YsA-62" value="创建多个BatchTarget" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="650" y="537.5" width="120" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="kgve2yl_xJI6iGoT1gtc-20" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;" edge="1" parent="1" source="P365xrxu5ykFGGpO0YsA-64" target="kgve2yl_xJI6iGoT1gtc-18">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="P365xrxu5ykFGGpO0YsA-64" value="修改多个TargetDevice指向自己的BatchTarget" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="580" y="652.5" width="260" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="P365xrxu5ykFGGpO0YsA-70" value="否" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
+          <mxGeometry x="621.01" y="502.5" width="60" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="kgve2yl_xJI6iGoT1gtc-6" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;" edge="1" parent="1" source="kgve2yl_xJI6iGoT1gtc-1" target="kgve2yl_xJI6iGoT1gtc-5">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="kgve2yl_xJI6iGoT1gtc-71" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="kgve2yl_xJI6iGoT1gtc-1" target="kgve2yl_xJI6iGoT1gtc-60">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="kgve2yl_xJI6iGoT1gtc-1" value="是否在多设备包中" style="rhombus;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="720" y="155" width="140" height="85" as="geometry" />
+        </mxCell>
+        <mxCell id="kgve2yl_xJI6iGoT1gtc-39" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" edge="1" parent="1" source="kgve2yl_xJI6iGoT1gtc-2" target="kgve2yl_xJI6iGoT1gtc-34">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="kgve2yl_xJI6iGoT1gtc-2" value="修改TargetDevice的batch_target_id指向刚刚创建的BatchTarget" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="1143" y="290" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="kgve2yl_xJI6iGoT1gtc-4" value="是" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="770" y="260" width="60" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="kgve2yl_xJI6iGoT1gtc-5" value="不处理" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="1040" y="181" width="100" height="35" as="geometry" />
+        </mxCell>
+        <mxCell id="kgve2yl_xJI6iGoT1gtc-7" value="否" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="880" y="180" width="60" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="kgve2yl_xJI6iGoT1gtc-10" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="kgve2yl_xJI6iGoT1gtc-8" target="P365xrxu5ykFGGpO0YsA-48">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="kgve2yl_xJI6iGoT1gtc-15" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" edge="1" parent="1" source="kgve2yl_xJI6iGoT1gtc-8" target="kgve2yl_xJI6iGoT1gtc-14">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="kgve2yl_xJI6iGoT1gtc-8" value="是否移向特定的包" style="rhombus;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="297.5" y="400" width="135" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="kgve2yl_xJI6iGoT1gtc-11" value="否" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="534" y="400" width="60" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="kgve2yl_xJI6iGoT1gtc-22" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" edge="1" parent="1" source="kgve2yl_xJI6iGoT1gtc-14">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="365.58823529411757" y="680" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="kgve2yl_xJI6iGoT1gtc-14" value="直接修改target_device的batch_target_id" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="300" y="512.5" width="130" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="kgve2yl_xJI6iGoT1gtc-17" value="是" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="350" y="470" width="60" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="kgve2yl_xJI6iGoT1gtc-24" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="kgve2yl_xJI6iGoT1gtc-18" target="kgve2yl_xJI6iGoT1gtc-23">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="kgve2yl_xJI6iGoT1gtc-28" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;" edge="1" parent="1" source="kgve2yl_xJI6iGoT1gtc-18" target="kgve2yl_xJI6iGoT1gtc-27">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="kgve2yl_xJI6iGoT1gtc-18" value="判断移出后原先的多设备包是否为空" style="rhombus;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="251.88" y="652.5" width="226.25" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="kgve2yl_xJI6iGoT1gtc-23" value="删除原先的多设备包" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="287.5" y="780" width="155" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="kgve2yl_xJI6iGoT1gtc-25" value="是" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="340" y="740" width="60" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="kgve2yl_xJI6iGoT1gtc-27" value="不处理" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="70" y="780" width="140" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="kgve2yl_xJI6iGoT1gtc-29" value="否" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="180" y="680" width="60" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="kgve2yl_xJI6iGoT1gtc-32" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="kgve2yl_xJI6iGoT1gtc-34" target="kgve2yl_xJI6iGoT1gtc-35">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="kgve2yl_xJI6iGoT1gtc-74" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="kgve2yl_xJI6iGoT1gtc-34" target="kgve2yl_xJI6iGoT1gtc-75">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="1410.0000000000005" y="640" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="1411" y="557" />
+              <mxPoint x="1411" y="640" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="kgve2yl_xJI6iGoT1gtc-34" value="判断移出后原先的多设备包是否为空" style="rhombus;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="1089.88" y="511.5" width="226.25" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="kgve2yl_xJI6iGoT1gtc-35" value="删除原先的多设备包" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="1125.5" y="661.5" width="155" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="kgve2yl_xJI6iGoT1gtc-36" value="是" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="1173" y="612.75" width="60" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="kgve2yl_xJI6iGoT1gtc-55" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="kgve2yl_xJI6iGoT1gtc-53" target="P365xrxu5ykFGGpO0YsA-30">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="kgve2yl_xJI6iGoT1gtc-58" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" edge="1" parent="1" source="kgve2yl_xJI6iGoT1gtc-53" target="kgve2yl_xJI6iGoT1gtc-57">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="kgve2yl_xJI6iGoT1gtc-53" value="是否移动到特定的包中" style="rhombus;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="10" y="170" width="180" height="95" as="geometry" />
+        </mxCell>
+        <mxCell id="kgve2yl_xJI6iGoT1gtc-56" value="否" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="-70" y="181" width="60" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="kgve2yl_xJI6iGoT1gtc-57" value="创建多个TargetDevice指向特定的BatchTarget" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="40" y="330" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="kgve2yl_xJI6iGoT1gtc-59" value="是" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="90" y="277.5" width="60" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="kgve2yl_xJI6iGoT1gtc-78" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" edge="1" parent="1" source="kgve2yl_xJI6iGoT1gtc-60" target="kgve2yl_xJI6iGoT1gtc-77">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="kgve2yl_xJI6iGoT1gtc-81" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="kgve2yl_xJI6iGoT1gtc-60" target="kgve2yl_xJI6iGoT1gtc-80">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="kgve2yl_xJI6iGoT1gtc-60" value="是否移入到特定的包中" style="rhombus;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="688.75" y="290" width="202.5" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="kgve2yl_xJI6iGoT1gtc-75" value="不处理" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="1340" y="652.5" width="140" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="kgve2yl_xJI6iGoT1gtc-76" value="否" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="1340" y="522.5" width="60" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="kgve2yl_xJI6iGoT1gtc-79" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="kgve2yl_xJI6iGoT1gtc-77" target="kgve2yl_xJI6iGoT1gtc-34">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="kgve2yl_xJI6iGoT1gtc-77" value="修改TargetDevice的batch_target_id到指定的BatchTarget" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="730" y="427.5" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="kgve2yl_xJI6iGoT1gtc-82" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="kgve2yl_xJI6iGoT1gtc-80" target="kgve2yl_xJI6iGoT1gtc-2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="kgve2yl_xJI6iGoT1gtc-80" value="创建多个BachTarget" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="969.88" y="290" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="kgve2yl_xJI6iGoT1gtc-83" value="是" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="780" y="367.5" width="60" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="kgve2yl_xJI6iGoT1gtc-84" value="否" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="891.25" y="285" width="60" height="30" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>
